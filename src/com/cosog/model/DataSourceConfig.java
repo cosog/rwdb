@@ -1,38 +1,62 @@
 package com.cosog.model;
 
 public class DataSourceConfig {
+	
+	private DiagramTableConfig DiagramTable;
 
-	private boolean Enable;
+    private ProductionDataTableConfig ProductionDataTable;
+	
+	public static class ConnectInfoConfig
+	{
+	    private String IP;
 
-    private String IP;
+	    private int Port;
 
-    private int Version;
+	    private String InstanceName;
 
-    private String InstanceName;
-    
-    private int Port;
+	    private int Version;
 
-    private String User;
+	    private String User;
 
-    private String Password;
+	    private String Password;
 
-    private DiagramTable DiagramTable;
-
-    private CommStatusTable CommStatusTable;
-
-    private RunStatusTable RunStatusTable;
-
-    private ReservoirTable ReservoirTable;
-
-    private RodStringTable RodStringTable;
-
-    private TubingStringTable TubingStringTable;
-
-    private CasingStringTable CasingStringTable;
-
-    private PumpTable PumpTable;
-
-    private ProductionTable ProductionTable;
+	    public void setIP(String IP){
+	        this.IP = IP;
+	    }
+	    public String getIP(){
+	        return this.IP;
+	    }
+	    public void setPort(int Port){
+	        this.Port = Port;
+	    }
+	    public int getPort(){
+	        return this.Port;
+	    }
+	    public void setInstanceName(String InstanceName){
+	        this.InstanceName = InstanceName;
+	    }
+	    public String getInstanceName(){
+	        return this.InstanceName;
+	    }
+	    public void setVersion(int Version){
+	        this.Version = Version;
+	    }
+	    public int getVersion(){
+	        return this.Version;
+	    }
+	    public void setUser(String User){
+	        this.User = User;
+	    }
+	    public String getUser(){
+	        return this.User;
+	    }
+	    public void setPassword(String Password){
+	        this.Password = Password;
+	    }
+	    public String getPassword(){
+	        return this.Password;
+	    }
+	}
 	
 	public static class ColumnInfo
 	{
@@ -147,11 +171,9 @@ public class DataSourceConfig {
 		}
 	}
 	
-	public static class DiagramTable
+	public static class FESDiagramTableStructure
 	{
 	    private String Name;
-
-	    private boolean Enable;
 
 	    private FESDiagramTableColumns Columns;
 
@@ -161,12 +183,6 @@ public class DataSourceConfig {
 	    public String getName(){
 	        return this.Name;
 	    }
-	    public void setEnable(boolean Enable){
-	        this.Enable = Enable;
-	    }
-	    public boolean getEnable(){
-	        return this.Enable;
-	    }
 	    public void setColumns(FESDiagramTableColumns Columns){
 	        this.Columns = Columns;
 	    }
@@ -175,582 +191,147 @@ public class DataSourceConfig {
 	    }
 	}
 	
-	public static class CommStatusTableColumns
+	public static class DiagramTableConfig
 	{
-	    private ColumnInfo WellName;
-
-	    private ColumnInfo CommStatus;
-
-		public ColumnInfo getWellName() {
-			return WellName;
-		}
-
-		public void setWellName(ColumnInfo wellName) {
-			WellName = wellName;
-		}
-
-		public ColumnInfo getCommStatus() {
-			return CommStatus;
-		}
-
-		public void setCommStatus(ColumnInfo commStatus) {
-			CommStatus = commStatus;
-		}
-	}
-	
-	public static class CommStatusTable
-	{
-	    private String Name;
-
 	    private boolean Enable;
 
-	    private CommStatusTableColumns Columns;
+	    private ConnectInfoConfig ConnectInfo;
 
-	    public void setName(String Name){
-	        this.Name = Name;
-	    }
-	    public String getName(){
-	        return this.Name;
-	    }
+	    private FESDiagramTableStructure TableInfo;
+
 	    public void setEnable(boolean Enable){
 	        this.Enable = Enable;
 	    }
 	    public boolean getEnable(){
 	        return this.Enable;
 	    }
-	    public void setColumns(CommStatusTableColumns Columns){
-	        this.Columns = Columns;
+	    public void setConnectInfo(ConnectInfoConfig ConnectInfo){
+	        this.ConnectInfo = ConnectInfo;
 	    }
-	    public CommStatusTableColumns getColumns(){
-	        return this.Columns;
+	    public ConnectInfoConfig getConnectInfo(){
+	        return this.ConnectInfo;
+	    }
+	    public void setTableInfo(FESDiagramTableStructure TableInfo){
+	        this.TableInfo = TableInfo;
+	    }
+	    public FESDiagramTableStructure getTableInfo(){
+	        return this.TableInfo;
 	    }
 	}
 	
-	public static class RunStatusTableColumns
+	public static class ProductionDataTableColumns
 	{
+	    private ColumnInfo WellId;
+
 	    private ColumnInfo WellName;
 
-	    private ColumnInfo RunStatus;
+	    private ColumnInfo SaveTime;
 
-		public ColumnInfo getWellName() {
-			return WellName;
-		}
+	    private ColumnInfo CrudeOilDensity;
 
-		public void setWellName(ColumnInfo wellName) {
-			WellName = wellName;
-		}
+	    private ColumnInfo WaterDensity;
 
-		public ColumnInfo getRunStatus() {
-			return RunStatus;
-		}
+	    private ColumnInfo NaturalGasRelativeDensity;
 
-		public void setRunStatus(ColumnInfo runStatus) {
-			RunStatus = runStatus;
-		}
-	}
-	
-	public class RunStatusTable
-	{
-	    private String Name;
+	    private ColumnInfo SaturationPressure;
 
-	    private boolean Enable;
+	    private ColumnInfo ReservoirDepth;
 
-	    private RunStatusTableColumns Columns;
+	    private ColumnInfo ReservoirTemperature;
 
-	    public void setName(String Name){
-	        this.Name = Name;
-	    }
-	    public String getName(){
-	        return this.Name;
-	    }
-	    public void setEnable(boolean Enable){
-	        this.Enable = Enable;
-	    }
-	    public boolean getEnable(){
-	        return this.Enable;
-	    }
-	    public void setColumns(RunStatusTableColumns Columns){
-	        this.Columns = Columns;
-	    }
-	    public RunStatusTableColumns getColumns(){
-	        return this.Columns;
-	    }
-	}
-	
-	public static class ReservoirTableColumns
-	{
-	    private ColumnInfo WellName;
+	    private ColumnInfo TubingPressure;
 
-	    private ColumnInfo Depth;
-	    
-	    private ColumnInfo Temperature;
+	    private ColumnInfo CasingPressure;
 
-		public ColumnInfo getWellName() {
-			return WellName;
-		}
-
-		public void setWellName(ColumnInfo wellName) {
-			WellName = wellName;
-		}
-
-		public ColumnInfo getDepth() {
-			return Depth;
-		}
-
-		public void setDepth(ColumnInfo depth) {
-			Depth = depth;
-		}
-
-		public ColumnInfo getTemperature() {
-			return Temperature;
-		}
-
-		public void setTemperature(ColumnInfo temperature) {
-			Temperature = temperature;
-		}
-	}
-	
-	public static class ReservoirTable
-	{
-	    private String Name;
-
-	    private boolean Enable;
-
-	    private ReservoirTableColumns Columns;
-
-	    public void setName(String Name){
-	        this.Name = Name;
-	    }
-	    public String getName(){
-	        return this.Name;
-	    }
-	    public void setEnable(boolean Enable){
-	        this.Enable = Enable;
-	    }
-	    public boolean getEnable(){
-	        return this.Enable;
-	    }
-	    public void setColumns(ReservoirTableColumns Columns){
-	        this.Columns = Columns;
-	    }
-	    public ReservoirTableColumns getColumns(){
-	        return this.Columns;
-	    }
-	}
-	
-	public static class RodStringTableColumns
-	{
-	    private ColumnInfo WellName;
-
-	    private ColumnInfo Grade1;
-	    
-	    private ColumnInfo OutsideDiameter1;
-	    
-	    private ColumnInfo InsideDiameter1;
-	    
-	    private ColumnInfo Length1;
-	    
-	    private ColumnInfo Grade2;
-	    
-	    private ColumnInfo OutsideDiameter2;
-	    
-	    private ColumnInfo InsideDiameter2;
-	    
-	    private ColumnInfo Length2;
-	    
-	    private ColumnInfo Grade3;
-	    
-	    private ColumnInfo OutsideDiameter3;
-	    
-	    private ColumnInfo InsideDiameter3;
-	    
-	    private ColumnInfo Length3;
-	    
-	    private ColumnInfo Grade4;
-	    
-	    private ColumnInfo OutsideDiameter4;
-	    
-	    private ColumnInfo InsideDiameter4;
-	    
-	    private ColumnInfo Length4;
-
-		public ColumnInfo getWellName() {
-			return WellName;
-		}
-
-		public void setWellName(ColumnInfo wellName) {
-			WellName = wellName;
-		}
-
-		public ColumnInfo getGrade1() {
-			return Grade1;
-		}
-
-		public void setGrade1(ColumnInfo grade1) {
-			Grade1 = grade1;
-		}
-
-		public ColumnInfo getOutsideDiameter1() {
-			return OutsideDiameter1;
-		}
-
-		public void setOutsideDiameter1(ColumnInfo outsideDiameter1) {
-			OutsideDiameter1 = outsideDiameter1;
-		}
-
-		public ColumnInfo getInsideDiameter1() {
-			return InsideDiameter1;
-		}
-
-		public void setInsideDiameter1(ColumnInfo insideDiameter1) {
-			InsideDiameter1 = insideDiameter1;
-		}
-
-		public ColumnInfo getLength1() {
-			return Length1;
-		}
-
-		public void setLength1(ColumnInfo length1) {
-			Length1 = length1;
-		}
-
-		public ColumnInfo getGrade2() {
-			return Grade2;
-		}
-
-		public void setGrade2(ColumnInfo grade2) {
-			Grade2 = grade2;
-		}
-
-		public ColumnInfo getOutsideDiameter2() {
-			return OutsideDiameter2;
-		}
-
-		public void setOutsideDiameter2(ColumnInfo outsideDiameter2) {
-			OutsideDiameter2 = outsideDiameter2;
-		}
-
-		public ColumnInfo getInsideDiameter2() {
-			return InsideDiameter2;
-		}
-
-		public void setInsideDiameter2(ColumnInfo insideDiameter2) {
-			InsideDiameter2 = insideDiameter2;
-		}
-
-		public ColumnInfo getLength2() {
-			return Length2;
-		}
-
-		public void setLength2(ColumnInfo length2) {
-			Length2 = length2;
-		}
-
-		public ColumnInfo getGrade3() {
-			return Grade3;
-		}
-
-		public void setGrade3(ColumnInfo grade3) {
-			Grade3 = grade3;
-		}
-
-		public ColumnInfo getOutsideDiameter3() {
-			return OutsideDiameter3;
-		}
-
-		public void setOutsideDiameter3(ColumnInfo outsideDiameter3) {
-			OutsideDiameter3 = outsideDiameter3;
-		}
-
-		public ColumnInfo getInsideDiameter3() {
-			return InsideDiameter3;
-		}
-
-		public void setInsideDiameter3(ColumnInfo insideDiameter3) {
-			InsideDiameter3 = insideDiameter3;
-		}
-
-		public ColumnInfo getLength3() {
-			return Length3;
-		}
-
-		public void setLength3(ColumnInfo length3) {
-			Length3 = length3;
-		}
-
-		public ColumnInfo getGrade4() {
-			return Grade4;
-		}
-
-		public void setGrade4(ColumnInfo grade4) {
-			Grade4 = grade4;
-		}
-
-		public ColumnInfo getOutsideDiameter4() {
-			return OutsideDiameter4;
-		}
-
-		public void setOutsideDiameter4(ColumnInfo outsideDiameter4) {
-			OutsideDiameter4 = outsideDiameter4;
-		}
-
-		public ColumnInfo getInsideDiameter4() {
-			return InsideDiameter4;
-		}
-
-		public void setInsideDiameter4(ColumnInfo insideDiameter4) {
-			InsideDiameter4 = insideDiameter4;
-		}
-
-		public ColumnInfo getLength4() {
-			return Length4;
-		}
-
-		public void setLength4(ColumnInfo length4) {
-			Length4 = length4;
-		}
-	}
-	
-	public static class RodStringTable
-	{
-	    private String Name;
-
-	    private boolean Enable;
-
-	    private RodStringTableColumns Columns;
-
-	    public void setName(String Name){
-	        this.Name = Name;
-	    }
-	    public String getName(){
-	        return this.Name;
-	    }
-	    public void setEnable(boolean Enable){
-	        this.Enable = Enable;
-	    }
-	    public boolean getEnable(){
-	        return this.Enable;
-	    }
-	    public void setColumns(RodStringTableColumns Columns){
-	        this.Columns = Columns;
-	    }
-	    public RodStringTableColumns getColumns(){
-	        return this.Columns;
-	    }
-	}
-	
-	public static class TubingStringTableColumns
-	{
-	    private ColumnInfo WellName;
-
-	    private ColumnInfo InsideDiameter;
-
-		public ColumnInfo getWellName() {
-			return WellName;
-		}
-
-		public void setWellName(ColumnInfo wellName) {
-			WellName = wellName;
-		}
-
-		public ColumnInfo getInsideDiameter() {
-			return InsideDiameter;
-		}
-
-		public void setInsideDiameter(ColumnInfo insideDiameter) {
-			InsideDiameter = insideDiameter;
-		}
-	}
-	
-	public static class TubingStringTable
-	{
-	    private String Name;
-
-	    private boolean Enable;
-
-	    private TubingStringTableColumns Columns;
-
-	    public void setName(String Name){
-	        this.Name = Name;
-	    }
-	    public String getName(){
-	        return this.Name;
-	    }
-	    public void setEnable(boolean Enable){
-	        this.Enable = Enable;
-	    }
-	    public boolean getEnable(){
-	        return this.Enable;
-	    }
-	    public void setColumns(TubingStringTableColumns Columns){
-	        this.Columns = Columns;
-	    }
-	    public TubingStringTableColumns getColumns(){
-	        return this.Columns;
-	    }
-	}
-	
-	public static class CasingStringTableColumns
-	{
-	    private ColumnInfo WellName;
-
-	    private ColumnInfo InsideDiameter;
-
-		public ColumnInfo getWellName() {
-			return WellName;
-		}
-
-		public void setWellName(ColumnInfo wellName) {
-			WellName = wellName;
-		}
-
-		public ColumnInfo getInsideDiameter() {
-			return InsideDiameter;
-		}
-
-		public void setInsideDiameter(ColumnInfo insideDiameter) {
-			InsideDiameter = insideDiameter;
-		}
-	}
-	
-	public static class CasingStringTable
-	{
-	    private String Name;
-
-	    private boolean Enable;
-
-	    private CasingStringTableColumns Columns;
-
-	    public void setName(String Name){
-	        this.Name = Name;
-	    }
-	    public String getName(){
-	        return this.Name;
-	    }
-	    public void setEnable(boolean Enable){
-	        this.Enable = Enable;
-	    }
-	    public boolean getEnable(){
-	        return this.Enable;
-	    }
-	    public void setColumns(CasingStringTableColumns Columns){
-	        this.Columns = Columns;
-	    }
-	    public CasingStringTableColumns getColumns(){
-	        return this.Columns;
-	    }
-	}
-	
-	public static class PumpTableColumns
-	{
-	    private ColumnInfo WellName;
-
-	    private ColumnInfo BarrelType;
-
-	    private ColumnInfo PumpGrade;
-	    
-	    private ColumnInfo BarrelLength;
-	    
-	    private ColumnInfo PlungerLength;
-	    
-	    private ColumnInfo PumpBoreDiameter;
-
-		public ColumnInfo getWellName() {
-			return WellName;
-		}
-
-		public void setWellName(ColumnInfo wellName) {
-			WellName = wellName;
-		}
-
-		public ColumnInfo getBarrelType() {
-			return BarrelType;
-		}
-
-		public void setBarrelType(ColumnInfo barrelType) {
-			BarrelType = barrelType;
-		}
-
-		public ColumnInfo getPumpGrade() {
-			return PumpGrade;
-		}
-
-		public void setPumpGrade(ColumnInfo pumpGrade) {
-			PumpGrade = pumpGrade;
-		}
-
-		public ColumnInfo getBarrelLength() {
-			return BarrelLength;
-		}
-
-		public void setBarrelLength(ColumnInfo barrelLength) {
-			BarrelLength = barrelLength;
-		}
-
-		public ColumnInfo getPlungerLength() {
-			return PlungerLength;
-		}
-
-		public void setPlungerLength(ColumnInfo plungerLength) {
-			PlungerLength = plungerLength;
-		}
-
-		public ColumnInfo getPumpBoreDiameter() {
-			return PumpBoreDiameter;
-		}
-
-		public void setPumpBoreDiameter(ColumnInfo pumpBoreDiameter) {
-			PumpBoreDiameter = pumpBoreDiameter;
-		}
-	}
-	
-	public static class PumpTable
-	{
-	    private String Name;
-
-	    private boolean Enable;
-
-	    private PumpTableColumns Columns;
-
-	    public void setName(String Name){
-	        this.Name = Name;
-	    }
-	    public String getName(){
-	        return this.Name;
-	    }
-	    public void setEnable(boolean Enable){
-	        this.Enable = Enable;
-	    }
-	    public boolean getEnable(){
-	        return this.Enable;
-	    }
-	    public void setColumns(PumpTableColumns Columns){
-	        this.Columns = Columns;
-	    }
-	    public PumpTableColumns getColumns(){
-	        return this.Columns;
-	    }
-	}
-	
-	public static class ProductionTableColumns
-	{
-	    private ColumnInfo WellName;
+	    private ColumnInfo WellHeadTemperature;
 
 	    private ColumnInfo WaterCut;
 
 	    private ColumnInfo ProductionGasOilRatio;
-	    
-	    private ColumnInfo TubingPressure;
-	    
-	    private ColumnInfo CasingPressure;
-	    
-	    private ColumnInfo BackPressure;
 
-	    private ColumnInfo WellHeadFluidTemperature;
-	    
 	    private ColumnInfo ProducingfluidLevel;
-	    
+
 	    private ColumnInfo PumpSettingDepth;
+
+	    private ColumnInfo BarrelType;
+
+	    private ColumnInfo PumpGrade;
+
+	    private ColumnInfo PumpBoreDiameter;
+
+	    private ColumnInfo PlungerLength;
+
+	    private ColumnInfo TubingStringInsideDiameter;
+
+	    private ColumnInfo CasingStringInsideDiameter;
+
+	    private ColumnInfo RodStringGrade1;
+
+	    private ColumnInfo RodStringOutsideDiameter1;
+
+	    private ColumnInfo RodStringInsideDiameter1;
+
+	    private ColumnInfo RodStringLength1;
+
+	    private ColumnInfo RodStringGrade2;
+
+	    private ColumnInfo RodStringOutsideDiameter2;
+
+	    private ColumnInfo RodStringInsideDiameter2;
+
+	    private ColumnInfo RodStringLength2;
+
+	    private ColumnInfo RodStringGrade3;
+
+	    private ColumnInfo RodStringOutsideDiameter3;
+
+	    private ColumnInfo RodStringInsideDiameter3;
+
+	    private ColumnInfo RodStringLength3;
+
+	    private ColumnInfo RodStringGrade4;
+
+	    private ColumnInfo RodStringOutsideDiameter4;
+
+	    private ColumnInfo RodStringInsideDiameter4;
+
+	    private ColumnInfo RodStringLength4;
+
+	    private ColumnInfo CrankRotationDirection;
+
+	    private ColumnInfo OffsetAngleOfCrank;
+
+	    private ColumnInfo BalanceWeight1;
+
+	    private ColumnInfo BalanceWeight2;
+
+	    private ColumnInfo BalanceWeight3;
+
+	    private ColumnInfo BalanceWeight4;
+
+	    private ColumnInfo BalanceWeight5;
+
+	    private ColumnInfo BalanceWeight6;
+
+	    private ColumnInfo BalanceWeight7;
+
+	    private ColumnInfo BalanceWeight8;
+
+	    private ColumnInfo ManualInterventionCode;
+
+	    private ColumnInfo NetGrossRatio;
+
+	    private ColumnInfo NetGrossValue;
+
+	    private ColumnInfo LevelCorrectValue;
+
+		public ColumnInfo getWellId() {
+			return WellId;
+		}
+
+		public void setWellId(ColumnInfo wellId) {
+			WellId = wellId;
+		}
 
 		public ColumnInfo getWellName() {
 			return WellName;
@@ -760,20 +341,60 @@ public class DataSourceConfig {
 			WellName = wellName;
 		}
 
-		public ColumnInfo getWaterCut() {
-			return WaterCut;
+		public ColumnInfo getSaveTime() {
+			return SaveTime;
 		}
 
-		public void setWaterCut(ColumnInfo waterCut) {
-			WaterCut = waterCut;
+		public void setSaveTime(ColumnInfo saveTime) {
+			SaveTime = saveTime;
 		}
 
-		public ColumnInfo getProductionGasOilRatio() {
-			return ProductionGasOilRatio;
+		public ColumnInfo getCrudeOilDensity() {
+			return CrudeOilDensity;
 		}
 
-		public void setProductionGasOilRatio(ColumnInfo productionGasOilRatio) {
-			ProductionGasOilRatio = productionGasOilRatio;
+		public void setCrudeOilDensity(ColumnInfo crudeOilDensity) {
+			CrudeOilDensity = crudeOilDensity;
+		}
+
+		public ColumnInfo getWaterDensity() {
+			return WaterDensity;
+		}
+
+		public void setWaterDensity(ColumnInfo waterDensity) {
+			WaterDensity = waterDensity;
+		}
+
+		public ColumnInfo getNaturalGasRelativeDensity() {
+			return NaturalGasRelativeDensity;
+		}
+
+		public void setNaturalGasRelativeDensity(ColumnInfo naturalGasRelativeDensity) {
+			NaturalGasRelativeDensity = naturalGasRelativeDensity;
+		}
+
+		public ColumnInfo getSaturationPressure() {
+			return SaturationPressure;
+		}
+
+		public void setSaturationPressure(ColumnInfo saturationPressure) {
+			SaturationPressure = saturationPressure;
+		}
+
+		public ColumnInfo getReservoirDepth() {
+			return ReservoirDepth;
+		}
+
+		public void setReservoirDepth(ColumnInfo reservoirDepth) {
+			ReservoirDepth = reservoirDepth;
+		}
+
+		public ColumnInfo getReservoirTemperature() {
+			return ReservoirTemperature;
+		}
+
+		public void setReservoirTemperature(ColumnInfo reservoirTemperature) {
+			ReservoirTemperature = reservoirTemperature;
 		}
 
 		public ColumnInfo getTubingPressure() {
@@ -792,20 +413,28 @@ public class DataSourceConfig {
 			CasingPressure = casingPressure;
 		}
 
-		public ColumnInfo getBackPressure() {
-			return BackPressure;
+		public ColumnInfo getWellHeadTemperature() {
+			return WellHeadTemperature;
 		}
 
-		public void setBackPressure(ColumnInfo backPressure) {
-			BackPressure = backPressure;
+		public void setWellHeadTemperature(ColumnInfo wellHeadTemperature) {
+			WellHeadTemperature = wellHeadTemperature;
 		}
 
-		public ColumnInfo getWellHeadFluidTemperature() {
-			return WellHeadFluidTemperature;
+		public ColumnInfo getWaterCut() {
+			return WaterCut;
 		}
 
-		public void setWellHeadFluidTemperature(ColumnInfo wellHeadFluidTemperature) {
-			WellHeadFluidTemperature = wellHeadFluidTemperature;
+		public void setWaterCut(ColumnInfo waterCut) {
+			WaterCut = waterCut;
+		}
+
+		public ColumnInfo getProductionGasOilRatio() {
+			return ProductionGasOilRatio;
+		}
+
+		public void setProductionGasOilRatio(ColumnInfo productionGasOilRatio) {
+			ProductionGasOilRatio = productionGasOilRatio;
 		}
 
 		public ColumnInfo getProducingfluidLevel() {
@@ -823,15 +452,301 @@ public class DataSourceConfig {
 		public void setPumpSettingDepth(ColumnInfo pumpSettingDepth) {
 			PumpSettingDepth = pumpSettingDepth;
 		}
+
+		public ColumnInfo getBarrelType() {
+			return BarrelType;
+		}
+
+		public void setBarrelType(ColumnInfo barrelType) {
+			BarrelType = barrelType;
+		}
+
+		public ColumnInfo getPumpGrade() {
+			return PumpGrade;
+		}
+
+		public void setPumpGrade(ColumnInfo pumpGrade) {
+			PumpGrade = pumpGrade;
+		}
+
+		public ColumnInfo getPumpBoreDiameter() {
+			return PumpBoreDiameter;
+		}
+
+		public void setPumpBoreDiameter(ColumnInfo pumpBoreDiameter) {
+			PumpBoreDiameter = pumpBoreDiameter;
+		}
+
+		public ColumnInfo getPlungerLength() {
+			return PlungerLength;
+		}
+
+		public void setPlungerLength(ColumnInfo plungerLength) {
+			PlungerLength = plungerLength;
+		}
+
+		public ColumnInfo getTubingStringInsideDiameter() {
+			return TubingStringInsideDiameter;
+		}
+
+		public void setTubingStringInsideDiameter(ColumnInfo tubingStringInsideDiameter) {
+			TubingStringInsideDiameter = tubingStringInsideDiameter;
+		}
+
+		public ColumnInfo getCasingStringInsideDiameter() {
+			return CasingStringInsideDiameter;
+		}
+
+		public void setCasingStringInsideDiameter(ColumnInfo casingStringInsideDiameter) {
+			CasingStringInsideDiameter = casingStringInsideDiameter;
+		}
+
+		public ColumnInfo getRodStringGrade1() {
+			return RodStringGrade1;
+		}
+
+		public void setRodStringGrade1(ColumnInfo rodStringGrade1) {
+			RodStringGrade1 = rodStringGrade1;
+		}
+
+		public ColumnInfo getRodStringOutsideDiameter1() {
+			return RodStringOutsideDiameter1;
+		}
+
+		public void setRodStringOutsideDiameter1(ColumnInfo rodStringOutsideDiameter1) {
+			RodStringOutsideDiameter1 = rodStringOutsideDiameter1;
+		}
+
+		public ColumnInfo getRodStringInsideDiameter1() {
+			return RodStringInsideDiameter1;
+		}
+
+		public void setRodStringInsideDiameter1(ColumnInfo rodStringInsideDiameter1) {
+			RodStringInsideDiameter1 = rodStringInsideDiameter1;
+		}
+
+		public ColumnInfo getRodStringLength1() {
+			return RodStringLength1;
+		}
+
+		public void setRodStringLength1(ColumnInfo rodStringLength1) {
+			RodStringLength1 = rodStringLength1;
+		}
+
+		public ColumnInfo getRodStringGrade2() {
+			return RodStringGrade2;
+		}
+
+		public void setRodStringGrade2(ColumnInfo rodStringGrade2) {
+			RodStringGrade2 = rodStringGrade2;
+		}
+
+		public ColumnInfo getRodStringOutsideDiameter2() {
+			return RodStringOutsideDiameter2;
+		}
+
+		public void setRodStringOutsideDiameter2(ColumnInfo rodStringOutsideDiameter2) {
+			RodStringOutsideDiameter2 = rodStringOutsideDiameter2;
+		}
+
+		public ColumnInfo getRodStringInsideDiameter2() {
+			return RodStringInsideDiameter2;
+		}
+
+		public void setRodStringInsideDiameter2(ColumnInfo rodStringInsideDiameter2) {
+			RodStringInsideDiameter2 = rodStringInsideDiameter2;
+		}
+
+		public ColumnInfo getRodStringLength2() {
+			return RodStringLength2;
+		}
+
+		public void setRodStringLength2(ColumnInfo rodStringLength2) {
+			RodStringLength2 = rodStringLength2;
+		}
+
+		public ColumnInfo getRodStringGrade3() {
+			return RodStringGrade3;
+		}
+
+		public void setRodStringGrade3(ColumnInfo rodStringGrade3) {
+			RodStringGrade3 = rodStringGrade3;
+		}
+
+		public ColumnInfo getRodStringOutsideDiameter3() {
+			return RodStringOutsideDiameter3;
+		}
+
+		public void setRodStringOutsideDiameter3(ColumnInfo rodStringOutsideDiameter3) {
+			RodStringOutsideDiameter3 = rodStringOutsideDiameter3;
+		}
+
+		public ColumnInfo getRodStringInsideDiameter3() {
+			return RodStringInsideDiameter3;
+		}
+
+		public void setRodStringInsideDiameter3(ColumnInfo rodStringInsideDiameter3) {
+			RodStringInsideDiameter3 = rodStringInsideDiameter3;
+		}
+
+		public ColumnInfo getRodStringLength3() {
+			return RodStringLength3;
+		}
+
+		public void setRodStringLength3(ColumnInfo rodStringLength3) {
+			RodStringLength3 = rodStringLength3;
+		}
+
+		public ColumnInfo getRodStringGrade4() {
+			return RodStringGrade4;
+		}
+
+		public void setRodStringGrade4(ColumnInfo rodStringGrade4) {
+			RodStringGrade4 = rodStringGrade4;
+		}
+
+		public ColumnInfo getRodStringOutsideDiameter4() {
+			return RodStringOutsideDiameter4;
+		}
+
+		public void setRodStringOutsideDiameter4(ColumnInfo rodStringOutsideDiameter4) {
+			RodStringOutsideDiameter4 = rodStringOutsideDiameter4;
+		}
+
+		public ColumnInfo getRodStringInsideDiameter4() {
+			return RodStringInsideDiameter4;
+		}
+
+		public void setRodStringInsideDiameter4(ColumnInfo rodStringInsideDiameter4) {
+			RodStringInsideDiameter4 = rodStringInsideDiameter4;
+		}
+
+		public ColumnInfo getRodStringLength4() {
+			return RodStringLength4;
+		}
+
+		public void setRodStringLength4(ColumnInfo rodStringLength4) {
+			RodStringLength4 = rodStringLength4;
+		}
+
+		public ColumnInfo getCrankRotationDirection() {
+			return CrankRotationDirection;
+		}
+
+		public void setCrankRotationDirection(ColumnInfo crankRotationDirection) {
+			CrankRotationDirection = crankRotationDirection;
+		}
+
+		public ColumnInfo getOffsetAngleOfCrank() {
+			return OffsetAngleOfCrank;
+		}
+
+		public void setOffsetAngleOfCrank(ColumnInfo offsetAngleOfCrank) {
+			OffsetAngleOfCrank = offsetAngleOfCrank;
+		}
+
+		public ColumnInfo getBalanceWeight1() {
+			return BalanceWeight1;
+		}
+
+		public void setBalanceWeight1(ColumnInfo balanceWeight1) {
+			BalanceWeight1 = balanceWeight1;
+		}
+
+		public ColumnInfo getBalanceWeight2() {
+			return BalanceWeight2;
+		}
+
+		public void setBalanceWeight2(ColumnInfo balanceWeight2) {
+			BalanceWeight2 = balanceWeight2;
+		}
+
+		public ColumnInfo getBalanceWeight3() {
+			return BalanceWeight3;
+		}
+
+		public void setBalanceWeight3(ColumnInfo balanceWeight3) {
+			BalanceWeight3 = balanceWeight3;
+		}
+
+		public ColumnInfo getBalanceWeight4() {
+			return BalanceWeight4;
+		}
+
+		public void setBalanceWeight4(ColumnInfo balanceWeight4) {
+			BalanceWeight4 = balanceWeight4;
+		}
+
+		public ColumnInfo getBalanceWeight5() {
+			return BalanceWeight5;
+		}
+
+		public void setBalanceWeight5(ColumnInfo balanceWeight5) {
+			BalanceWeight5 = balanceWeight5;
+		}
+
+		public ColumnInfo getBalanceWeight6() {
+			return BalanceWeight6;
+		}
+
+		public void setBalanceWeight6(ColumnInfo balanceWeight6) {
+			BalanceWeight6 = balanceWeight6;
+		}
+
+		public ColumnInfo getBalanceWeight7() {
+			return BalanceWeight7;
+		}
+
+		public void setBalanceWeight7(ColumnInfo balanceWeight7) {
+			BalanceWeight7 = balanceWeight7;
+		}
+
+		public ColumnInfo getBalanceWeight8() {
+			return BalanceWeight8;
+		}
+
+		public void setBalanceWeight8(ColumnInfo balanceWeight8) {
+			BalanceWeight8 = balanceWeight8;
+		}
+
+		public ColumnInfo getManualInterventionCode() {
+			return ManualInterventionCode;
+		}
+
+		public void setManualInterventionCode(ColumnInfo manualInterventionCode) {
+			ManualInterventionCode = manualInterventionCode;
+		}
+
+		public ColumnInfo getNetGrossRatio() {
+			return NetGrossRatio;
+		}
+
+		public void setNetGrossRatio(ColumnInfo netGrossRatio) {
+			NetGrossRatio = netGrossRatio;
+		}
+
+		public ColumnInfo getNetGrossValue() {
+			return NetGrossValue;
+		}
+
+		public void setNetGrossValue(ColumnInfo netGrossValue) {
+			NetGrossValue = netGrossValue;
+		}
+
+		public ColumnInfo getLevelCorrectValue() {
+			return LevelCorrectValue;
+		}
+
+		public void setLevelCorrectValue(ColumnInfo levelCorrectValue) {
+			LevelCorrectValue = levelCorrectValue;
+		}
 	}
-	
-	public static class ProductionTable
+
+	public static class ProductionDataTableStructure
 	{
 	    private String Name;
 
-	    private boolean Enable;
-
-	    private ProductionTableColumns Columns;
+	    private ProductionDataTableColumns Columns;
 
 	    public void setName(String Name){
 	        this.Name = Name;
@@ -839,145 +754,55 @@ public class DataSourceConfig {
 	    public String getName(){
 	        return this.Name;
 	    }
+	    public void setColumns(ProductionDataTableColumns Columns){
+	        this.Columns = Columns;
+	    }
+	    public ProductionDataTableColumns getColumns(){
+	        return this.Columns;
+	    }
+	}
+	
+	public static class ProductionDataTableConfig
+	{
+	    private boolean Enable;
+
+	    private ConnectInfoConfig ConnectInfo;
+
+	    private ProductionDataTableStructure TableInfo;
+
 	    public void setEnable(boolean Enable){
 	        this.Enable = Enable;
 	    }
 	    public boolean getEnable(){
 	        return this.Enable;
 	    }
-	    public void setColumns(ProductionTableColumns Columns){
-	        this.Columns = Columns;
+	    public void setConnectInfo(ConnectInfoConfig ConnectInfo){
+	        this.ConnectInfo = ConnectInfo;
 	    }
-	    public ProductionTableColumns getColumns(){
-	        return this.Columns;
+	    public ConnectInfoConfig getConnectInfo(){
+	        return this.ConnectInfo;
+	    }
+	    public void setTableInfo(ProductionDataTableStructure TableInfo){
+	        this.TableInfo = TableInfo;
+	    }
+	    public ProductionDataTableStructure getTableInfo(){
+	        return this.TableInfo;
 	    }
 	}
 
-	public boolean isEnable() {
-		return Enable;
-	}
-
-	public void setEnable(boolean enable) {
-		Enable = enable;
-	}
-
-	public String getIP() {
-		return IP;
-	}
-
-	public void setIP(String iP) {
-		IP = iP;
-	}
-
-	public int getPort() {
-		return Port;
-	}
-
-	public void setPort(int port) {
-		Port = port;
-	}
-
-	public String getInstanceName() {
-		return InstanceName;
-	}
-
-	public void setInstanceName(String instanceName) {
-		InstanceName = instanceName;
-	}
-
-	public String getUser() {
-		return User;
-	}
-
-	public void setUser(String user) {
-		User = user;
-	}
-
-	public String getPassword() {
-		return Password;
-	}
-
-	public void setPassword(String password) {
-		Password = password;
-	}
-
-	public DiagramTable getDiagramTable() {
+	public DiagramTableConfig getDiagramTable() {
 		return DiagramTable;
 	}
 
-	public void setDiagramTable(DiagramTable diagramTable) {
+	public void setDiagramTable(DiagramTableConfig diagramTable) {
 		DiagramTable = diagramTable;
 	}
 
-	public CommStatusTable getCommStatusTable() {
-		return CommStatusTable;
+	public ProductionDataTableConfig getProductionDataTable() {
+		return ProductionDataTable;
 	}
 
-	public void setCommStatusTable(CommStatusTable commStatusTable) {
-		CommStatusTable = commStatusTable;
-	}
-
-	public RunStatusTable getRunStatusTable() {
-		return RunStatusTable;
-	}
-
-	public void setRunStatusTable(RunStatusTable runStatusTable) {
-		RunStatusTable = runStatusTable;
-	}
-
-	public ReservoirTable getReservoirTable() {
-		return ReservoirTable;
-	}
-
-	public void setReservoirTable(ReservoirTable reservoirTable) {
-		ReservoirTable = reservoirTable;
-	}
-
-	public RodStringTable getRodStringTable() {
-		return RodStringTable;
-	}
-
-	public void setRodStringTable(RodStringTable rodStringTable) {
-		RodStringTable = rodStringTable;
-	}
-
-	public TubingStringTable getTubingStringTable() {
-		return TubingStringTable;
-	}
-
-	public void setTubingStringTable(TubingStringTable tubingStringTable) {
-		TubingStringTable = tubingStringTable;
-	}
-
-	public CasingStringTable getCasingStringTable() {
-		return CasingStringTable;
-	}
-
-	public void setCasingStringTable(CasingStringTable casingStringTable) {
-		CasingStringTable = casingStringTable;
-	}
-
-	public PumpTable getPumpTable() {
-		return PumpTable;
-	}
-
-	public void setPumpTable(PumpTable pumpTable) {
-		PumpTable = pumpTable;
-	}
-
-	public ProductionTable getProductionTable() {
-		return ProductionTable;
-	}
-
-	public void setProductionTable(ProductionTable productionTable) {
-		ProductionTable = productionTable;
-	}
-
-	public int getVersion() {
-		return Version;
-	}
-
-	public void setVersion(int version) {
-		Version = version;
+	public void setProductionDataTable(ProductionDataTableConfig productionDataTable) {
+		ProductionDataTable = productionDataTable;
 	}
 }

@@ -4,6 +4,7 @@ import com.cosog.model.DataSourceConfig;
 import com.cosog.model.DataWriteBackConfig;
 import com.cosog.utils.Config;
 import com.cosog.utils.MemoryDataUtils;
+import com.cosog.utils.StringManagerUtils;
 
 public class AgileCalculate {
 
@@ -13,17 +14,20 @@ public class AgileCalculate {
 		
 		DataSourceConfig dataSourceConfig=MemoryDataUtils.getDataSourceConfig();
 		DataWriteBackConfig dataWriteBackConfig=MemoryDataUtils.getDataWriteBackConfig();
-		if(dataSourceConfig!=null && dataSourceConfig.isEnable()){
+		if(dataSourceConfig!=null && dataSourceConfig.getDiagramTable()!=null && dataSourceConfig.getDiagramTable().getEnable()
+				&& dataSourceConfig.getProductionDataTable()!=null && dataSourceConfig.getProductionDataTable().getEnable()){
 			do{
 				System.out.println(commUrl);
 				try {
 					Thread.sleep(1*1000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}while(true);
 		}
+		
+//		String path=stringManagerUtils.getFilePath(fileName,"protocolConfig/");
+//		StringManagerUtils.writeFile(path,StringManagerUtils.jsonStringFormat(gson.toJson(modbusProtocolConfig)));
 	}
 
 }

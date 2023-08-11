@@ -1,4 +1,4 @@
-ac:                                                    #AC程序配置
+ac:                                                    #AC绋嬪簭閰嶇疆
    probe:                                              #状态监测
       app: http://8.142.92.84:18100/api/probe/app                               #运行状态监测
       mem: http://8.142.92.84:18100/api/probe/mem                               #服务器内存监测
@@ -11,3 +11,9 @@ ac:                                                    #AC程序配置
    run: http://8.142.92.84:18100/api/calc/plugin/timeeff/run                    #运行时率计算
    energy: http://8.142.92.84:18100/api/calc/plugin/energy                      #能耗计算
    totalCalculation: http://8.142.92.84:18100/api/analy/total/well              #全井汇总
+threadPool: 
+   outerDatabaseSync:
+      corePoolSize: 80
+      maximumPoolSize: 100
+      keepAliveTime: 5
+      wattingCount: 0

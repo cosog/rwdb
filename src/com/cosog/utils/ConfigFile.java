@@ -3,6 +3,8 @@ package com.cosog.utils;
 public class ConfigFile {
 
     private Ac ac;
+    
+    private ThreadPool threadPool;
 	
 	public static class AcProbe
 	{
@@ -128,6 +130,62 @@ public class ConfigFile {
 			this.totalCalculation = totalCalculation;
 		}
 	}
+	
+	public static class ThreadPoolConfig
+	{
+
+	    private int corePoolSize;
+
+	    private int maximumPoolSize;
+
+	    private int keepAliveTime;
+
+	    private int wattingCount;
+
+		public int getCorePoolSize() {
+			return corePoolSize;
+		}
+
+		public void setCorePoolSize(int corePoolSize) {
+			this.corePoolSize = corePoolSize;
+		}
+
+		public int getMaximumPoolSize() {
+			return maximumPoolSize;
+		}
+
+		public void setMaximumPoolSize(int maximumPoolSize) {
+			this.maximumPoolSize = maximumPoolSize;
+		}
+
+		public int getKeepAliveTime() {
+			return keepAliveTime;
+		}
+
+		public void setKeepAliveTime(int keepAliveTime) {
+			this.keepAliveTime = keepAliveTime;
+		}
+
+		public int getWattingCount() {
+			return wattingCount;
+		}
+
+		public void setWattingCount(int wattingCount) {
+			this.wattingCount = wattingCount;
+		}
+	}
+	
+	public static class ThreadPool
+	{
+		ThreadPoolConfig outerDatabaseSync;
+		public ThreadPoolConfig getOuterDatabaseSync() {
+			return outerDatabaseSync;
+		}
+		
+		public void setOuterDatabaseSync(ThreadPoolConfig outerDatabaseSync) {
+			this.outerDatabaseSync = outerDatabaseSync;
+		}
+	}
 
 	public Ac getAc() {
 		return ac;
@@ -135,5 +193,13 @@ public class ConfigFile {
 
 	public void setAc(Ac ac) {
 		this.ac = ac;
+	}
+
+	public ThreadPool getThreadPool() {
+		return threadPool;
+	}
+
+	public void setThreadPool(ThreadPool threadPool) {
+		this.threadPool = threadPool;
 	}
 }
