@@ -18,33 +18,61 @@ import oracle.sql.CLOB;
 @SuppressWarnings("deprecation")
 public class OracleJdbcUtis {
 
-	public static BasicDataSource outerDataSource=null;
+	public static BasicDataSource outerDiagramDataSource=null;
+	
+	public static BasicDataSource outerProductionDataSource=null;
 	
 	public static BasicDataSource outerDataWriteBackDataSource=null;
 	
-	private static void initOuterDataSource(){
+	private static void initDiagramDataSource(){
 		
 		DataSourceConfig dataSourceConfig=MemoryDataUtils.getDataSourceConfig();
 		
-		if(dataSourceConfig!=null && dataSourceConfig.isEnable()){
+		if(dataSourceConfig!=null && dataSourceConfig.getDiagramTable()!=null && dataSourceConfig.getDiagramTable().getConnectInfo()!=null && dataSourceConfig.getDiagramTable().getEnable()){
 			
-			outerDataSource = new BasicDataSource();
+			outerDiagramDataSource = new BasicDataSource();
 			
-			outerDataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+			outerDiagramDataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 
-			outerDataSource.setUrl("jdbc:oracle:thin:@"+dataSourceConfig.getIP()+":"+dataSourceConfig.getPort()+(dataSourceConfig.getVersion()>=12?"/":":")+dataSourceConfig.getInstanceName()+"");
+			outerDiagramDataSource.setUrl("jdbc:oracle:thin:@"+dataSourceConfig.getDiagramTable().getConnectInfo().getIP()+":"+dataSourceConfig.getDiagramTable().getConnectInfo().getPort()+(dataSourceConfig.getDiagramTable().getConnectInfo().getVersion()>=12?"/":":")+dataSourceConfig.getDiagramTable().getConnectInfo().getInstanceName()+"");
 
-			outerDataSource.setUsername(dataSourceConfig.getUser());
+			outerDiagramDataSource.setUsername(dataSourceConfig.getDiagramTable().getConnectInfo().getUser());
 
-			outerDataSource.setPassword(dataSourceConfig.getPassword());
+			outerDiagramDataSource.setPassword(dataSourceConfig.getDiagramTable().getConnectInfo().getPassword());
 
-			outerDataSource.setInitialSize(5); // åˆå§‹åŒ–è¿žæŽ¥æ•°
+			outerDiagramDataSource.setInitialSize(5); // ³õÊ¼»¯Á¬½ÓÊý
 
-			outerDataSource.setMaxIdle(10); // æœ€å¤§ç©ºé—²è¿žæŽ¥æ•°
+			outerDiagramDataSource.setMaxIdle(10); // ×î´ó¿ÕÏÐÁ¬½ÓÊý
 
-			outerDataSource.setMinIdle(5); // æœ€å°ç©ºé—²è¿žæŽ¥æ•°
+			outerDiagramDataSource.setMinIdle(5); // ×îÐ¡¿ÕÏÐÁ¬½ÓÊý
 
-			outerDataSource.setMaxIdle(100); // æœ€å¤§è¿žæŽ¥æ•°
+			outerDiagramDataSource.setMaxIdle(100); // ×î´óÁ¬½ÓÊý
+		}
+	}
+	
+	private static void initProductionDataSource(){
+		
+		DataSourceConfig dataSourceConfig=MemoryDataUtils.getDataSourceConfig();
+		
+		if(dataSourceConfig!=null && dataSourceConfig.getProductionDataTable()!=null && dataSourceConfig.getProductionDataTable().getConnectInfo()!=null && dataSourceConfig.getProductionDataTable().getEnable()){
+			
+			outerProductionDataSource = new BasicDataSource();
+			
+			outerProductionDataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+
+			outerProductionDataSource.setUrl("jdbc:oracle:thin:@"+dataSourceConfig.getProductionDataTable().getConnectInfo().getIP()+":"+dataSourceConfig.getProductionDataTable().getConnectInfo().getPort()+(dataSourceConfig.getProductionDataTable().getConnectInfo().getVersion()>=12?"/":":")+dataSourceConfig.getProductionDataTable().getConnectInfo().getInstanceName()+"");
+
+			outerProductionDataSource.setUsername(dataSourceConfig.getProductionDataTable().getConnectInfo().getUser());
+
+			outerProductionDataSource.setPassword(dataSourceConfig.getProductionDataTable().getConnectInfo().getPassword());
+
+			outerProductionDataSource.setInitialSize(5); // ³õÊ¼»¯Á¬½ÓÊý
+
+			outerProductionDataSource.setMaxIdle(10); // ×î´ó¿ÕÏÐÁ¬½ÓÊý
+
+			outerProductionDataSource.setMinIdle(5); // ×îÐ¡¿ÕÏÐÁ¬½ÓÊý
+
+			outerProductionDataSource.setMaxIdle(100); // ×î´óÁ¬½ÓÊý
 		}
 	}
 	
@@ -52,35 +80,46 @@ public class OracleJdbcUtis {
 		
 		DataWriteBackConfig dataWriteBackConfig=MemoryDataUtils.getDataWriteBackConfig();
 		
-		if(dataWriteBackConfig!=null && dataWriteBackConfig.isEnable()){
+		if(dataWriteBackConfig!=null && dataWriteBackConfig.getConnectInfo()!=null && dataWriteBackConfig.isEnable()){
 			
 			outerDataWriteBackDataSource = new BasicDataSource();
 			
 			outerDataWriteBackDataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 
-			outerDataWriteBackDataSource.setUrl("jdbc:oracle:thin:@"+dataWriteBackConfig.getIP()+":"+dataWriteBackConfig.getPort()+(dataWriteBackConfig.getVersion()>=12?"/":":")+dataWriteBackConfig.getInstanceName()+"");
+			outerDataWriteBackDataSource.setUrl("jdbc:oracle:thin:@"+dataWriteBackConfig.getConnectInfo().getIP()+":"+dataWriteBackConfig.getConnectInfo().getPort()+(dataWriteBackConfig.getConnectInfo().getVersion()>=12?"/":":")+dataWriteBackConfig.getConnectInfo().getInstanceName()+"");
 
-			outerDataWriteBackDataSource.setUsername(dataWriteBackConfig.getUser());
+			outerDataWriteBackDataSource.setUsername(dataWriteBackConfig.getConnectInfo().getUser());
 
-			outerDataWriteBackDataSource.setPassword(dataWriteBackConfig.getPassword());
+			outerDataWriteBackDataSource.setPassword(dataWriteBackConfig.getConnectInfo().getPassword());
 
-			outerDataWriteBackDataSource.setInitialSize(5); // åˆå§‹åŒ–è¿žæŽ¥æ•°
+			outerDataWriteBackDataSource.setInitialSize(5); // ³õÊ¼»¯Á¬½ÓÊý
 
-			outerDataWriteBackDataSource.setMaxIdle(10); // æœ€å¤§ç©ºé—²è¿žæŽ¥æ•°
+			outerDataWriteBackDataSource.setMaxIdle(10); // ×î´ó¿ÕÏÐÁ¬½ÓÊý
 
-			outerDataWriteBackDataSource.setMinIdle(5); // æœ€å°ç©ºé—²è¿žæŽ¥æ•°
+			outerDataWriteBackDataSource.setMinIdle(5); // ×îÐ¡¿ÕÏÐÁ¬½ÓÊý
 
-			outerDataWriteBackDataSource.setMaxIdle(100); // æœ€å¤§è¿žæŽ¥æ•°
+			outerDataWriteBackDataSource.setMaxIdle(100); // ×î´óÁ¬½ÓÊý
 		}
 	}
 	
-	public static Connection getOuterConnection() throws SQLException{
+	public static Connection getDiagramConnection() throws SQLException{
 		Connection conn=null;
-		if(outerDataSource==null){
-			initOuterDataSource();
+		if(outerDiagramDataSource==null){
+			initDiagramDataSource();
 		}
-		if(outerDataSource!=null){
-			conn=outerDataSource.getConnection();
+		if(outerDiagramDataSource!=null){
+			conn=outerDiagramDataSource.getConnection();
+		}
+		return conn;
+	}
+	
+	public static Connection getProductionDataConnection() throws SQLException{
+		Connection conn=null;
+		if(outerProductionDataSource==null){
+			initProductionDataSource();
+		}
+		if(outerProductionDataSource!=null){
+			conn=outerProductionDataSource.getConnection();
 		}
 		return conn;
 	}

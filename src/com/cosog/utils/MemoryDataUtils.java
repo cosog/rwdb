@@ -15,7 +15,7 @@ public class MemoryDataUtils {
 		StringManagerUtils stringManagerUtils=new StringManagerUtils();
 		
 		String path=stringManagerUtils.getFilePath("dataSource.json","dataSource/");
-		String data=stringManagerUtils.readFile(path,"utf-8");
+		String data=stringManagerUtils.readFile(path,"utf-8").replaceAll(" ", "");
 		
 		type = new TypeToken<DataSourceConfig>() {}.getType();
 		DataSourceConfig dataSourceConfig=gson.fromJson(data, type);

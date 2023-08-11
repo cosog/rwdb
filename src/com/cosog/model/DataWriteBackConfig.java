@@ -1,24 +1,68 @@
 package com.cosog.model;
 
+import com.cosog.model.DataSourceConfig.ConnectInfoConfig;
+
 public class DataWriteBackConfig {
 
 	private boolean Enable;
 
-    private String IP;
-
-    private int Port;
-
-    private String InstanceName;
-
-    private int Version;
-
-    private String User;
-
-    private String Password;
-
     private String WriteType;
+    
+    private ConnectInfoConfig ConnectInfo;
 
     private DiagramResultConfig DiagramResult;
+    
+    public static class ConnectInfoConfig
+	{
+	    private String IP;
+
+	    private int Port;
+
+	    private String InstanceName;
+
+	    private int Version;
+
+	    private String User;
+
+	    private String Password;
+
+	    public void setIP(String IP){
+	        this.IP = IP;
+	    }
+	    public String getIP(){
+	        return this.IP;
+	    }
+	    public void setPort(int Port){
+	        this.Port = Port;
+	    }
+	    public int getPort(){
+	        return this.Port;
+	    }
+	    public void setInstanceName(String InstanceName){
+	        this.InstanceName = InstanceName;
+	    }
+	    public String getInstanceName(){
+	        return this.InstanceName;
+	    }
+	    public void setVersion(int Version){
+	        this.Version = Version;
+	    }
+	    public int getVersion(){
+	        return this.Version;
+	    }
+	    public void setUser(String User){
+	        this.User = User;
+	    }
+	    public String getUser(){
+	        return this.User;
+	    }
+	    public void setPassword(String Password){
+	        this.Password = Password;
+	    }
+	    public String getPassword(){
+	        return this.Password;
+	    }
+	}
 	
 	public static class ColumnInfo
 	{
@@ -425,54 +469,6 @@ public class DataWriteBackConfig {
 		Enable = enable;
 	}
 
-	public String getIP() {
-		return IP;
-	}
-
-	public void setIP(String iP) {
-		IP = iP;
-	}
-
-	public int getPort() {
-		return Port;
-	}
-
-	public void setPort(int port) {
-		Port = port;
-	}
-
-	public String getInstanceName() {
-		return InstanceName;
-	}
-
-	public void setInstanceName(String instanceName) {
-		InstanceName = instanceName;
-	}
-
-	public int getVersion() {
-		return Version;
-	}
-
-	public void setVersion(int version) {
-		Version = version;
-	}
-
-	public String getUser() {
-		return User;
-	}
-
-	public void setUser(String user) {
-		User = user;
-	}
-
-	public String getPassword() {
-		return Password;
-	}
-
-	public void setPassword(String password) {
-		Password = password;
-	}
-
 	public String getWriteType() {
 		return WriteType;
 	}
@@ -487,5 +483,13 @@ public class DataWriteBackConfig {
 
 	public void setDiagramResult(DiagramResultConfig diagramResult) {
 		DiagramResult = diagramResult;
+	}
+
+	public ConnectInfoConfig getConnectInfo() {
+		return ConnectInfo;
+	}
+
+	public void setConnectInfo(ConnectInfoConfig connectInfo) {
+		ConnectInfo = connectInfo;
 	}
 }

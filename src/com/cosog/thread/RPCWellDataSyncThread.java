@@ -27,23 +27,23 @@ public class RPCWellDataSyncThread  extends Thread{
 	
 	public void run(){
 		DataSourceConfig dataSourceConfig=MemoryDataUtils.getDataSourceConfig();
-		if(dataSourceConfig!=null && dataSourceConfig.isEnable()){
+		if(dataSourceConfig!=null && dataSourceConfig.getDiagramTable()!=null && dataSourceConfig.getDiagramTable().getEnable()){
 			Connection conn = null;
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			try {
-				conn=OracleJdbcUtis.getOuterConnection();
+				conn=OracleJdbcUtis.getDiagramConnection();
 				if(conn!=null){
 					if(dataSourceConfig.getDiagramTable().getEnable()){
-						String wellNameColumn=dataSourceConfig.getDiagramTable().getColumns().getWellName().getColumn();
-						String acqTimeColumn=dataSourceConfig.getDiagramTable().getColumns().getAcqTime().getColumn();
-						String strokeColumn=dataSourceConfig.getDiagramTable().getColumns().getStroke().getColumn();
-						String spmColumn=dataSourceConfig.getDiagramTable().getColumns().getSPM().getColumn();
-						String pointCountColumn=dataSourceConfig.getDiagramTable().getColumns().getPointCount().getColumn();
-						String sColumn=dataSourceConfig.getDiagramTable().getColumns().getS().getColumn();
-						String fColumn=dataSourceConfig.getDiagramTable().getColumns().getF().getColumn();
-						String iColumn=dataSourceConfig.getDiagramTable().getColumns().getI().getColumn();
-						String KWattColumn=dataSourceConfig.getDiagramTable().getColumns().getKWatt().getColumn();
+						String wellNameColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getWellName().getColumn();
+						String acqTimeColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getAcqTime().getColumn();
+						String strokeColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getStroke().getColumn();
+						String spmColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getSPM().getColumn();
+						String pointCountColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getPointCount().getColumn();
+						String sColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getS().getColumn();
+						String fColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getF().getColumn();
+						String iColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getI().getColumn();
+						String KWattColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getKWatt().getColumn();
 						String sql="";
 						String finalSql="";
 						Gson gson = new Gson();
@@ -57,8 +57,8 @@ public class RPCWellDataSyncThread  extends Thread{
 								+ fColumn+", "
 								+ iColumn+", "
 								+ KWattColumn+" "
-								+ " from "+dataSourceConfig.getDiagramTable().getName()+" t "
-								+ " where t."+dataSourceConfig.getDiagramTable().getColumns().getWellName().getColumn()+"='"+this.wellName+"'";
+								+ " from "+dataSourceConfig.getDiagramTable().getTableInfo().getName()+" t "
+								+ " where t."+dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getWellName().getColumn()+"='"+this.wellName+"'";
 						if(StringManagerUtils.isNotNull(this.fesdiagramacqtime)){
 							sql+=" and "+acqTimeColumn+" > to_date('"+fesdiagramacqtime+"','yyyy-mm-dd hh24:mi:ss') order by "+acqTimeColumn;
 						}else{
@@ -78,7 +78,7 @@ public class RPCWellDataSyncThread  extends Thread{
 						if(StringManagerUtils.isNotNull(this.fesdiagramacqtime)){
 							finalSql+=" where rownum<=100";
 						}else{
-							finalSql+=" where rownum<=1";//取最新数据
+							finalSql+=" where rownum<=1";//鍙栨渶鏂版暟鎹�
 						}
 						
 						pstmt = conn.prepareStatement(finalSql);

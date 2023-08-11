@@ -5,11 +5,14 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.lang.reflect.Proxy;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -22,6 +25,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import oracle.sql.CLOB;
 
 public class StringManagerUtils {
@@ -29,7 +38,6 @@ public class StringManagerUtils {
 	
 	public static boolean isNotNull(String value) {
         boolean flag = false;
-        //if (value != "" || value != null || StringUtils.isNotBlank(value)) {
         if (value != null && value.trim().length() > 0 && (!"".equals(value.trim())) && !"null".equalsIgnoreCase(value)) {
             flag = true;
         }
@@ -40,16 +48,10 @@ public class StringManagerUtils {
         return str != null && str.matches("^[-+]?(([0-9]+)([.]([0-9]+))?|([.]([0-9]+))?)$");
     }
     
-    /**
-     * 判断字符串是否是数字
-     */
     public static boolean isNumber(String value) {
         return isInteger(value) || isDouble(value);
     }
     
-    /**
-     * 判断字符串是否是数字
-     */
     public static boolean isInteger(String value) {
         try {
             Integer.parseInt(value);
@@ -59,9 +61,6 @@ public class StringManagerUtils {
         }
     }
 
-    /**
-     * 判断字符串是否是数字
-     */
     public static boolean isDouble(String value) {
         try {
             Double.parseDouble(value);
@@ -79,7 +78,6 @@ public class StringManagerUtils {
         try {
             s_date = (Date) sdf.parse(strDate);
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return s_date;
@@ -103,10 +101,7 @@ public class StringManagerUtils {
     public static String getCurrentTime() {
         String time = null;
         Date now = new Date();
-        // Calendar cal = Calendar.getInstance();
-        // DateFormat df = DateFormat.getDateTimeInstance();
         SimpleDateFormat f = new SimpleDateFormat(DATEPATTERN);
-        // DateFormat df = DateFormat.getDateInstance();
         time = f.format(now);
         return time;
     }
@@ -114,15 +109,11 @@ public class StringManagerUtils {
     public static String getCurrentTime(String format) {
         String time = null;
         Date now = new Date();
-        // Calendar cal = Calendar.getInstance();
-        // DateFormat df = DateFormat.getDateTimeInstance();
         SimpleDateFormat f = new SimpleDateFormat(format);
-        // DateFormat df = DateFormat.getDateInstance();
         time = f.format(now);
         return time;
     }
     
-  //把数据库中blob类型转换成String类型
     public static String convertBlobToString(Blob blob) {
         String result = "";
         try {
@@ -142,27 +133,26 @@ public class StringManagerUtils {
             msgContent = BlobContent.getBytes(1, (int) BlobContent.length());
         } catch (SQLException e1) {
             e1.printStackTrace();
-        } // BLOB转换为字节数组
-        String newStr = ""; // 返回字符串
-        long BlobLength; // BLOB字段长度
+        }
+        String newStr = "";
+        long BlobLength;
         try {
-            BlobLength = BlobContent.length(); // 获取BLOB长度
-            if (msgContent == null || BlobLength == 0) // 如果为空，返回空值
+            BlobLength = BlobContent.length(); 
+            if (msgContent == null || BlobLength == 0)
             {
                 return "";
-            } else // 处理BLOB为字符串
+            } else 
             {
-                newStr = new String(BlobContent.getBytes(1, msgContent.length), "gb2312"); // 简化处理，只取前900字节
+                newStr = new String(BlobContent.getBytes(1, msgContent.length), "gb2312"); // 绠�鍖栧鐞嗭紝鍙彇鍓�900瀛楄妭
                 return newStr;
             }
-        } catch (Exception e) // oracle异常捕获
+        } catch (Exception e)
         {
             e.printStackTrace();
         }
         return newStr;
     }
 
-    //将字符串转为指定小数点位数的浮点型
     public static float stringToFloat(String value, int bit) {
         StringBuffer buf = new StringBuffer();
         buf.append("0.");
@@ -252,7 +242,6 @@ public class StringManagerUtils {
         return sum;
     }
 
-    //BLOB转字符串	
     public static String BLOBtoString(oracle.sql.BLOB blob) throws SQLException, IOException {
         byte[] bytes;
         BufferedInputStream bis = null;
@@ -267,7 +256,7 @@ public class StringManagerUtils {
         return new String(bytes);
 
     }
-    //CLOB转字符串
+    
     public static String CLOBtoString(oracle.sql.CLOB clob) throws SQLException, IOException {
         if (clob == null) {
             return "";
@@ -279,21 +268,10 @@ public class StringManagerUtils {
 
     }
 
-    //Clob转字符串
     public static String CLOBtoString2(Clob clob) throws SQLException, IOException {
         if (clob == null) {
             return "";
         }
-//        BufferedReader reader = null;
-//        InputStreamReader is = new InputStreamReader(clob.getAsciiStream());
-//        reader = new BufferedReader(is);
-//        String result = "";
-//        String line = "";
-//        while ((line = reader.readLine()) != null) {
-//            result += line;
-//        }
-//        is.close();
-//        reader.close();
         
         String  result = clob.getSubString((long)1,(int)clob.length());
         return result;
@@ -312,11 +290,11 @@ public class StringManagerUtils {
         }
 
         path = path.substring(0, index);
-        if (path.startsWith("zip")) { // 当class文件在war中时，此时返回zip:D:/...这样的路径
+        if (path.startsWith("zip")) {
             path = path.substring(4);
-        } else if (path.startsWith("file")) { // 当class文件在class文件中时，此时返回file:/D:/...这样的路径
+        } else if (path.startsWith("file")) {
             path = path.substring(5);
-        } else if (path.startsWith("jar")) { // 当class文件在jar文件里面时，此时返回jar:file:/D:/...这样的路径
+        } else if (path.startsWith("jar")) {
             path = path.substring(9);
         }
         try {
@@ -355,20 +333,181 @@ public class StringManagerUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return fileContent; //.replaceAll(" ", "");
+        return fileContent;
     }
 	
-	/**
-     * 通过URLConnect的方式发送post请求，并返回响应结果
-     * 
-     * @param url
-     *            请求地址
-     * @param params
-     *            参数列表，例如name=小明&age=8里面的中文要经过Uri.encode编码
-     * @param encoding
-     *            编码格式
-     * @return 服务器响应结果
+	// 把json格式的字符串写到文件
+    public static boolean writeFile(String filePath, String sets) {
+        FileOutputStream fileOutputStream = null;
+        OutputStreamWriter writer = null;
+        Boolean result = false;
+        try {
+            fileOutputStream = new FileOutputStream(filePath, false);
+            writer = new OutputStreamWriter(fileOutputStream, "UTF-8");
+            writer.write(sets);
+            result = true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            result = false;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            result = false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            result = false;
+        } finally {
+            try {
+                writer.close();
+                fileOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return result;
+    }
+    
+    /**
+     * 向文件中写入内容
+     * @param filepath 文件路径与名称
+     * @param newstr  写入的内容
+     * @return
+     * @throws IOException
      */
+    public static boolean writeFileContent(String filepath, String newstr) throws IOException {
+        Boolean bool = false;
+        String filein = newstr + "\r\n"; //新写入的行，换行
+        String temp = "";
+
+        FileInputStream fis = null;
+        InputStreamReader isr = null;
+        BufferedReader br = null;
+        FileOutputStream fos = null;
+        PrintWriter pw = null;
+        try {
+            File file = new File(filepath); //文件路径(包括文件名称)
+            //将文件读入输入流
+            fis = new FileInputStream(file);
+            isr = new InputStreamReader(fis);
+            br = new BufferedReader(isr);
+            StringBuffer buffer = new StringBuffer();
+
+            //文件原有内容
+            for (int i = 0;
+                (temp = br.readLine()) != null; i++) {
+                buffer.append(temp);
+                // 行与行之间的分隔符 相当于"\n"
+                buffer = buffer.append(System.getProperty("line.separator"));
+            }
+            buffer.append(filein);
+
+            fos = new FileOutputStream(file);
+            pw = new PrintWriter(fos);
+            pw.write(buffer.toString().toCharArray());
+            pw.flush();
+            bool = true;
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        } finally {
+            //不要忘记关闭
+            if (pw != null) {
+                pw.close();
+            }
+            if (fos != null) {
+                fos.close();
+            }
+            if (br != null) {
+                br.close();
+            }
+            if (isr != null) {
+                isr.close();
+            }
+            if (fis != null) {
+                fis.close();
+            }
+        }
+        return bool;
+    }
+    
+    public static String toPrettyFormat(String json) {
+        if (!StringManagerUtils.isNotNull(json)) {
+            return json;
+        }
+        if (json.indexOf("'") != -1) {
+            json = json.replaceAll("'", "\\'");
+        }
+        if (json.indexOf("\"") != -1) {
+            json = json.replaceAll("\"", "\\\"");
+        }
+
+        if (json.indexOf("\r\n") != -1) { 
+            json = json.replaceAll("\r\n", "\\u000d\\u000a");
+        }
+        if (json.indexOf("\n") != -1) {
+            json = json.replaceAll("\n", "\\u000a");
+        }
+        JsonParser jsonParser = new JsonParser();
+        JsonObject jsonObject = jsonParser.parse(json).getAsJsonObject();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(jsonObject);
+    }
+    public static String jsonStringFormat(String json) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonParser jp = new JsonParser();
+        JsonElement je = jp.parse(json);
+        String prettyJsonString = gson.toJson(je);
+        return prettyJsonString;
+    }
+    
+    public static File createJsonFile(String jsonString, String filePath) {
+        boolean flag = true;
+
+        String fullPath = filePath;
+        File file = null;
+        try {
+            file = new File(fullPath);
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            if (file.exists()) {
+                file.delete();
+            }
+            file.createNewFile();
+
+            if (jsonString.indexOf("'") != -1) {
+                jsonString = jsonString.replaceAll("'", "\\'");
+            }
+            if (jsonString.indexOf("\"") != -1) {
+                jsonString = jsonString.replaceAll("\"", "\\\"");
+            }
+
+            if (jsonString.indexOf("\r\n") != -1) {
+                jsonString = jsonString.replaceAll("\r\n", "\\u000d\\u000a");
+            }
+            if (jsonString.indexOf("\n") != -1) {
+                jsonString = jsonString.replaceAll("\n", "\\u000a");
+            }
+
+            // 格式化json字符串
+            jsonString = toPrettyFormat(jsonString);
+
+            // 将格式化后的字符串写入文件
+            FileOutputStream fos = new FileOutputStream(file);
+            Writer write = new OutputStreamWriter(fos, "UTF-8");
+            write.write(jsonString);
+            write.flush();
+            fos.close();
+            write.close();
+        } catch (Exception e) {
+            flag = false;
+            e.printStackTrace();
+        }
+
+        // 返回是否成功的标记
+        return file;
+    }
+    
     public static String sendPostMethod(String url, String param, String encoding, int connectTimeout, int readTimeout) {
         PrintWriter out = null;
         BufferedReader in = null;
