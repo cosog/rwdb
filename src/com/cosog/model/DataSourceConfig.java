@@ -1,10 +1,42 @@
 package com.cosog.model;
 
+import com.cosog.utils.StringManagerUtils;
+
 public class DataSourceConfig {
 	
 	private DiagramTableConfig DiagramTable;
 
     private ProductionDataTableConfig ProductionDataTable;
+    
+    public static boolean ConnectInfoEquals(ConnectInfoConfig info1,ConnectInfoConfig info2){
+    	boolean result=false;
+    	if(info1!=null && info2!=null 
+    			&& info1.getIP().equalsIgnoreCase(info2.getIP())
+    			&& info1.getPort()==info2.getPort()
+    			&& info1.getInstanceName().equalsIgnoreCase(info2.getInstanceName())
+    			&& info1.getVersion()==info2.getVersion()
+    			&& info1.getUser().equalsIgnoreCase(info2.getUser())
+    			&& info1.getPassword().equalsIgnoreCase(info2.getPassword())
+    			){
+    		result=true;
+    	}
+    	return result;
+    }
+    
+    public static boolean ConnectInfoEffective(ConnectInfoConfig info){
+    	boolean result=false;
+    	if(info!=null
+    			&& StringManagerUtils.isNotNull(info.getIP())
+    			&& info.getPort()>0
+    			&& StringManagerUtils.isNotNull(info.getInstanceName())
+    			&& info.getVersion()>0
+    			&& StringManagerUtils.isNotNull(info.getUser())
+    			&& StringManagerUtils.isNotNull(info.getPassword())
+    			){
+    		result=true;
+    	}
+    	return result;
+    }
 	
 	public static class ConnectInfoConfig
 	{

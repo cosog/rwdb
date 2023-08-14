@@ -1,6 +1,7 @@
 package com.cosog.model;
 
 import com.cosog.model.DataSourceConfig.ConnectInfoConfig;
+import com.cosog.utils.StringManagerUtils;
 
 public class DataWriteBackConfig {
 
@@ -11,6 +12,21 @@ public class DataWriteBackConfig {
     private ConnectInfoConfig ConnectInfo;
 
     private DiagramResultConfig DiagramResult;
+    
+    public static boolean ConnectInfoEffective(ConnectInfoConfig info){
+    	boolean result=false;
+    	if(info!=null
+    			&& StringManagerUtils.isNotNull(info.getIP())
+    			&& info.getPort()>0
+    			&& StringManagerUtils.isNotNull(info.getInstanceName())
+    			&& info.getVersion()>0
+    			&& StringManagerUtils.isNotNull(info.getUser())
+    			&& StringManagerUtils.isNotNull(info.getPassword())
+    			){
+    		result=true;
+    	}
+    	return result;
+    }
     
     public static class ConnectInfoConfig
 	{

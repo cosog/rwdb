@@ -40,13 +40,13 @@ public class OracleJdbcUtis {
 
 			outerDiagramDataSource.setPassword(dataSourceConfig.getDiagramTable().getConnectInfo().getPassword());
 
-			outerDiagramDataSource.setInitialSize(5); // ³õÊ¼»¯Á¬½ÓÊý
+			outerDiagramDataSource.setInitialSize(5);  // åˆå§‹åŒ–è¿žæŽ¥æ•°
 
-			outerDiagramDataSource.setMaxIdle(10); // ×î´ó¿ÕÏÐÁ¬½ÓÊý
+			outerDiagramDataSource.setMaxIdle(10); // æœ€å¤§ç©ºé—²è¿žæŽ¥æ•°
 
-			outerDiagramDataSource.setMinIdle(5); // ×îÐ¡¿ÕÏÐÁ¬½ÓÊý
+			outerDiagramDataSource.setMinIdle(5); // æœ€å°ç©ºé—²è¿žæŽ¥æ•°
 
-			outerDiagramDataSource.setMaxIdle(100); // ×î´óÁ¬½ÓÊý
+			outerDiagramDataSource.setMaxIdle(100); // æœ€å¤§è¿žæŽ¥æ•°
 		}
 	}
 	
@@ -66,13 +66,13 @@ public class OracleJdbcUtis {
 
 			outerProductionDataSource.setPassword(dataSourceConfig.getProductionDataTable().getConnectInfo().getPassword());
 
-			outerProductionDataSource.setInitialSize(5); // ³õÊ¼»¯Á¬½ÓÊý
+			outerProductionDataSource.setInitialSize(5); // åˆå§‹åŒ–è¿žæŽ¥æ•°
 
-			outerProductionDataSource.setMaxIdle(10); // ×î´ó¿ÕÏÐÁ¬½ÓÊý
+			outerProductionDataSource.setMaxIdle(10); // æœ€å¤§ç©ºé—²è¿žæŽ¥æ•°
 
-			outerProductionDataSource.setMinIdle(5); // ×îÐ¡¿ÕÏÐÁ¬½ÓÊý
+			outerProductionDataSource.setMinIdle(5); // æœ€å°ç©ºé—²è¿žæŽ¥æ•°
 
-			outerProductionDataSource.setMaxIdle(100); // ×î´óÁ¬½ÓÊý
+			outerProductionDataSource.setMaxIdle(100); // æœ€å¤§è¿žæŽ¥æ•°
 		}
 	}
 	
@@ -92,13 +92,13 @@ public class OracleJdbcUtis {
 
 			outerDataWriteBackDataSource.setPassword(dataWriteBackConfig.getConnectInfo().getPassword());
 
-			outerDataWriteBackDataSource.setInitialSize(5); // ³õÊ¼»¯Á¬½ÓÊý
+			outerDataWriteBackDataSource.setInitialSize(5); // åˆå§‹åŒ–è¿žæŽ¥æ•°
 
-			outerDataWriteBackDataSource.setMaxIdle(10); // ×î´ó¿ÕÏÐÁ¬½ÓÊý
+			outerDataWriteBackDataSource.setMaxIdle(10); // æœ€å¤§ç©ºé—²è¿žæŽ¥æ•°
 
-			outerDataWriteBackDataSource.setMinIdle(5); // ×îÐ¡¿ÕÏÐÁ¬½ÓÊý
+			outerDataWriteBackDataSource.setMinIdle(5); // æœ€å°ç©ºé—²è¿žæŽ¥æ•°
 
-			outerDataWriteBackDataSource.setMaxIdle(100); // ×î´óÁ¬½ÓÊý
+			outerDataWriteBackDataSource.setMaxIdle(100); // æœ€å¤§è¿žæŽ¥æ•°
 		}
 	}
 	
