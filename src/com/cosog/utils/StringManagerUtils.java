@@ -588,4 +588,24 @@ public class StringManagerUtils {
         }
         return "";
     }
+    
+    public static long getTimeDifference(String fromDateStr, String toDateStr, String format) {
+        long result = 0;
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+            long from = 0;
+            if (StringManagerUtils.isNotNull(fromDateStr)) {
+                Date fromDate = simpleDateFormat.parse(fromDateStr);
+                from = fromDate.getTime();
+            }
+            Date toDate = simpleDateFormat.parse(toDateStr);
+            long to = toDate.getTime();
+            result = to - from;
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            result = 0;
+        }
+        return result;
+    }
 }
