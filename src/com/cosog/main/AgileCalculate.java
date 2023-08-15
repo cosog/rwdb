@@ -157,7 +157,7 @@ public class AgileCalculate {
 				
 				if(StringManagerUtils.isNotNull(dataSourceConfig.getProductionDataTable().getTableInfo().getColumns().getSaveTime().getColumn())){
 					sqlBuff.append(" where t."+dataSourceConfig.getProductionDataTable().getTableInfo().getColumns().getSaveTime().getColumn());
-					sqlBuff.append("= select max(t2."+dataSourceConfig.getProductionDataTable().getTableInfo().getColumns().getSaveTime().getColumn()+") from "+dataSourceConfig.getProductionDataTable().getTableInfo().getName()+" t2 where t2."+dataSourceConfig.getProductionDataTable().getTableInfo().getColumns().getWellName().getColumn()+"=t."+dataSourceConfig.getProductionDataTable().getTableInfo().getColumns().getWellName().getColumn()+" ");
+					sqlBuff.append("= (select max(t2."+dataSourceConfig.getProductionDataTable().getTableInfo().getColumns().getSaveTime().getColumn()+") from "+dataSourceConfig.getProductionDataTable().getTableInfo().getName()+" t2 where t2."+dataSourceConfig.getProductionDataTable().getTableInfo().getColumns().getWellName().getColumn()+"=t."+dataSourceConfig.getProductionDataTable().getTableInfo().getColumns().getWellName().getColumn()+" )");
 				}
 				
 				try {

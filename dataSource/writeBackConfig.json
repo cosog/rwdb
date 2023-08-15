@@ -124,7 +124,7 @@
             "PumpEff": {
                 "Column": "PumpEff",
                 "Type": "number",
-                "Ratio": 1,
+                "Ratio": 100,
                 "Enable": true
             },
             "CalcProducingfluidLevel": {
@@ -190,19 +190,19 @@
             "WellDownSystemEfficiency": {
                 "Column": "WellDownSystemEfficiency",
                 "Type": "number",
-                "Ratio": 1,
+                "Ratio": 100,
                 "Enable": true
             },
             "SurfaceSystemEfficiency": {
                 "Column": "SurfaceSystemEfficiency",
                 "Type": "number",
-                "Ratio": 1,
+                "Ratio": 100,
                 "Enable": true
             },
             "SystemEfficiency": {
                 "Column": "SystemEfficiency",
                 "Type": "number",
-                "Ratio": 1,
+                "Ratio": 100,
                 "Enable": true
             },
             "EnergyPer100mLift": {
