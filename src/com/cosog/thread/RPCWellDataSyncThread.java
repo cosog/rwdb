@@ -12,6 +12,7 @@ import com.cosog.model.DataSourceConfig;
 import com.cosog.model.DataWriteBackConfig;
 import com.cosog.model.RPCCalculateRequestData;
 import com.cosog.model.RPCCalculateResponseData;
+import com.cosog.model.WorkType;
 import com.cosog.utils.CalculateUtils;
 import com.cosog.utils.Config;
 import com.cosog.utils.MemoryDataUtils;
@@ -99,6 +100,7 @@ public class RPCWellDataSyncThread  extends Thread{
 						
 						pstmt = conn.prepareStatement(finalSql);
 						rs=pstmt.executeQuery();
+						
 						while(rs.next()){
 							String fesdiagramAcqtimeStr=rs.getString(2);
 							float stroke=rs.getFloat(3);
@@ -276,25 +278,14 @@ public class RPCWellDataSyncThread  extends Thread{
 											//工况名称和优化建议
 											String resultName="";
 											String optimizationSuggestion="";
-											
-//											Jedis jedis=null;
-//											try{
-//												jedis = RedisUtil.jedisPool.getResource();
-//												if(!jedis.exists("RPCWorkType".getBytes())){
-//													MemoryDataManagerTask.loadRPCWorkType();
-//												}
-//												WorkType workType=(WorkType) SerializeObjectUnils.unserizlize(jedis.hget("RPCWorkType".getBytes(), (calculateResponseData.getCalculationStatus().getResultCode()+"").getBytes()));
-//												if(workType!=null){
-//													resultName=workType.getResultName();
-//													optimizationSuggestion=workType.getOptimizationSuggestion();
-//												}
-//											}catch(Exception e){
-//												e.printStackTrace();
-//											}finally{
-//												if(jedis!=null&&jedis.isConnected()){
-//													jedis.close();
-//												}
-//											}
+											if(calculateResponseData!=null && calculateResponseData.getCalculationStatus().getResultStatus()==1){
+												Map<Integer,WorkType> workTypeMap=MemoryDataUtils.getRPCWorkTypeInfo();
+												WorkType workType=workTypeMap.get(calculateResponseData.getCalculationStatus().getResultCode());
+												if(workType!=null){
+													resultName=workType.getResultName();
+													optimizationSuggestion=workType.getOptimizationSuggestion();
+												}
+											}
 											
 											resultName=getOperaValue(resultName,dataWriteBackConfig.getDiagramResult().getColumns().getResultName().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getResultName().getRatio());
 											optimizationSuggestion=getOperaValue(optimizationSuggestion,dataWriteBackConfig.getDiagramResult().getColumns().getOptimizationSuggestion().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getOptimizationSuggestion().getRatio());

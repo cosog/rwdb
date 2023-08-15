@@ -62,7 +62,7 @@
             "Password": "a11ck_123"
         },
         "TableInfo": {
-            "Name": "tbl_rpcproductiondata",
+            "Name": "TBL_PRODUCTIONDATA",
             "Columns": {
                 "WellId": {
                     "Column": "well_id",
