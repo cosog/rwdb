@@ -1,4 +1,4 @@
-ac:                                                    #AC绋嬪簭閰嶇疆
+ac:                                                    #AC计算程序配置
    probe:                                              #状态监测
       app: http://8.142.92.84:18100/api/probe/app                               #运行状态监测
       mem: http://8.142.92.84:18100/api/probe/mem                               #服务器内存监测
@@ -17,3 +17,5 @@ threadPool:
       maximumPoolSize: 100
       keepAliveTime: 5
       wattingCount: 0
+other: 
+   defaultTimeSpan: 0                                #第一次获取功图数据的时间跨度， 0-读取当天数据

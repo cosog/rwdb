@@ -5,6 +5,8 @@ public class ConfigFile {
     private Ac ac;
     
     private ThreadPool threadPool;
+    
+    private Other other;
 	
 	public static class AcProbe
 	{
@@ -186,6 +188,19 @@ public class ConfigFile {
 			this.outerDatabaseSync = outerDatabaseSync;
 		}
 	}
+	
+	public static class Other{
+		
+		public int defaultTimeSpan;
+
+		public int getDefaultTimeSpan() {
+			return defaultTimeSpan;
+		}
+
+		public void setDefaultTimeSpan(int defaultTimeSpan) {
+			this.defaultTimeSpan = defaultTimeSpan;
+		}
+	}
 
 	public Ac getAc() {
 		return ac;
@@ -201,5 +216,13 @@ public class ConfigFile {
 
 	public void setThreadPool(ThreadPool threadPool) {
 		this.threadPool = threadPool;
+	}
+
+	public Other getOther() {
+		return other;
+	}
+
+	public void setOther(Other other) {
+		this.other = other;
 	}
 }
