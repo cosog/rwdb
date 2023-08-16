@@ -48,6 +48,8 @@ public class RPCWellDataSyncThread  extends Thread{
 						Map<String,String> dataReadTimeInfoMap=MemoryDataUtils.getDataReadTimeInfo();
 						
 						String fesdiagramacqtime="";
+						String currentDate=StringManagerUtils.getCurrentTime("yyyy-MM-dd");
+						int defaultTimeSpan=Config.getInstance().configFile.getOther().getDefaultTimeSpan();
 						if(dataReadTimeInfoMap!=null && dataReadTimeInfoMap.containsKey(calculateRequestData.getWellName())){
 							fesdiagramacqtime=dataReadTimeInfoMap.get(calculateRequestData.getWellName());
 						}
@@ -79,7 +81,8 @@ public class RPCWellDataSyncThread  extends Thread{
 						if(StringManagerUtils.isNotNull(fesdiagramacqtime)){
 							sql+=" and "+acqTimeColumn+" > to_date('"+fesdiagramacqtime+"','yyyy-mm-dd hh24:mi:ss') order by "+acqTimeColumn;
 						}else{
-							sql+="order by "+acqTimeColumn+" desc";
+//							sql+="order by "+acqTimeColumn+" desc";
+							sql+=" and "+acqTimeColumn+" > to_date('"+currentDate+"','yyyy-mm-dd')-"+defaultTimeSpan+" order by "+acqTimeColumn;
 						}
 						
 						finalSql="select "+wellNameColumn+","
@@ -95,7 +98,8 @@ public class RPCWellDataSyncThread  extends Thread{
 						if(StringManagerUtils.isNotNull(fesdiagramacqtime)){
 							finalSql+=" where rownum<=100";
 						}else{
-							finalSql+=" where rownum<=1";//取最新数据
+							finalSql+=" where rownum<=100";
+//							finalSql+=" where rownum<=1";//取最新数据
 						}
 						
 						pstmt = conn.prepareStatement(finalSql);

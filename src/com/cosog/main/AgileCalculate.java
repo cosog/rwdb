@@ -13,6 +13,7 @@ import com.cosog.model.DataReadTimeInfo;
 import com.cosog.model.DataSourceConfig;
 import com.cosog.model.DataWriteBackConfig;
 import com.cosog.model.RPCCalculateRequestData;
+import com.cosog.thread.DIagramSimulateDataThread;
 import com.cosog.thread.RPCWellDataSyncThread;
 import com.cosog.thread.ThreadPool;
 import com.cosog.utils.Config;
@@ -26,8 +27,8 @@ public class AgileCalculate {
 
 	@SuppressWarnings({ "static-access", "unused" })
 	public static void main(String[] args) {
-		String commUrl=Config.getInstance().configFile.getAc().getCommunication();
-		
+//		DIagramSimulateDataThread dIagramSimulateDataThread=new DIagramSimulateDataThread();
+//		dIagramSimulateDataThread.start();
 		DataSourceConfig dataSourceConfig=MemoryDataUtils.getDataSourceConfig();
 		DataWriteBackConfig dataWriteBackConfig=MemoryDataUtils.getDataWriteBackConfig();
 		if(dataSourceConfig!=null 
@@ -343,7 +344,6 @@ public class AgileCalculate {
 				}finally{
 					OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
 				}
-				System.out.println(commUrl);
 				try {
 					Thread.sleep(1*1000);
 				} catch (InterruptedException e) {
@@ -351,8 +351,6 @@ public class AgileCalculate {
 				}
 			}while(true);
 		}
-		
-
 	}
 
 }
