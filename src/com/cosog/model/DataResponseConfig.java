@@ -1,9 +1,9 @@
 package com.cosog.model;
 
-import com.cosog.model.DataSourceConfig.ConnectInfoConfig;
+import com.cosog.model.DataRequestConfig.ConnectInfoConfig;
 import com.cosog.utils.StringManagerUtils;
 
-public class DataWriteBackConfig {
+public class DataResponseConfig {
 
 	private boolean Enable;
 

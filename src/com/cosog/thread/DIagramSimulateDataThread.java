@@ -5,23 +5,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.cosog.model.DataSourceConfig;
-import com.cosog.model.DataWriteBackConfig;
+import com.cosog.model.DataRequestConfig;
+import com.cosog.model.DataResponseConfig;
 import com.cosog.utils.MemoryDataUtils;
 import com.cosog.utils.OracleJdbcUtis;
 import com.cosog.utils.StringManagerUtils;
 
 public class DIagramSimulateDataThread extends Thread{
 	public void run(){
-		DataSourceConfig dataSourceConfig=MemoryDataUtils.getDataSourceConfig();
-		DataWriteBackConfig dataWriteBackConfig=MemoryDataUtils.getDataWriteBackConfig();
-		if(dataSourceConfig!=null 
-				&& dataSourceConfig.getDiagramTable()!=null 
-				&& dataSourceConfig.getDiagramTable().getEnable() 
-				&& dataSourceConfig.getDiagramTable().getTableInfo()!=null 
-				&& dataSourceConfig.getDiagramTable().getTableInfo().getColumns()!=null 
-				&& DataSourceConfig.ConnectInfoEffective(dataSourceConfig.getDiagramTable().getConnectInfo())
-				&& dataWriteBackConfig!=null && dataWriteBackConfig.isEnable()){
+		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
+		DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
+		if(dataRequestConfig!=null 
+				&& dataRequestConfig.getDiagramTable()!=null 
+				&& dataRequestConfig.getDiagramTable().getEnable() 
+				&& dataRequestConfig.getDiagramTable().getTableInfo()!=null 
+				&& dataRequestConfig.getDiagramTable().getTableInfo().getColumns()!=null 
+				&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo())
+				&& dataResponseConfig!=null && dataResponseConfig.isEnable()){
 			String time="";
 			String writeDataInsertSql="";
 			String diagramDataInsertSql="";
@@ -40,7 +40,7 @@ public class DIagramSimulateDataThread extends Thread{
 						time=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 						String wellName="";
 						int iNum=0;
-						
+						System.out.println(time+"-生成模拟数据");
 						try{  
 							for(int i=1;i<=100;i++){
 								if(i<10){
@@ -50,8 +50,8 @@ public class DIagramSimulateDataThread extends Thread{
 								}else{
 									wellName="rpc"+i;
 								}
-								writeDataInsertSql="insert into "+dataWriteBackConfig.getDiagramResult().getTableName()
-										+"("+dataWriteBackConfig.getDiagramResult().getColumns().getWellName().getColumn()+","+dataWriteBackConfig.getDiagramResult().getColumns().getAcqTime().getColumn()+") "
+								writeDataInsertSql="insert into "+dataResponseConfig.getDiagramResult().getTableName()
+										+"("+dataResponseConfig.getDiagramResult().getColumns().getWellName().getColumn()+","+dataResponseConfig.getDiagramResult().getColumns().getAcqTime().getColumn()+") "
 										+ " values('"+wellName+"',to_date('"+time+"','yyyy-mm-dd hh24:mi:ss'))";
 								writeBackPstmt=writeBackConn.prepareStatement(writeDataInsertSql);
 					            iNum=writeBackPstmt.executeUpdate();
