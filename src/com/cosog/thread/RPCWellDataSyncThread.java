@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.cosog.model.DataSourceConfig;
-import com.cosog.model.DataWriteBackConfig;
+import org.apache.log4j.Logger;
+
+import com.cosog.model.DataRequestConfig;
+import com.cosog.model.DataResponseConfig;
 import com.cosog.model.RPCCalculateRequestData;
 import com.cosog.model.RPCCalculateResponseData;
 import com.cosog.model.WorkType;
@@ -22,29 +24,31 @@ import com.google.gson.Gson;
 
 public class RPCWellDataSyncThread  extends Thread{
 	private RPCCalculateRequestData calculateRequestData;
+	private Logger logger = Logger.getLogger(this.getClass());
 	public RPCWellDataSyncThread(RPCCalculateRequestData calculateRequestData) {
 		super();
 		this.calculateRequestData = calculateRequestData;
 	}
 	
 	public void run(){
-		DataSourceConfig dataSourceConfig=MemoryDataUtils.getDataSourceConfig();
-		DataWriteBackConfig dataWriteBackConfig=MemoryDataUtils.getDataWriteBackConfig();
+		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
+		DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
 		if(calculateRequestData!=null 
-				&& dataSourceConfig!=null 
-				&& dataSourceConfig.getDiagramTable()!=null 
-				&& dataSourceConfig.getDiagramTable().getEnable() 
-				&& dataSourceConfig.getDiagramTable().getTableInfo()!=null 
-				&& dataSourceConfig.getDiagramTable().getTableInfo().getColumns()!=null 
-				&& DataSourceConfig.ConnectInfoEffective(dataSourceConfig.getDiagramTable().getConnectInfo())
-				&&dataWriteBackConfig!=null && dataWriteBackConfig.isEnable()){
+				&& dataRequestConfig!=null 
+				&& dataRequestConfig.getDiagramTable()!=null 
+				&& dataRequestConfig.getDiagramTable().getEnable() 
+				&& dataRequestConfig.getDiagramTable().getTableInfo()!=null 
+				&& dataRequestConfig.getDiagramTable().getTableInfo().getColumns()!=null 
+				&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo())
+				&&dataResponseConfig!=null && dataResponseConfig.isEnable()){
+			
 			Connection conn = null;
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			try {
 				conn=OracleJdbcUtis.getDiagramConnection();
 				if(conn!=null){
-					if(dataSourceConfig.getDiagramTable().getEnable()){
+					if(dataRequestConfig.getDiagramTable().getEnable()){
 						Map<String,String> dataReadTimeInfoMap=MemoryDataUtils.getDataReadTimeInfo();
 						
 						String fesdiagramacqtime="";
@@ -54,15 +58,15 @@ public class RPCWellDataSyncThread  extends Thread{
 							fesdiagramacqtime=dataReadTimeInfoMap.get(calculateRequestData.getWellName());
 						}
 						
-						String wellNameColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getWellName().getColumn();
-						String acqTimeColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getAcqTime().getColumn();
-						String strokeColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getStroke().getColumn();
-						String spmColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getSPM().getColumn();
-						String pointCountColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getPointCount().getColumn();
-						String sColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getS().getColumn();
-						String fColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getF().getColumn();
-						String iColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getI().getColumn();
-						String KWattColumn=dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getKWatt().getColumn();
+						String wellNameColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getWellName().getColumn();
+						String acqTimeColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getAcqTime().getColumn();
+						String strokeColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getStroke().getColumn();
+						String spmColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getSPM().getColumn();
+						String pointCountColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getPointCount().getColumn();
+						String sColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getS().getColumn();
+						String fColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getF().getColumn();
+						String iColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getI().getColumn();
+						String KWattColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getKWatt().getColumn();
 						String sql="";
 						String finalSql="";
 						Gson gson = new Gson();
@@ -76,8 +80,8 @@ public class RPCWellDataSyncThread  extends Thread{
 								+ fColumn+", "
 								+ iColumn+", "
 								+ KWattColumn+" "
-								+ " from "+dataSourceConfig.getDiagramTable().getTableInfo().getName()+" t "
-								+ " where t."+dataSourceConfig.getDiagramTable().getTableInfo().getColumns().getWellName().getColumn()+"='"+calculateRequestData.getWellName()+"'";
+								+ " from "+dataRequestConfig.getDiagramTable().getTableInfo().getName()+" t "
+								+ " where t."+dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getWellName().getColumn()+"='"+calculateRequestData.getWellName()+"'";
 						if(StringManagerUtils.isNotNull(fesdiagramacqtime)){
 							sql+=" and "+acqTimeColumn+" > to_date('"+fesdiagramacqtime+"','yyyy-mm-dd hh24:mi:ss') order by "+acqTimeColumn;
 						}else{
@@ -115,6 +119,9 @@ public class RPCWellDataSyncThread  extends Thread{
 							String iStr=rs.getString(8);
 							String KWattStr=rs.getString(9);
 							
+							System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"-获取"+calculateRequestData.getWellName()+"井功图数据，采集时间："+fesdiagramAcqtimeStr);
+							logger.info(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"-获取"+calculateRequestData.getWellName()+"井功图数据，采集时间："+fesdiagramAcqtimeStr);
+							
 							calculateRequestData.setFESDiagram(new RPCCalculateRequestData.FESDiagram());
 							calculateRequestData.getFESDiagram().setAcqTime(fesdiagramAcqtimeStr);
 							calculateRequestData.getFESDiagram().setStroke(stroke);
@@ -147,14 +154,14 @@ public class RPCWellDataSyncThread  extends Thread{
 							
 							//结果回写
 
-							if(dataWriteBackConfig!=null && dataWriteBackConfig.isEnable() && calculateResponseData!=null){
+							if(dataResponseConfig!=null && dataResponseConfig.isEnable() && calculateResponseData!=null){
 								Connection writeBackConn = null;
 								PreparedStatement writeBackPstmt = null;
 								ResultSet writeBackRs = null;
 								try {
 									writeBackConn=OracleJdbcUtis.getDataWriteBackConnection();
 									if(writeBackConn!=null){
-										if(dataWriteBackConfig.getDiagramResult().getEnable()){
+										if(dataResponseConfig.getDiagramResult().getEnable()){
 											String updateSql="";
 											String insertSql="";
 											String insertColumns="";
@@ -164,117 +171,117 @@ public class RPCWellDataSyncThread  extends Thread{
 											String wellNameValue="";
 											String acqTimeValue="";
 											
-											updateSql="update "+dataWriteBackConfig.getDiagramResult().getTableName()+" t set ";
-											insertSql="insert into "+dataWriteBackConfig.getDiagramResult().getTableName()+" (";
+											updateSql="update "+dataResponseConfig.getDiagramResult().getTableName()+" t set ";
+											insertSql="insert into "+dataResponseConfig.getDiagramResult().getTableName()+" (";
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getWellName().getEnable()){
-												String value=getOperaValue(calculateResponseData.getWellName(),dataWriteBackConfig.getDiagramResult().getColumns().getWellName().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getWellName().getRatio());
+											if(dataResponseConfig.getDiagramResult().getColumns().getWellName().getEnable()){
+												String value=getOperaValue(calculateResponseData.getWellName(),dataResponseConfig.getDiagramResult().getColumns().getWellName().getType(),dataResponseConfig.getDiagramResult().getColumns().getWellName().getRatio());
 												
-//												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getWellName().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getWellName().getColumn()+",";
+//												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getWellName().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getWellName().getColumn()+",";
 												insertValues+=value+",";
 												
 												wellNameValue=value;
 //												itemCount++;
 											}
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getAcqTime().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getAcqTime().getEnable()){
 												String value="null";
 												if(calculateResponseData.getFESDiagram()!=null){
-													value=getOperaValue(calculateResponseData.getFESDiagram().getAcqTime(),dataWriteBackConfig.getDiagramResult().getColumns().getAcqTime().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getAcqTime().getRatio());
+													value=getOperaValue(calculateResponseData.getFESDiagram().getAcqTime(),dataResponseConfig.getDiagramResult().getColumns().getAcqTime().getType(),dataResponseConfig.getDiagramResult().getColumns().getAcqTime().getRatio());
 												}	
-//												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getAcqTime().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getAcqTime().getColumn()+",";
+//												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getAcqTime().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getAcqTime().getColumn()+",";
 												insertValues+=value+",";
 												
 												acqTimeValue=value;
 //												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getFMax().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getFMax().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram().getFMax()!=null&&calculateResponseData.getFESDiagram().getFMax().size()>0){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getFMax().get(0)+"",dataWriteBackConfig.getDiagramResult().getColumns().getFMax().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getFMax().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getFMax().get(0)+"",dataResponseConfig.getDiagramResult().getColumns().getFMax().getType(),dataResponseConfig.getDiagramResult().getColumns().getFMax().getRatio());
 													}
 												}	
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getFMax().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getFMax().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getFMax().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getFMax().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getFMin().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getFMin().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram().getFMin()!=null&&calculateResponseData.getFESDiagram().getFMin().size()>0){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getFMin().get(0)+"",dataWriteBackConfig.getDiagramResult().getColumns().getFMin().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getFMin().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getFMin().get(0)+"",dataResponseConfig.getDiagramResult().getColumns().getFMin().getType(),dataResponseConfig.getDiagramResult().getColumns().getFMin().getRatio());
 													}
 												}	
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getFMin().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getFMin().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getFMin().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getFMin().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getUpperLoadLine().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getUpperLoadLine().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram()!=null){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getUpperLoadLine()+"",dataWriteBackConfig.getDiagramResult().getColumns().getUpperLoadLine().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getUpperLoadLine().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getUpperLoadLine()+"",dataResponseConfig.getDiagramResult().getColumns().getUpperLoadLine().getType(),dataResponseConfig.getDiagramResult().getColumns().getUpperLoadLine().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getUpperLoadLine().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getUpperLoadLine().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getUpperLoadLine().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getUpperLoadLine().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getLowerLoadLine().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getLowerLoadLine().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram()!=null){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getLowerLoadLine()+"",dataWriteBackConfig.getDiagramResult().getColumns().getLowerLoadLine().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getLowerLoadLine().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getLowerLoadLine()+"",dataResponseConfig.getDiagramResult().getColumns().getLowerLoadLine().getType(),dataResponseConfig.getDiagramResult().getColumns().getLowerLoadLine().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getLowerLoadLine().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getLowerLoadLine().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getLowerLoadLine().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getLowerLoadLine().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getFullnessCoefficient().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getFullnessCoefficient().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram()!=null){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getFullnessCoefficient()+"",dataWriteBackConfig.getDiagramResult().getColumns().getFullnessCoefficient().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getFullnessCoefficient().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getFullnessCoefficient()+"",dataResponseConfig.getDiagramResult().getColumns().getFullnessCoefficient().getType(),dataResponseConfig.getDiagramResult().getColumns().getFullnessCoefficient().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getFullnessCoefficient().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getFullnessCoefficient().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getFullnessCoefficient().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getFullnessCoefficient().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getNoLiquidFullnessCoefficient().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getNoLiquidFullnessCoefficient().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram()!=null){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getNoLiquidFullnessCoefficient()+"",dataWriteBackConfig.getDiagramResult().getColumns().getNoLiquidFullnessCoefficient().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getNoLiquidFullnessCoefficient().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getNoLiquidFullnessCoefficient()+"",dataResponseConfig.getDiagramResult().getColumns().getNoLiquidFullnessCoefficient().getType(),dataResponseConfig.getDiagramResult().getColumns().getNoLiquidFullnessCoefficient().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getNoLiquidFullnessCoefficient().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getNoLiquidFullnessCoefficient().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getNoLiquidFullnessCoefficient().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getNoLiquidFullnessCoefficient().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getResultCode().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getResultCode().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
-													value=getOperaValue(calculateResponseData.getCalculationStatus().getResultCode()+"",dataWriteBackConfig.getDiagramResult().getColumns().getResultCode().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getResultCode().getRatio());
+													value=getOperaValue(calculateResponseData.getCalculationStatus().getResultCode()+"",dataResponseConfig.getDiagramResult().getColumns().getResultCode().getType(),dataResponseConfig.getDiagramResult().getColumns().getResultCode().getRatio());
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getResultCode().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getResultCode().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getResultCode().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getResultCode().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
@@ -291,303 +298,303 @@ public class RPCWellDataSyncThread  extends Thread{
 												}
 											}
 											
-											resultName=getOperaValue(resultName,dataWriteBackConfig.getDiagramResult().getColumns().getResultName().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getResultName().getRatio());
-											optimizationSuggestion=getOperaValue(optimizationSuggestion,dataWriteBackConfig.getDiagramResult().getColumns().getOptimizationSuggestion().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getOptimizationSuggestion().getRatio());
+											resultName=getOperaValue(resultName,dataResponseConfig.getDiagramResult().getColumns().getResultName().getType(),dataResponseConfig.getDiagramResult().getColumns().getResultName().getRatio());
+											optimizationSuggestion=getOperaValue(optimizationSuggestion,dataResponseConfig.getDiagramResult().getColumns().getOptimizationSuggestion().getType(),dataResponseConfig.getDiagramResult().getColumns().getOptimizationSuggestion().getRatio());
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getResultName().getEnable()){
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getResultName().getColumn()+ "="+resultName+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getResultName().getColumn()+",";
+											if(dataResponseConfig.getDiagramResult().getColumns().getResultName().getEnable()){
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getResultName().getColumn()+ "="+resultName+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getResultName().getColumn()+",";
 												insertValues+=resultName+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getOptimizationSuggestion().getEnable()){
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getOptimizationSuggestion().getColumn()+ "="+optimizationSuggestion+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getOptimizationSuggestion().getColumn()+",";
+											if(dataResponseConfig.getDiagramResult().getColumns().getOptimizationSuggestion().getEnable()){
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getOptimizationSuggestion().getColumn()+ "="+optimizationSuggestion+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getOptimizationSuggestion().getColumn()+",";
 												insertValues+=optimizationSuggestion+",";
 												itemCount++;
 											}
 											
 											//产量
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getLiquidVolumetricProduction().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getLiquidVolumetricProduction().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getProduction()!=null){
-														value=getOperaValue(calculateResponseData.getProduction().getLiquidVolumetricProduction()+"",dataWriteBackConfig.getDiagramResult().getColumns().getLiquidVolumetricProduction().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getLiquidVolumetricProduction().getRatio());
+														value=getOperaValue(calculateResponseData.getProduction().getLiquidVolumetricProduction()+"",dataResponseConfig.getDiagramResult().getColumns().getLiquidVolumetricProduction().getType(),dataResponseConfig.getDiagramResult().getColumns().getLiquidVolumetricProduction().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getLiquidVolumetricProduction().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getLiquidVolumetricProduction().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getLiquidVolumetricProduction().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getLiquidVolumetricProduction().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getOilVolumetricProduction().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getOilVolumetricProduction().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getProduction()!=null){
-														value=getOperaValue(calculateResponseData.getProduction().getOilVolumetricProduction()+"",dataWriteBackConfig.getDiagramResult().getColumns().getOilVolumetricProduction().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getOilVolumetricProduction().getRatio());
+														value=getOperaValue(calculateResponseData.getProduction().getOilVolumetricProduction()+"",dataResponseConfig.getDiagramResult().getColumns().getOilVolumetricProduction().getType(),dataResponseConfig.getDiagramResult().getColumns().getOilVolumetricProduction().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getOilVolumetricProduction().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getOilVolumetricProduction().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getOilVolumetricProduction().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getOilVolumetricProduction().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getWaterVolumetricProduction().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getWaterVolumetricProduction().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getProduction()!=null){
-														value=getOperaValue(calculateResponseData.getProduction().getWaterVolumetricProduction()+"",dataWriteBackConfig.getDiagramResult().getColumns().getWaterVolumetricProduction().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getWaterVolumetricProduction().getRatio());
+														value=getOperaValue(calculateResponseData.getProduction().getWaterVolumetricProduction()+"",dataResponseConfig.getDiagramResult().getColumns().getWaterVolumetricProduction().getType(),dataResponseConfig.getDiagramResult().getColumns().getWaterVolumetricProduction().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getWaterVolumetricProduction().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getWaterVolumetricProduction().getColumn()+",";
-												insertValues+=value+",";
-												itemCount++;
-											}
-											
-											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getLiquidWeightProduction().getEnable()){
-												String value="null";
-												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
-													if(calculateResponseData.getProduction()!=null){
-														value=getOperaValue(calculateResponseData.getProduction().getLiquidWeightProduction()+"",dataWriteBackConfig.getDiagramResult().getColumns().getLiquidWeightProduction().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getLiquidWeightProduction().getRatio());
-													}	
-												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getLiquidWeightProduction().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getLiquidWeightProduction().getColumn()+",";
-												insertValues+=value+",";
-												itemCount++;
-											}
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getOilWeightProduction().getEnable()){
-												String value="null";
-												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
-													if(calculateResponseData.getProduction()!=null){
-														value=getOperaValue(calculateResponseData.getProduction().getOilWeightProduction()+"",dataWriteBackConfig.getDiagramResult().getColumns().getOilWeightProduction().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getOilWeightProduction().getRatio());
-													}	
-												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getOilWeightProduction().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getOilWeightProduction().getColumn()+",";
-												insertValues+=value+",";
-												itemCount++;
-											}
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getWaterWeightProduction().getEnable()){
-												String value="null";
-												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
-													if(calculateResponseData.getProduction()!=null){
-														value=getOperaValue(calculateResponseData.getProduction().getWaterWeightProduction()+"",dataWriteBackConfig.getDiagramResult().getColumns().getWaterWeightProduction().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getWaterWeightProduction().getRatio());
-													}	
-												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getWaterWeightProduction().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getWaterWeightProduction().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getWaterVolumetricProduction().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getWaterVolumetricProduction().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getTheoreticalProduction().getEnable()){
+											
+											if(dataResponseConfig.getDiagramResult().getColumns().getLiquidWeightProduction().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getProduction()!=null){
-														value=getOperaValue(calculateResponseData.getProduction().getTheoreticalProduction()+"",dataWriteBackConfig.getDiagramResult().getColumns().getTheoreticalProduction().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getTheoreticalProduction().getRatio());
+														value=getOperaValue(calculateResponseData.getProduction().getLiquidWeightProduction()+"",dataResponseConfig.getDiagramResult().getColumns().getLiquidWeightProduction().getType(),dataResponseConfig.getDiagramResult().getColumns().getLiquidWeightProduction().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getTheoreticalProduction().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getTheoreticalProduction().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getLiquidWeightProduction().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getLiquidWeightProduction().getColumn()+",";
+												insertValues+=value+",";
+												itemCount++;
+											}
+											if(dataResponseConfig.getDiagramResult().getColumns().getOilWeightProduction().getEnable()){
+												String value="null";
+												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
+													if(calculateResponseData.getProduction()!=null){
+														value=getOperaValue(calculateResponseData.getProduction().getOilWeightProduction()+"",dataResponseConfig.getDiagramResult().getColumns().getOilWeightProduction().getType(),dataResponseConfig.getDiagramResult().getColumns().getOilWeightProduction().getRatio());
+													}	
+												}
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getOilWeightProduction().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getOilWeightProduction().getColumn()+",";
+												insertValues+=value+",";
+												itemCount++;
+											}
+											if(dataResponseConfig.getDiagramResult().getColumns().getWaterWeightProduction().getEnable()){
+												String value="null";
+												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
+													if(calculateResponseData.getProduction()!=null){
+														value=getOperaValue(calculateResponseData.getProduction().getWaterWeightProduction()+"",dataResponseConfig.getDiagramResult().getColumns().getWaterWeightProduction().getType(),dataResponseConfig.getDiagramResult().getColumns().getWaterWeightProduction().getRatio());
+													}	
+												}
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getWaterWeightProduction().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getWaterWeightProduction().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getPumpEff().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getTheoreticalProduction().getEnable()){
+												String value="null";
+												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
+													if(calculateResponseData.getProduction()!=null){
+														value=getOperaValue(calculateResponseData.getProduction().getTheoreticalProduction()+"",dataResponseConfig.getDiagramResult().getColumns().getTheoreticalProduction().getType(),dataResponseConfig.getDiagramResult().getColumns().getTheoreticalProduction().getRatio());
+													}	
+												}
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getTheoreticalProduction().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getTheoreticalProduction().getColumn()+",";
+												insertValues+=value+",";
+												itemCount++;
+											}
+											
+											if(dataResponseConfig.getDiagramResult().getColumns().getPumpEff().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getPumpEfficiency()!=null){
-														value=getOperaValue(calculateResponseData.getPumpEfficiency().getPumpEff()+"",dataWriteBackConfig.getDiagramResult().getColumns().getPumpEff().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getPumpEff().getRatio());
+														value=getOperaValue(calculateResponseData.getPumpEfficiency().getPumpEff()+"",dataResponseConfig.getDiagramResult().getColumns().getPumpEff().getType(),dataResponseConfig.getDiagramResult().getColumns().getPumpEff().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getPumpEff().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getPumpEff().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getPumpEff().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getPumpEff().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getCalcProducingfluidLevel().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getCalcProducingfluidLevel().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getProduction()!=null){
-														value=getOperaValue(calculateResponseData.getProduction().getCalcProducingfluidLevel()+"",dataWriteBackConfig.getDiagramResult().getColumns().getCalcProducingfluidLevel().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getCalcProducingfluidLevel().getRatio());
+														value=getOperaValue(calculateResponseData.getProduction().getCalcProducingfluidLevel()+"",dataResponseConfig.getDiagramResult().getColumns().getCalcProducingfluidLevel().getType(),dataResponseConfig.getDiagramResult().getColumns().getCalcProducingfluidLevel().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getCalcProducingfluidLevel().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getCalcProducingfluidLevel().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getCalcProducingfluidLevel().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getCalcProducingfluidLevel().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getLevelDifferenceValue().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getLevelDifferenceValue().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getProduction()!=null){
-														value=getOperaValue(calculateResponseData.getProduction().getLevelDifferenceValue()+"",dataWriteBackConfig.getDiagramResult().getColumns().getLevelDifferenceValue().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getLevelDifferenceValue().getRatio());
+														value=getOperaValue(calculateResponseData.getProduction().getLevelDifferenceValue()+"",dataResponseConfig.getDiagramResult().getColumns().getLevelDifferenceValue().getType(),dataResponseConfig.getDiagramResult().getColumns().getLevelDifferenceValue().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getLevelDifferenceValue().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getLevelDifferenceValue().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getLevelDifferenceValue().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getLevelDifferenceValue().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getSubmergence().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getSubmergence().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getProduction()!=null){
-														value=getOperaValue(calculateResponseData.getProduction().getSubmergence()+"",dataWriteBackConfig.getDiagramResult().getColumns().getSubmergence().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getSubmergence().getRatio());
+														value=getOperaValue(calculateResponseData.getProduction().getSubmergence()+"",dataResponseConfig.getDiagramResult().getColumns().getSubmergence().getType(),dataResponseConfig.getDiagramResult().getColumns().getSubmergence().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getSubmergence().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getSubmergence().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getSubmergence().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getSubmergence().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getUpStrokeIMax().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getUpStrokeIMax().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram()!=null){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getUpStrokeIMax()+"",dataWriteBackConfig.getDiagramResult().getColumns().getUpStrokeIMax().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getUpStrokeIMax().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getUpStrokeIMax()+"",dataResponseConfig.getDiagramResult().getColumns().getUpStrokeIMax().getType(),dataResponseConfig.getDiagramResult().getColumns().getUpStrokeIMax().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getUpStrokeIMax().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getUpStrokeIMax().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getUpStrokeIMax().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getUpStrokeIMax().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getDownStrokeIMax().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getDownStrokeIMax().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram()!=null){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getDownStrokeIMax()+"",dataWriteBackConfig.getDiagramResult().getColumns().getDownStrokeIMax().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getDownStrokeIMax().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getDownStrokeIMax()+"",dataResponseConfig.getDiagramResult().getColumns().getDownStrokeIMax().getType(),dataResponseConfig.getDiagramResult().getColumns().getDownStrokeIMax().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getDownStrokeIMax().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getDownStrokeIMax().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getDownStrokeIMax().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getDownStrokeIMax().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getIDegreeBalance().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getIDegreeBalance().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram()!=null){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getIDegreeBalance()+"",dataWriteBackConfig.getDiagramResult().getColumns().getIDegreeBalance().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getIDegreeBalance().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getIDegreeBalance()+"",dataResponseConfig.getDiagramResult().getColumns().getIDegreeBalance().getType(),dataResponseConfig.getDiagramResult().getColumns().getIDegreeBalance().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getIDegreeBalance().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getIDegreeBalance().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getIDegreeBalance().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getIDegreeBalance().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getUpStrokeWattMax().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getUpStrokeWattMax().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram()!=null){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getUpStrokeWattMax()+"",dataWriteBackConfig.getDiagramResult().getColumns().getUpStrokeWattMax().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getUpStrokeWattMax().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getUpStrokeWattMax()+"",dataResponseConfig.getDiagramResult().getColumns().getUpStrokeWattMax().getType(),dataResponseConfig.getDiagramResult().getColumns().getUpStrokeWattMax().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getUpStrokeWattMax().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getUpStrokeWattMax().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getUpStrokeWattMax().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getUpStrokeWattMax().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getDownStrokeWattMax().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getDownStrokeWattMax().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram()!=null){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getDownStrokeWattMax()+"",dataWriteBackConfig.getDiagramResult().getColumns().getDownStrokeWattMax().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getDownStrokeWattMax().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getDownStrokeWattMax()+"",dataResponseConfig.getDiagramResult().getColumns().getDownStrokeWattMax().getType(),dataResponseConfig.getDiagramResult().getColumns().getDownStrokeWattMax().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getDownStrokeWattMax().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getDownStrokeWattMax().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getDownStrokeWattMax().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getDownStrokeWattMax().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getWattDegreeBalance().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getWattDegreeBalance().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram()!=null){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getWattDegreeBalance()+"",dataWriteBackConfig.getDiagramResult().getColumns().getWattDegreeBalance().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getWattDegreeBalance().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getWattDegreeBalance()+"",dataResponseConfig.getDiagramResult().getColumns().getWattDegreeBalance().getType(),dataResponseConfig.getDiagramResult().getColumns().getWattDegreeBalance().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getWattDegreeBalance().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getWattDegreeBalance().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getWattDegreeBalance().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getWattDegreeBalance().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getDeltaRadius().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getDeltaRadius().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getFESDiagram()!=null){
-														value=getOperaValue(calculateResponseData.getFESDiagram().getDeltaRadius()+"",dataWriteBackConfig.getDiagramResult().getColumns().getDeltaRadius().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getDeltaRadius().getRatio());
+														value=getOperaValue(calculateResponseData.getFESDiagram().getDeltaRadius()+"",dataResponseConfig.getDiagramResult().getColumns().getDeltaRadius().getType(),dataResponseConfig.getDiagramResult().getColumns().getDeltaRadius().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getDeltaRadius().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getDeltaRadius().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getDeltaRadius().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getDeltaRadius().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getWellDownSystemEfficiency().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getWellDownSystemEfficiency().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getSystemEfficiency()!=null){
-														value=getOperaValue(calculateResponseData.getSystemEfficiency().getWellDownSystemEfficiency()+"",dataWriteBackConfig.getDiagramResult().getColumns().getWellDownSystemEfficiency().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getWellDownSystemEfficiency().getRatio());
+														value=getOperaValue(calculateResponseData.getSystemEfficiency().getWellDownSystemEfficiency()+"",dataResponseConfig.getDiagramResult().getColumns().getWellDownSystemEfficiency().getType(),dataResponseConfig.getDiagramResult().getColumns().getWellDownSystemEfficiency().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getWellDownSystemEfficiency().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getWellDownSystemEfficiency().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getWellDownSystemEfficiency().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getWellDownSystemEfficiency().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getSurfaceSystemEfficiency().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getSurfaceSystemEfficiency().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getSystemEfficiency()!=null){
-														value=getOperaValue(calculateResponseData.getSystemEfficiency().getSurfaceSystemEfficiency()+"",dataWriteBackConfig.getDiagramResult().getColumns().getSurfaceSystemEfficiency().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getSurfaceSystemEfficiency().getRatio());
+														value=getOperaValue(calculateResponseData.getSystemEfficiency().getSurfaceSystemEfficiency()+"",dataResponseConfig.getDiagramResult().getColumns().getSurfaceSystemEfficiency().getType(),dataResponseConfig.getDiagramResult().getColumns().getSurfaceSystemEfficiency().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getSurfaceSystemEfficiency().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getSurfaceSystemEfficiency().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getSurfaceSystemEfficiency().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getSurfaceSystemEfficiency().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getSystemEfficiency().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getSystemEfficiency().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getSystemEfficiency()!=null){
-														value=getOperaValue(calculateResponseData.getSystemEfficiency().getSystemEfficiency()+"",dataWriteBackConfig.getDiagramResult().getColumns().getSystemEfficiency().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getSystemEfficiency().getRatio());
+														value=getOperaValue(calculateResponseData.getSystemEfficiency().getSystemEfficiency()+"",dataResponseConfig.getDiagramResult().getColumns().getSystemEfficiency().getType(),dataResponseConfig.getDiagramResult().getColumns().getSystemEfficiency().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getSystemEfficiency().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getSystemEfficiency().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getSystemEfficiency().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getSystemEfficiency().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
 											
-											if(dataWriteBackConfig.getDiagramResult().getColumns().getEnergyPer100mLift().getEnable()){
+											if(dataResponseConfig.getDiagramResult().getColumns().getEnergyPer100mLift().getEnable()){
 												String value="null";
 												if(calculateResponseData!=null&&(calculateResponseData.getCalculationStatus().getResultStatus()==1||calculateResponseData.getCalculationStatus().getResultStatus()==-99)){
 													if(calculateResponseData.getSystemEfficiency()!=null){
-														value=getOperaValue(calculateResponseData.getSystemEfficiency().getEnergyPer100mLift()+"",dataWriteBackConfig.getDiagramResult().getColumns().getEnergyPer100mLift().getType(),dataWriteBackConfig.getDiagramResult().getColumns().getEnergyPer100mLift().getRatio());
+														value=getOperaValue(calculateResponseData.getSystemEfficiency().getEnergyPer100mLift()+"",dataResponseConfig.getDiagramResult().getColumns().getEnergyPer100mLift().getType(),dataResponseConfig.getDiagramResult().getColumns().getEnergyPer100mLift().getRatio());
 													}	
 												}
-												updateSql+= dataWriteBackConfig.getDiagramResult().getColumns().getEnergyPer100mLift().getColumn()+ "="+value+",";
-												insertColumns+=dataWriteBackConfig.getDiagramResult().getColumns().getEnergyPer100mLift().getColumn()+",";
+												updateSql+= dataResponseConfig.getDiagramResult().getColumns().getEnergyPer100mLift().getColumn()+ "="+value+",";
+												insertColumns+=dataResponseConfig.getDiagramResult().getColumns().getEnergyPer100mLift().getColumn()+",";
 												insertValues+=value+",";
 												itemCount++;
 											}
@@ -603,13 +610,13 @@ public class RPCWellDataSyncThread  extends Thread{
 													insertValues=insertValues.substring(0,insertValues.length()-1);
 												}
 												
-												updateSql+=" where "+dataWriteBackConfig.getDiagramResult().getColumns().getWellName().getColumn()+"="+wellNameValue+" "
-														+ " and "+dataWriteBackConfig.getDiagramResult().getColumns().getAcqTime().getColumn()+"="+acqTimeValue;
+												updateSql+=" where "+dataResponseConfig.getDiagramResult().getColumns().getWellName().getColumn()+"="+wellNameValue+" "
+														+ " and "+dataResponseConfig.getDiagramResult().getColumns().getAcqTime().getColumn()+"="+acqTimeValue;
 												insertSql+=insertColumns+") values ("+insertValues+")";
 												
 												String writeBackSql=updateSql;
 												
-												if("insert".equalsIgnoreCase(dataWriteBackConfig.getWriteType())){
+												if("insert".equalsIgnoreCase(dataResponseConfig.getWriteType())){
 													writeBackSql=insertSql;
 												}
 												

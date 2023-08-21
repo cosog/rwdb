@@ -2,7 +2,7 @@ package com.cosog.model;
 
 import com.cosog.utils.StringManagerUtils;
 
-public class DataSourceConfig {
+public class DataRequestConfig {
 	
 	private DiagramTableConfig DiagramTable;
 

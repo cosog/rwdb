@@ -288,8 +288,13 @@ public class StringManagerUtils {
         if (index == -1) {
             index = path.indexOf("bin");
         }
+        
+        if(index == -1){
+        	path="";
+        }else{
+        	path = path.substring(0, index);
+        }
 
-        path = path.substring(0, index);
         if (path.startsWith("zip")) {
             path = path.substring(4);
         } else if (path.startsWith("file")) {

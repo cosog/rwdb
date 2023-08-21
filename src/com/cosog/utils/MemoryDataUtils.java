@@ -4,62 +4,62 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.cosog.model.DataReadTimeInfo;
-import com.cosog.model.DataSourceConfig;
-import com.cosog.model.DataWriteBackConfig;
+import com.cosog.model.DataRequestConfig;
+import com.cosog.model.DataResponseConfig;
 import com.cosog.model.WorkType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class MemoryDataUtils {
 
-	public static void loadDataSourceConfig(){
+	public static void loadDataReqConfig(){
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
 		StringManagerUtils stringManagerUtils=new StringManagerUtils();
 		
-		String path=stringManagerUtils.getFilePath("dataSource.json","dataSource/");
+		String path=stringManagerUtils.getFilePath("req.json","conf/");
 		String data=StringManagerUtils.readFile(path,"utf-8").replaceAll(" ", "");
 		
-		type = new TypeToken<DataSourceConfig>() {}.getType();
-		DataSourceConfig dataSourceConfig=gson.fromJson(data, type);
+		type = new TypeToken<DataRequestConfig>() {}.getType();
+		DataRequestConfig dataRequestConfig=gson.fromJson(data, type);
 		
 		Map<String, Object> map = DataModelMap.getMapObject();
-		map.put("dataSourceConfig", dataSourceConfig);
+		map.put("dataRequestConfig", dataRequestConfig);
 	}
 	
-	public static DataSourceConfig getDataSourceConfig(){
+	public static DataRequestConfig getDataReqConfig(){
 		Map<String, Object> map = DataModelMap.getMapObject();
-		DataSourceConfig dataSourceConfig=(DataSourceConfig) map.get("dataSourceConfig");
-		if(dataSourceConfig==null){
-			loadDataSourceConfig();
-			dataSourceConfig=(DataSourceConfig) map.get("dataSourceConfig");
+		DataRequestConfig dataRequestConfig=(DataRequestConfig) map.get("dataRequestConfig");
+		if(dataRequestConfig==null){
+			loadDataReqConfig();
+			dataRequestConfig=(DataRequestConfig) map.get("dataRequestConfig");
 		}
-		return dataSourceConfig;
+		return dataRequestConfig;
 	}
 	
-	public static void loadDataWriteBackConfig(){
+	public static void loadDataResponseConfig(){
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
 		StringManagerUtils stringManagerUtils=new StringManagerUtils();
 		
-		String path=stringManagerUtils.getFilePath("writeBackConfig.json","dataSource/");
+		String path=stringManagerUtils.getFilePath("res.json","conf/");
 		String data=stringManagerUtils.readFile(path,"utf-8");
 		
-		type = new TypeToken<DataWriteBackConfig>() {}.getType();
-		DataWriteBackConfig dataWriteBackConfig=gson.fromJson(data, type);
+		type = new TypeToken<DataResponseConfig>() {}.getType();
+		DataResponseConfig dataResponseConfig=gson.fromJson(data, type);
 		
 		Map<String, Object> map = DataModelMap.getMapObject();
-		map.put("dataWriteBackConfig", dataWriteBackConfig);
+		map.put("dataResponseConfig", dataResponseConfig);
 	}
 	
-	public static DataWriteBackConfig getDataWriteBackConfig(){
+	public static DataResponseConfig getDataResponseConfig(){
 		Map<String, Object> map = DataModelMap.getMapObject();
-		DataWriteBackConfig dataWriteBackConfig=(DataWriteBackConfig) map.get("dataWriteBackConfig");
-		if(dataWriteBackConfig==null){
-			loadDataWriteBackConfig();
-			dataWriteBackConfig=(DataWriteBackConfig) map.get("dataWriteBackConfig");
+		DataResponseConfig dataResponseConfig=(DataResponseConfig) map.get("dataResponseConfig");
+		if(dataResponseConfig==null){
+			loadDataResponseConfig();
+			dataResponseConfig=(DataResponseConfig) map.get("dataResponseConfig");
 		}
-		return dataWriteBackConfig;
+		return dataResponseConfig;
 	}
 	
 	public static void loadDataReadTimeInfo(){
@@ -67,7 +67,7 @@ public class MemoryDataUtils {
 		java.lang.reflect.Type type=null;
 		StringManagerUtils stringManagerUtils=new StringManagerUtils();
 		
-		String path=stringManagerUtils.getFilePath("dataReadTimeInfo.json","dataSource/");
+		String path=stringManagerUtils.getFilePath("timestamp.json","conf/");
 		String data=stringManagerUtils.readFile(path,"utf-8");
 		
 		type = new TypeToken<DataReadTimeInfo>() {}.getType();

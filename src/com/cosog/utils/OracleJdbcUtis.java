@@ -10,8 +10,8 @@ import java.util.List;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
-import com.cosog.model.DataSourceConfig;
-import com.cosog.model.DataWriteBackConfig;
+import com.cosog.model.DataRequestConfig;
+import com.cosog.model.DataResponseConfig;
 
 import oracle.sql.CLOB;
 
@@ -26,19 +26,19 @@ public class OracleJdbcUtis {
 	
 	private static void initDiagramDataSource(){
 		
-		DataSourceConfig dataSourceConfig=MemoryDataUtils.getDataSourceConfig();
+		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
 		
-		if(dataSourceConfig!=null && dataSourceConfig.getDiagramTable()!=null && dataSourceConfig.getDiagramTable().getConnectInfo()!=null && dataSourceConfig.getDiagramTable().getEnable()){
+		if(dataRequestConfig!=null && dataRequestConfig.getDiagramTable()!=null && dataRequestConfig.getDiagramTable().getConnectInfo()!=null && dataRequestConfig.getDiagramTable().getEnable()){
 			
 			outerDiagramDataSource = new BasicDataSource();
 			
 			outerDiagramDataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 
-			outerDiagramDataSource.setUrl("jdbc:oracle:thin:@"+dataSourceConfig.getDiagramTable().getConnectInfo().getIP()+":"+dataSourceConfig.getDiagramTable().getConnectInfo().getPort()+(dataSourceConfig.getDiagramTable().getConnectInfo().getVersion()>=12?"/":":")+dataSourceConfig.getDiagramTable().getConnectInfo().getInstanceName()+"");
+			outerDiagramDataSource.setUrl("jdbc:oracle:thin:@"+dataRequestConfig.getDiagramTable().getConnectInfo().getIP()+":"+dataRequestConfig.getDiagramTable().getConnectInfo().getPort()+(dataRequestConfig.getDiagramTable().getConnectInfo().getVersion()>=12?"/":":")+dataRequestConfig.getDiagramTable().getConnectInfo().getInstanceName()+"");
 
-			outerDiagramDataSource.setUsername(dataSourceConfig.getDiagramTable().getConnectInfo().getUser());
+			outerDiagramDataSource.setUsername(dataRequestConfig.getDiagramTable().getConnectInfo().getUser());
 
-			outerDiagramDataSource.setPassword(dataSourceConfig.getDiagramTable().getConnectInfo().getPassword());
+			outerDiagramDataSource.setPassword(dataRequestConfig.getDiagramTable().getConnectInfo().getPassword());
 
 			outerDiagramDataSource.setInitialSize(5);  // 初始化连接数
 
@@ -52,19 +52,19 @@ public class OracleJdbcUtis {
 	
 	private static void initProductionDataSource(){
 		
-		DataSourceConfig dataSourceConfig=MemoryDataUtils.getDataSourceConfig();
+		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
 		
-		if(dataSourceConfig!=null && dataSourceConfig.getProductionDataTable()!=null && dataSourceConfig.getProductionDataTable().getConnectInfo()!=null && dataSourceConfig.getProductionDataTable().getEnable()){
+		if(dataRequestConfig!=null && dataRequestConfig.getProductionDataTable()!=null && dataRequestConfig.getProductionDataTable().getConnectInfo()!=null && dataRequestConfig.getProductionDataTable().getEnable()){
 			
 			outerProductionDataSource = new BasicDataSource();
 			
 			outerProductionDataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 
-			outerProductionDataSource.setUrl("jdbc:oracle:thin:@"+dataSourceConfig.getProductionDataTable().getConnectInfo().getIP()+":"+dataSourceConfig.getProductionDataTable().getConnectInfo().getPort()+(dataSourceConfig.getProductionDataTable().getConnectInfo().getVersion()>=12?"/":":")+dataSourceConfig.getProductionDataTable().getConnectInfo().getInstanceName()+"");
+			outerProductionDataSource.setUrl("jdbc:oracle:thin:@"+dataRequestConfig.getProductionDataTable().getConnectInfo().getIP()+":"+dataRequestConfig.getProductionDataTable().getConnectInfo().getPort()+(dataRequestConfig.getProductionDataTable().getConnectInfo().getVersion()>=12?"/":":")+dataRequestConfig.getProductionDataTable().getConnectInfo().getInstanceName()+"");
 
-			outerProductionDataSource.setUsername(dataSourceConfig.getProductionDataTable().getConnectInfo().getUser());
+			outerProductionDataSource.setUsername(dataRequestConfig.getProductionDataTable().getConnectInfo().getUser());
 
-			outerProductionDataSource.setPassword(dataSourceConfig.getProductionDataTable().getConnectInfo().getPassword());
+			outerProductionDataSource.setPassword(dataRequestConfig.getProductionDataTable().getConnectInfo().getPassword());
 
 			outerProductionDataSource.setInitialSize(5); // 初始化连接数
 
@@ -78,19 +78,19 @@ public class OracleJdbcUtis {
 	
 	private static void initDataWriteBackDataSource(){
 		
-		DataWriteBackConfig dataWriteBackConfig=MemoryDataUtils.getDataWriteBackConfig();
+		DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
 		
-		if(dataWriteBackConfig!=null && dataWriteBackConfig.getConnectInfo()!=null && dataWriteBackConfig.isEnable()){
+		if(dataResponseConfig!=null && dataResponseConfig.getConnectInfo()!=null && dataResponseConfig.isEnable()){
 			
 			outerDataWriteBackDataSource = new BasicDataSource();
 			
 			outerDataWriteBackDataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 
-			outerDataWriteBackDataSource.setUrl("jdbc:oracle:thin:@"+dataWriteBackConfig.getConnectInfo().getIP()+":"+dataWriteBackConfig.getConnectInfo().getPort()+(dataWriteBackConfig.getConnectInfo().getVersion()>=12?"/":":")+dataWriteBackConfig.getConnectInfo().getInstanceName()+"");
+			outerDataWriteBackDataSource.setUrl("jdbc:oracle:thin:@"+dataResponseConfig.getConnectInfo().getIP()+":"+dataResponseConfig.getConnectInfo().getPort()+(dataResponseConfig.getConnectInfo().getVersion()>=12?"/":":")+dataResponseConfig.getConnectInfo().getInstanceName()+"");
 
-			outerDataWriteBackDataSource.setUsername(dataWriteBackConfig.getConnectInfo().getUser());
+			outerDataWriteBackDataSource.setUsername(dataResponseConfig.getConnectInfo().getUser());
 
-			outerDataWriteBackDataSource.setPassword(dataWriteBackConfig.getConnectInfo().getPassword());
+			outerDataWriteBackDataSource.setPassword(dataResponseConfig.getConnectInfo().getPassword());
 
 			outerDataWriteBackDataSource.setInitialSize(5); // 初始化连接数
 
