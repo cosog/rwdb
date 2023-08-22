@@ -68,6 +68,12 @@ public class CalculateUtils {
 		String responseDataStr=StringManagerUtils.sendPostMethod(FESDiagramUrl, requestDataStr,"utf-8",0,0);
 		type = new TypeToken<RPCCalculateResponseData>() {}.getType();
 		RPCCalculateResponseData responseData=gson.fromJson(responseDataStr, type);
+		
+		if("rpc001".equalsIgnoreCase(responseData.getWellName())){
+			System.out.println("requestDataStr"+requestDataStr);
+			System.out.println("responseDataStr"+responseDataStr);
+		}
+		
 		return responseData;
 	}
 	

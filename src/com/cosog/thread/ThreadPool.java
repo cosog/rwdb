@@ -7,8 +7,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ThreadPool {
 	private static Map<String, Object> map = new Hashtable<>();
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	private ThreadPoolExecutor executor;
 	/**
 	* 阻塞任务队列数
@@ -148,6 +152,7 @@ public class ThreadPool {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+				logger.error("error", e);
 			}
 		}
 	}

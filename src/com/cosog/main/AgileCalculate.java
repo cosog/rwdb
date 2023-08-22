@@ -9,6 +9,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+
+import org.apache.log4j.Logger;
+
 import com.cosog.model.DataReadTimeInfo;
 import com.cosog.model.DataRequestConfig;
 import com.cosog.model.DataResponseConfig;
@@ -24,10 +28,11 @@ import com.cosog.utils.StringManagerUtils;
 import com.google.gson.Gson;
 
 public class AgileCalculate {
-
+	private static final Logger logger = Logger.getLogger(AgileCalculate.class.getName());
+//	private static Logger logger = Logger.getLogger(AgileCalculate.class.getName());
+	
 	@SuppressWarnings({ "static-access", "unused" })
 	public static void main(String[] args) {
-
 		try {
 			DIagramSimulateDataThread dIagramSimulateDataThread=new DIagramSimulateDataThread();
 			dIagramSimulateDataThread.start();
@@ -320,6 +325,7 @@ public class AgileCalculate {
 									Thread.sleep(1000*1);
 								}catch (Exception e) {
 									e.printStackTrace();
+									logger.error("error", e);
 								}
 						    }
 							//将读取数据时间保存到本地
@@ -345,6 +351,7 @@ public class AgileCalculate {
 						}
 					} catch (SQLException e1) {
 						e1.printStackTrace();
+						logger.error("error", e1);
 					}finally{
 						OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
 					}
@@ -352,12 +359,21 @@ public class AgileCalculate {
 						Thread.sleep(1*1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
+						logger.error("error", e);
 					}
 				
 				}while(true);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("error", e);
 		}
 	}
+	
+//	@PostConstruct
+//	public void init() throws InterruptedException {
+//	     Thread.sleep(10*1000);//这里如果方法执行过长会导致项目一直无法提供服务
+//	     System.out.println(123456);
+//	 }
+
 }

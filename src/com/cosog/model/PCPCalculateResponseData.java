@@ -5,9 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.cosog.utils.StringManagerUtils;
 public  class PCPCalculateResponseData implements Serializable , Comparable<PCPCalculateResponseData>{
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(PCPCalculateResponseData.class.getName());
 	private String WellName;
 	private String Scene;
 	private String AcqTime;
@@ -818,8 +821,9 @@ public  class PCPCalculateResponseData implements Serializable , Comparable<PCPC
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("error", e);
 		}
-		return (int)(to-from);   // 根据值或者位升序排列，降序修改相减顺序即�?
+		return (int)(to-from);   // 根据值或者位升序排列，降序修改相减顺序即�?
 	}
 
 	public String getScene() {
