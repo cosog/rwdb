@@ -9,7 +9,9 @@ import java.sql.Statement;
 import java.util.List;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.log4j.Logger;
 
+import com.cosog.main.AgileCalculate;
 import com.cosog.model.DataRequestConfig;
 import com.cosog.model.DataResponseConfig;
 
@@ -17,7 +19,8 @@ import oracle.sql.CLOB;
 
 @SuppressWarnings("deprecation")
 public class OracleJdbcUtis {
-
+	private static final Logger logger = Logger.getLogger(OracleJdbcUtis.class.getName());
+	
 	public static BasicDataSource outerDiagramDataSource=null;
 	
 	public static BasicDataSource outerProductionDataSource=null;
@@ -164,6 +167,8 @@ public class OracleJdbcUtis {
             }catch(SQLException e){  
                 System.out.println("closeDBConnectionError!");  
                 e.printStackTrace();  
+                logger.info("closeDBConnectionError!");
+                logger.error("error", e);
             }finally{  
                 try{
                 	if(pstmt!=null)
@@ -172,6 +177,7 @@ public class OracleJdbcUtis {
                 		rs.close();
                 }catch(SQLException e){  
                     e.printStackTrace();  
+                    logger.error("error", e);
                 }  
                 conn = null;  
             }  
@@ -192,6 +198,8 @@ public class OracleJdbcUtis {
             }catch(SQLException e){  
                 System.out.println("closeDBConnectionError!");  
                 e.printStackTrace();  
+                logger.info("closeDBConnectionError!");
+                logger.error("error", e);
             }finally{  
                 try{
                 	if(stmt!=null){
@@ -203,6 +211,7 @@ public class OracleJdbcUtis {
                 		rs.close();
                 }catch(SQLException e){  
                     e.printStackTrace();  
+                    logger.error("error", e);
                 }  
                 conn = null;  
             }  

@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cosog.model.DataRequestConfig;
 import com.cosog.model.DataResponseConfig;
 import com.cosog.utils.MemoryDataUtils;
@@ -12,6 +15,7 @@ import com.cosog.utils.OracleJdbcUtis;
 import com.cosog.utils.StringManagerUtils;
 
 public class DIagramSimulateDataThread extends Thread{
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	public void run(){
 		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
 		DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
@@ -40,7 +44,8 @@ public class DIagramSimulateDataThread extends Thread{
 						time=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 						String wellName="";
 						int iNum=0;
-						System.out.println(time+"-生成模拟数据");
+						StringManagerUtils.printLog(time+"-生成模拟数据");
+						logger.info(time+"-生成模拟数据");
 						try{  
 							for(int i=1;i<=100;i++){
 								if(i<10){
@@ -86,12 +91,14 @@ public class DIagramSimulateDataThread extends Thread{
 							}
 				        }catch(RuntimeException re){  
 				        	re.printStackTrace();
+				        	logger.error("error", re);
 				        }
 						
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					logger.error("error", e);
 				}finally{
 					OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
 					OracleJdbcUtis.closeDBConnection(writeBackConn, writeBackPstmt, writeBackRs);
@@ -100,6 +107,7 @@ public class DIagramSimulateDataThread extends Thread{
 					Thread.sleep(60*1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
+					logger.error("error", e);
 				}
 			}while(true);
 			

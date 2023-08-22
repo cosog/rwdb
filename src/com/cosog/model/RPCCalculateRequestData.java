@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,6 +18,8 @@ import com.google.gson.Gson;
 
 public class RPCCalculateRequestData implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
+	private static final Logger logger = Logger.getLogger(RPCCalculateRequestData.class.getName());
 	
 	private String WellName;
 	
@@ -1079,12 +1083,15 @@ public class RPCCalculateRequestData implements Serializable {
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error("error", e);
 		} catch (JsonMappingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error("error", e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error("error", e);
 		}
         return result;
 	}

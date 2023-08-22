@@ -6,11 +6,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.cosog.utils.StringManagerUtils;
 
 public class RPCCalculateResponseData implements Serializable, Comparable<RPCCalculateResponseData>{
 	
 	private static final long serialVersionUID = 1L;
+	
+	private static final Logger logger = Logger.getLogger(RPCCalculateResponseData.class.getName());
 	
 	 private String WellName;
 	 
@@ -1420,8 +1424,9 @@ public class RPCCalculateResponseData implements Serializable, Comparable<RPCCal
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("error", e);
 		}
-		return (int)(to-from);   // 根据值或者位升序排列，降序修改相减顺序即�?
+		return (int)(to-from);   // 根据值或者位升序排列，降序修改相减顺序即�?
 	}
 
 	public String getScene() {

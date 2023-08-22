@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cosog.model.DataResponseConfig;
 import com.cosog.model.RPCCalculateResponseData;
 import com.cosog.utils.MemoryDataUtils;
@@ -14,6 +17,7 @@ import com.cosog.utils.StringManagerUtils;
 
 public class DiagramDataWriteBackThread  extends Thread{
 	private RPCCalculateResponseData rpcCalculateResponseData;
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	public DiagramDataWriteBackThread(RPCCalculateResponseData rpcCalculateResponseData) {
 		super();
 		this.rpcCalculateResponseData = rpcCalculateResponseData;
@@ -484,6 +488,7 @@ public class DiagramDataWriteBackThread  extends Thread{
 					            int iNum=pstmt.executeUpdate();
 					        }catch(RuntimeException re){  
 					        	re.printStackTrace();
+					        	logger.error("error", re);
 					        }
 						}
 					}
@@ -492,6 +497,7 @@ public class DiagramDataWriteBackThread  extends Thread{
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.error("error", e);
 			} finally{
 				OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
 			}

@@ -25,6 +25,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
+import com.cosog.main.AgileCalculate;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -35,7 +38,7 @@ import oracle.sql.CLOB;
 
 public class StringManagerUtils {
 	private final static String DATEPATTERN = "yyyy-MM-dd";
-	
+	private static final Logger logger = Logger.getLogger(AgileCalculate.class.getName());
 	public static boolean isNotNull(String value) {
         boolean flag = false;
         if (value != null && value.trim().length() > 0 && (!"".equals(value.trim())) && !"null".equalsIgnoreCase(value)) {
@@ -79,6 +82,7 @@ public class StringManagerUtils {
             s_date = (Date) sdf.parse(strDate);
         } catch (ParseException e) {
             e.printStackTrace();
+            logger.error("error", e);
         }
         return s_date;
     }
@@ -123,6 +127,7 @@ public class StringManagerUtils {
             result = new String(byte_data);
         } catch (SQLException e) {
             e.printStackTrace();
+            logger.error("error", e);
         }
         return result;
     }
@@ -133,6 +138,7 @@ public class StringManagerUtils {
             msgContent = BlobContent.getBytes(1, (int) BlobContent.length());
         } catch (SQLException e1) {
             e1.printStackTrace();
+            logger.error("error", e1);
         }
         String newStr = "";
         long BlobLength;
@@ -149,6 +155,7 @@ public class StringManagerUtils {
         } catch (Exception e)
         {
             e.printStackTrace();
+            logger.error("error", e);
         }
         return newStr;
     }
@@ -306,6 +313,7 @@ public class StringManagerUtils {
             path = URLDecoder.decode(path, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            logger.error("error", e);
         }
         path = path + path0 + index4Str;
         return path;
@@ -337,6 +345,7 @@ public class StringManagerUtils {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("error", e);
         }
         return fileContent;
     }
@@ -353,12 +362,15 @@ public class StringManagerUtils {
             result = true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            logger.error("error", e);
             result = false;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            logger.error("error", e);
             result = false;
         } catch (IOException e) {
             e.printStackTrace();
+            logger.error("error", e);
             result = false;
         } finally {
             try {
@@ -366,6 +378,7 @@ public class StringManagerUtils {
                 fileOutputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
+                logger.error("error", e);
             }
         }
 
@@ -414,6 +427,7 @@ public class StringManagerUtils {
         } catch (Exception e) {
             // TODO: handle exception
             e.printStackTrace();
+            logger.error("error", e);
         } finally {
             //不要忘记关闭
             if (pw != null) {
@@ -507,6 +521,7 @@ public class StringManagerUtils {
         } catch (Exception e) {
             flag = false;
             e.printStackTrace();
+            logger.error("error", e);
         }
 
         // 返回是否成功的标记
@@ -567,9 +582,12 @@ public class StringManagerUtils {
                 throw new Exception();
             }
         } catch (Exception e) {
-            System.out.println("发送 POST 请求出现异常！" + e);
-            System.out.println("url:" + url + ",param:" + param);
+        	printLog("发送 POST 请求出现异常！" + e);
+        	printLog("url:" + url + ",param:" + param);
             e.printStackTrace();
+            logger.info("发送 POST 请求出现异常！" + e);
+            logger.info("url:" + url + ",param:" + param);
+            logger.error("error", e);
         } finally {
             try {
                 if (os != null) {
@@ -589,6 +607,7 @@ public class StringManagerUtils {
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
+                logger.error("error", ex);
             }
         }
         return "";
@@ -607,10 +626,14 @@ public class StringManagerUtils {
             long to = toDate.getTime();
             result = to - from;
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
+        	logger.error("error", e);
             e.printStackTrace();
             result = 0;
         }
         return result;
+    }
+    
+    public static void printLog(String x) {
+        System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss") + ":" + x);
     }
 }

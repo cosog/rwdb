@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cosog.model.DataRequestConfig;
 import com.cosog.model.DataResponseConfig;
@@ -24,7 +25,9 @@ import com.google.gson.Gson;
 
 public class RPCWellDataSyncThread  extends Thread{
 	private RPCCalculateRequestData calculateRequestData;
-	private Logger logger = Logger.getLogger(this.getClass());
+//	private Logger logger = Logger.getLogger(this.getClass());
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	public RPCWellDataSyncThread(RPCCalculateRequestData calculateRequestData) {
 		super();
 		this.calculateRequestData = calculateRequestData;
@@ -119,8 +122,8 @@ public class RPCWellDataSyncThread  extends Thread{
 							String iStr=rs.getString(8);
 							String KWattStr=rs.getString(9);
 							
-							System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"-获取"+calculateRequestData.getWellName()+"井功图数据，采集时间："+fesdiagramAcqtimeStr);
-							logger.info(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"-获取"+calculateRequestData.getWellName()+"井功图数据，采集时间："+fesdiagramAcqtimeStr);
+							StringManagerUtils.printLog("获取"+calculateRequestData.getWellName()+"井功图数据，功图采集时间："+fesdiagramAcqtimeStr);
+							logger.info("获取"+calculateRequestData.getWellName()+"井功图数据，功图采集时间："+fesdiagramAcqtimeStr);
 							
 							calculateRequestData.setFESDiagram(new RPCCalculateRequestData.FESDiagram());
 							calculateRequestData.getFESDiagram().setAcqTime(fesdiagramAcqtimeStr);
@@ -625,6 +628,7 @@ public class RPCWellDataSyncThread  extends Thread{
 										            int iNum=writeBackPstmt.executeUpdate();
 										        }catch(RuntimeException re){  
 										        	re.printStackTrace();
+										        	logger.error("error", re);
 										        }
 											}
 										}
@@ -633,6 +637,7 @@ public class RPCWellDataSyncThread  extends Thread{
 								} catch (SQLException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
+									logger.error("error", e);
 								} finally{
 									OracleJdbcUtis.closeDBConnection(writeBackConn, writeBackPstmt, writeBackRs);
 								}
@@ -645,6 +650,7 @@ public class RPCWellDataSyncThread  extends Thread{
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.error("error", e);
 			} finally{
 				OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
 			}
