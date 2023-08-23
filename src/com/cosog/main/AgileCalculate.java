@@ -1,5 +1,8 @@
 package com.cosog.main;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,9 +31,13 @@ import com.cosog.utils.StringManagerUtils;
 import com.google.gson.Gson;
 
 public class AgileCalculate {
-	private static final Logger logger = Logger.getLogger(AgileCalculate.class.getName());
+	private static Logger logger=null;
 //	private static Logger logger = Logger.getLogger(AgileCalculate.class.getName());
 	
+	static{
+		logPathConfig();
+		logger = Logger.getLogger(AgileCalculate.class.getName());
+	}
 	@SuppressWarnings({ "static-access", "unused" })
 	public static void main(String[] args) {
 		try {
@@ -56,8 +63,15 @@ public class AgileCalculate {
 				StringBuffer sqlBuff=null;
 				Gson gson=new Gson();
 				StringManagerUtils stringManagerUtils=new StringManagerUtils();
+				
+				ThreadPool executor = new ThreadPool("RPCWellDataSyncAndCalThreadPool",
+						Config.getInstance().configFile.getThreadPool().getOuterDatabaseSync().getCorePoolSize(), 
+						Config.getInstance().configFile.getThreadPool().getOuterDatabaseSync().getMaximumPoolSize(), 
+						Config.getInstance().configFile.getThreadPool().getOuterDatabaseSync().getKeepAliveTime(), 
+						TimeUnit.SECONDS, 
+						Config.getInstance().configFile.getThreadPool().getOuterDatabaseSync().getWattingCount());
+				
 				do{
-
 					sqlBuff=new StringBuffer();
 					sqlBuff.append("select ");
 					//井id
@@ -169,7 +183,8 @@ public class AgileCalculate {
 						sqlBuff.append(" where t."+dataRequestConfig.getProductionDataTable().getTableInfo().getColumns().getSaveTime().getColumn());
 						sqlBuff.append("= (select max(t2."+dataRequestConfig.getProductionDataTable().getTableInfo().getColumns().getSaveTime().getColumn()+") from "+dataRequestConfig.getProductionDataTable().getTableInfo().getName()+" t2 where t2."+dataRequestConfig.getProductionDataTable().getTableInfo().getColumns().getWellName().getColumn()+"=t."+dataRequestConfig.getProductionDataTable().getTableInfo().getColumns().getWellName().getColumn()+" )");
 					}
-					
+					StringManagerUtils.printLog("get production data,sql:"+sqlBuff.toString());
+					logger.info("get production data,sql:"+sqlBuff.toString());
 					try {
 						//判断生产数据表连接配置是否有效，是否和功图数据表连接配置相同
 						if( (!DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getProductionDataTable().getConnectInfo())) || DataRequestConfig.ConnectInfoEquals(dataRequestConfig.getProductionDataTable().getConnectInfo(), dataRequestConfig.getDiagramTable().getConnectInfo())  ){
@@ -178,16 +193,12 @@ public class AgileCalculate {
 							conn=OracleJdbcUtis.getProductionDataConnection();
 						}
 						if(conn!=null){
-							ThreadPool executor = new ThreadPool("RPCWellDataSyncAndCalThreadPool",
-									Config.getInstance().configFile.getThreadPool().getOuterDatabaseSync().getCorePoolSize(), 
-									Config.getInstance().configFile.getThreadPool().getOuterDatabaseSync().getMaximumPoolSize(), 
-									Config.getInstance().configFile.getThreadPool().getOuterDatabaseSync().getKeepAliveTime(), 
-									TimeUnit.SECONDS, 
-									Config.getInstance().configFile.getThreadPool().getOuterDatabaseSync().getWattingCount());
-							
 							pstmt = conn.prepareStatement(sqlBuff.toString());
 							rs=pstmt.executeQuery();
 							while(rs.next()){
+								
+								
+								
 								RPCCalculateRequestData rpcCalculateRequestData=new RPCCalculateRequestData();
 								rpcCalculateRequestData.init();
 								rpcCalculateRequestData.setWellName(rs.getString(2));
@@ -348,6 +359,9 @@ public class AgileCalculate {
 									StringManagerUtils.writeFile(path,StringManagerUtils.jsonStringFormat(gson.toJson(dataReadTimeInfo)));
 								}
 							}
+						}else{
+							StringManagerUtils.printLog("Production data database connection failure");
+							logger.info("Production data database connection failure");
 						}
 					} catch (SQLException e1) {
 						e1.printStackTrace();
@@ -363,6 +377,9 @@ public class AgileCalculate {
 					}
 				
 				}while(true);
+			}else{
+				StringManagerUtils.printLog("The configuration information of the database is incorrect");
+				logger.info("The configuration information of the database is incorrect");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -376,4 +393,44 @@ public class AgileCalculate {
 //	     System.out.println(123456);
 //	 }
 
+	public static void logPathConfig(){
+		String path=getFilePath("rwdb.log","logs/");
+//		String path="/D:/Program Files/eclipse-workspace/rwdb/logs/rwdb.log";
+		System.setProperty ("LOG4GWORKDIR", path);
+	}
+	
+	public static String getFilePath(String index4Str, String path0) {
+//        URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
+//        String path = url.toString();
+        String path=Class.class.getClass().getResource("/").getPath();
+        int index = path.indexOf(index4Str);
+        if (index == -1) {
+            index = path.indexOf("WEB-INF");
+        }
+
+        if (index == -1) {
+            index = path.indexOf("bin");
+        }
+        
+        if(index == -1){
+        	path="";
+        }else{
+        	path = path.substring(0, index);
+        }
+
+        if (path.startsWith("zip")) {
+            path = path.substring(4);
+        } else if (path.startsWith("file")) {
+            path = path.substring(5);
+        } else if (path.startsWith("jar")) {
+            path = path.substring(9);
+        }
+        try {
+            path = URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        path = path + path0 + index4Str;
+        return path;
+    }
 }

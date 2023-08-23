@@ -105,43 +105,57 @@ public class OracleJdbcUtis {
 		}
 	}
 	
-	public static Connection getDiagramConnection() throws SQLException{
+	public static Connection getDiagramConnection(){
 		Connection conn=null;
 		if(outerDiagramDataSource==null){
 			initDiagramDataSource();
 		}
 		if(outerDiagramDataSource!=null){
-			conn=outerDiagramDataSource.getConnection();
+			try {
+				conn=outerDiagramDataSource.getConnection();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				logger.error("error", e);
+			}
 		}
 		return conn;
 	}
 	
-	public static Connection getProductionDataConnection() throws SQLException{
+	public static Connection getProductionDataConnection(){
 		Connection conn=null;
 		if(outerProductionDataSource==null){
 			initProductionDataSource();
 		}
 		if(outerProductionDataSource!=null){
-			conn=outerProductionDataSource.getConnection();
+			try {
+				conn=outerProductionDataSource.getConnection();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				logger.error("error", e);
+			}
 		}
 		return conn;
 	}
 	
-	public static Connection getDataWriteBackConnection() throws SQLException{
+	public static Connection getDataWriteBackConnection(){
 		Connection conn=null;
 		if(outerDataWriteBackDataSource==null){
 			initDataWriteBackDataSource();
 		}
 		if(outerDataWriteBackDataSource!=null){
-			conn=outerDataWriteBackDataSource.getConnection();
+			try {
+				conn=outerDataWriteBackDataSource.getConnection();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				logger.error("error", e);
+			}
 		}
 		return conn;
 	}
 	
 	
 	public static Connection getConnection(){  
-        try{  
-            
+        try{
         	String driver="";
             String url = ""; 
             String username = "";
@@ -151,7 +165,8 @@ public class OracleJdbcUtis {
             return conn;  
         }  
         catch (Exception e){  
-            System.out.println(e.getMessage());  
+        	e.printStackTrace();
+			logger.error("error", e);
             return null;  
         }  
     }
