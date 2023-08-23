@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,18 @@ public class RPCWellDataSyncThread  extends Thread{
 	}
 	
 	public void run(){
+		Map<String,String> dataReadTimeInfoMap=MemoryDataUtils.getDataReadTimeInfo();
+		
+		String fesdiagramacqtime="";
+		String currentDate=StringManagerUtils.getCurrentTime("yyyy-MM-dd");
+		int defaultTimeSpan=Config.getInstance().configFile.getOther().getDefaultTimeSpan();
+		if(dataReadTimeInfoMap!=null && dataReadTimeInfoMap.containsKey(calculateRequestData.getWellName())){
+			fesdiagramacqtime=dataReadTimeInfoMap.get(calculateRequestData.getWellName());
+		}
+		
+		StringManagerUtils.printLog("Create thread to read fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime);
+		logger.info("Create thread to read fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime);
+		
 		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
 		DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
 		if(calculateRequestData!=null 
@@ -52,15 +65,6 @@ public class RPCWellDataSyncThread  extends Thread{
 				conn=OracleJdbcUtis.getDiagramConnection();
 				if(conn!=null){
 					if(dataRequestConfig.getDiagramTable().getEnable()){
-						Map<String,String> dataReadTimeInfoMap=MemoryDataUtils.getDataReadTimeInfo();
-						
-						String fesdiagramacqtime="";
-						String currentDate=StringManagerUtils.getCurrentTime("yyyy-MM-dd");
-						int defaultTimeSpan=Config.getInstance().configFile.getOther().getDefaultTimeSpan();
-						if(dataReadTimeInfoMap!=null && dataReadTimeInfoMap.containsKey(calculateRequestData.getWellName())){
-							fesdiagramacqtime=dataReadTimeInfoMap.get(calculateRequestData.getWellName());
-						}
-						
 						String wellNameColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getWellName().getColumn();
 						String acqTimeColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getAcqTime().getColumn();
 						String strokeColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getStroke().getColumn();
@@ -112,7 +116,12 @@ public class RPCWellDataSyncThread  extends Thread{
 						pstmt = conn.prepareStatement(finalSql);
 						rs=pstmt.executeQuery();
 						
+						long endTime=0,startTime=0;
+						long diffTime=0;
+		            	double durationTime=diffTime;
+						String timeUnit="ns";
 						while(rs.next()){
+							startTime=System.nanoTime();
 							String fesdiagramAcqtimeStr=rs.getString(2);
 							float stroke=rs.getFloat(3);
 							float spm=rs.getFloat(4);
@@ -121,9 +130,6 @@ public class RPCWellDataSyncThread  extends Thread{
 							String fStr=rs.getString(7);
 							String iStr=rs.getString(8);
 							String KWattStr=rs.getString(9);
-							
-							StringManagerUtils.printLog("获取"+calculateRequestData.getWellName()+"井功图数据，功图采集时间："+fesdiagramAcqtimeStr);
-							logger.info("获取"+calculateRequestData.getWellName()+"井功图数据，功图采集时间："+fesdiagramAcqtimeStr);
 							
 							calculateRequestData.setFESDiagram(new RPCCalculateRequestData.FESDiagram());
 							calculateRequestData.getFESDiagram().setAcqTime(fesdiagramAcqtimeStr);
@@ -134,10 +140,10 @@ public class RPCWellDataSyncThread  extends Thread{
 							calculateRequestData.getFESDiagram().setWatt(new ArrayList<Float>());
 							calculateRequestData.getFESDiagram().setI(new ArrayList<Float>());
 							
-							String[] sArr=sStr.replaceAll(";", ",").replaceAll("，", ",").split(",");
-							String[] fArr=fStr.replaceAll(";", ",").replaceAll("，", ",").split(",");
-							String[] wattArr=KWattStr.replaceAll(";", ",").replaceAll("，", ",").split(",");
-							String[] iArr=iStr.replaceAll(";", ",").replaceAll("，", ",").split(",");
+							String[] sArr=sStr.replaceAll(";", ",").replaceAll(",", ",").split(",");
+							String[] fArr=fStr.replaceAll(";", ",").replaceAll(",", ",").split(",");
+							String[] wattArr=KWattStr.replaceAll(";", ",").replaceAll(",", ",").split(",");
+							String[] iArr=iStr.replaceAll(";", ",").replaceAll(",", ",").split(",");
 							
 							for(int i=0;i<sArr.length;i++){
 								calculateRequestData.getFESDiagram().getS().add(StringManagerUtils.stringToFloat(sArr[i]));
@@ -626,6 +632,27 @@ public class RPCWellDataSyncThread  extends Thread{
 												try{  
 													writeBackPstmt=writeBackConn.prepareStatement(writeBackSql);
 										            int iNum=writeBackPstmt.executeUpdate();
+										            
+										            if(iNum>0){
+										            	endTime=System.nanoTime();
+										            	diffTime=endTime-startTime;
+										            	durationTime=diffTime;
+										            	if(diffTime<1000){
+										            		timeUnit="ns";
+										            	}else if(diffTime>=1000 && diffTime<1000*1000){
+										            		timeUnit="us";
+										            		durationTime=(double)(Math.round(diffTime*100/1000)/100.0);
+										            	}else if(diffTime>=1000*1000 && diffTime<1000*1000*1000){
+										            		timeUnit="ms";
+										            		durationTime=(double)(Math.round(diffTime*100/(1000*1000))/100.0);
+										            	}else if(diffTime>=1000*1000*1000){
+										            		timeUnit="s";
+										            		durationTime=(double)(Math.round(diffTime*100/(1000*1000*1000))/100.0);
+										            	}
+										            	
+										            	StringManagerUtils.printLog("Write back the calculated data,wellname:"+calculateRequestData.getWellName()+",acqtime:"+fesdiagramAcqtimeStr+",resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",resultCode:"+calculateResponseData.getCalculationStatus().getResultCode()+",durationTime:"+durationTime+timeUnit);
+														logger.info("Write back the calculated data,wellname:"+calculateRequestData.getWellName()+",acqtime:"+fesdiagramAcqtimeStr+",resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",resultCode:"+calculateResponseData.getCalculationStatus().getResultCode()+",durationTime:"+durationTime+timeUnit);
+										            }
 										        }catch(RuntimeException re){  
 										        	re.printStackTrace();
 										        	logger.error("error", re);
@@ -644,8 +671,14 @@ public class RPCWellDataSyncThread  extends Thread{
 							}
 							dataReadTimeInfoMap.put(calculateRequestData.getWellName(), fesdiagramAcqtimeStr);
 						}
+					}else{
+						StringManagerUtils.printLog("The configuration information of the diagram data table is incorrect");
+						logger.info("The configuration information of the diagram data table is incorrect");
 					}
 					
+				}else{
+					StringManagerUtils.printLog("Diagram data database connection failure");
+					logger.info("Diagram data database connection failure");
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -654,6 +687,9 @@ public class RPCWellDataSyncThread  extends Thread{
 			} finally{
 				OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
 			}
+		}else{
+			StringManagerUtils.printLog("The configuration information of the diagram data table is incorrect");
+			logger.info("The configuration information of the diagram data table is incorrect");
 		}
 	}
 	

@@ -44,8 +44,8 @@ public class DIagramSimulateDataThread extends Thread{
 						time=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 						String wellName="";
 						int iNum=0;
-						StringManagerUtils.printLog(time+"-生成模拟数据");
-						logger.info(time+"-生成模拟数据");
+						StringManagerUtils.printLog("Insert simulate data");
+						logger.info("Insert simulate data");
 						try{  
 							for(int i=1;i<=100;i++){
 								if(i<10){
@@ -93,7 +93,15 @@ public class DIagramSimulateDataThread extends Thread{
 				        	re.printStackTrace();
 				        	logger.error("error", re);
 				        }
-						
+					}else{
+						if(conn==null){
+							StringManagerUtils.printLog("Diagram data database connection failure");
+							logger.info("Diagram data database connection failure");
+						}
+						if(writeBackConn==null){
+							StringManagerUtils.printLog("Write back database connection failure");
+							logger.info("Write back database connection failure");
+						}
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -111,6 +119,9 @@ public class DIagramSimulateDataThread extends Thread{
 				}
 			}while(true);
 			
+		}else{
+			StringManagerUtils.printLog("The configuration information of the database is incorrect");
+			logger.info("The configuration information of the database is incorrect");
 		}
 	}
 }
