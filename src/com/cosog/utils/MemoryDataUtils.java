@@ -3,6 +3,9 @@ package com.cosog.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
+import com.cosog.main.AgileCalculate;
 import com.cosog.model.DataReadTimeInfo;
 import com.cosog.model.DataRequestConfig;
 import com.cosog.model.DataResponseConfig;
@@ -11,7 +14,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class MemoryDataUtils {
-
+	private static final Logger logger = Logger.getLogger(AgileCalculate.class.getName());
+	
 	public static void loadDataReqConfig(){
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -25,6 +29,10 @@ public class MemoryDataUtils {
 		
 		Map<String, Object> map = DataModelMap.getMapObject();
 		map.put("dataRequestConfig", dataRequestConfig);
+		if(dataRequestConfig==null){
+			StringManagerUtils.printLog("Parsing the req.json file failed");
+			logger.info("Parsing the req.json file failed");
+		}
 	}
 	
 	public static DataRequestConfig getDataReqConfig(){
@@ -50,6 +58,11 @@ public class MemoryDataUtils {
 		
 		Map<String, Object> map = DataModelMap.getMapObject();
 		map.put("dataResponseConfig", dataResponseConfig);
+		
+		if(dataResponseConfig==null){
+			StringManagerUtils.printLog("Parsing the res.json file failed");
+			logger.info("Parsing the res.json file failed");
+		}
 	}
 	
 	public static DataResponseConfig getDataResponseConfig(){
