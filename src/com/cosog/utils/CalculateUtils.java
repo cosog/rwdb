@@ -87,8 +87,6 @@ public class CalculateUtils {
 		String responseDataStr=StringManagerUtils.sendPostMethod(totalUrl, requestDataStr,"utf-8",0,0);
 		type = new TypeToken<TotalAnalysisResponseData>() {}.getType();
 		TotalAnalysisResponseData responseData=gson.fromJson(responseDataStr, type);
-//		System.out.println("姹囨�昏姹傛暟鎹�:"+requestDataStr);
-//		System.out.println("姹囨�昏繑鍥炴暟鎹�:"+responseDataStr);
 		return responseData;
 	}
 	

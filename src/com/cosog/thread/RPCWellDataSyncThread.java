@@ -44,9 +44,6 @@ public class RPCWellDataSyncThread  extends Thread{
 			fesdiagramacqtime=dataReadTimeInfoMap.get(calculateRequestData.getWellName());
 		}
 		
-		StringManagerUtils.printLog("Create thread to read fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime);
-		logger.info("Create thread to read fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime);
-		
 		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
 		DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
 		if(calculateRequestData!=null 
@@ -61,6 +58,11 @@ public class RPCWellDataSyncThread  extends Thread{
 			Connection conn = null;
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
+			String sql="";
+			String finalSql="";
+			int recordCount=0;
+			int writeBackCount=0;
+
 			try {
 				conn=OracleJdbcUtis.getDiagramConnection();
 				if(conn!=null){
@@ -74,8 +76,8 @@ public class RPCWellDataSyncThread  extends Thread{
 						String fColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getF().getColumn();
 						String iColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getI().getColumn();
 						String KWattColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getKWatt().getColumn();
-						String sql="";
-						String finalSql="";
+						sql="";
+						finalSql="";
 						Gson gson = new Gson();
 
 						sql="select "+wellNameColumn+","
@@ -120,7 +122,9 @@ public class RPCWellDataSyncThread  extends Thread{
 						long diffTime=0;
 		            	double durationTime=diffTime;
 						String timeUnit="ns";
+						String logInfo="";
 						while(rs.next()){
+							recordCount++;
 							startTime=System.nanoTime();
 							String fesdiagramAcqtimeStr=rs.getString(2);
 							float stroke=rs.getFloat(3);
@@ -162,17 +166,20 @@ public class RPCWellDataSyncThread  extends Thread{
 							RPCCalculateResponseData calculateResponseData=CalculateUtils.fesDiagramCalculate(gson.toJson(calculateRequestData));
 							
 							//结果回写
-
 							if(dataResponseConfig!=null && dataResponseConfig.isEnable() && calculateResponseData!=null){
 								Connection writeBackConn = null;
 								PreparedStatement writeBackPstmt = null;
 								ResultSet writeBackRs = null;
+								String updateSql="";
+								String insertSql="";
+								String writeBackSql="";
 								try {
 									writeBackConn=OracleJdbcUtis.getDataWriteBackConnection();
 									if(writeBackConn!=null){
 										if(dataResponseConfig.getDiagramResult().getEnable()){
-											String updateSql="";
-											String insertSql="";
+											updateSql="";
+											insertSql="";
+											writeBackSql="";
 											String insertColumns="";
 											String insertValues="";
 											int itemCount=0;
@@ -623,7 +630,7 @@ public class RPCWellDataSyncThread  extends Thread{
 														+ " and "+dataResponseConfig.getDiagramResult().getColumns().getAcqTime().getColumn()+"="+acqTimeValue;
 												insertSql+=insertColumns+") values ("+insertValues+")";
 												
-												String writeBackSql=updateSql;
+												writeBackSql=updateSql;
 												
 												if("insert".equalsIgnoreCase(dataResponseConfig.getWriteType())){
 													writeBackSql=insertSql;
@@ -634,6 +641,7 @@ public class RPCWellDataSyncThread  extends Thread{
 										            int iNum=writeBackPstmt.executeUpdate();
 										            
 										            if(iNum>0){
+										            	writeBackCount++;
 										            	endTime=System.nanoTime();
 										            	diffTime=endTime-startTime;
 										            	durationTime=diffTime;
@@ -649,9 +657,14 @@ public class RPCWellDataSyncThread  extends Thread{
 										            		timeUnit="s";
 										            		durationTime=(double)(Math.round(diffTime*100/(1000*1000*1000))/100.0);
 										            	}
+										            	logInfo="Write back the calculated data,wellname:"+calculateRequestData.getWellName()+",acqtime:"+fesdiagramAcqtimeStr+",resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",resultCode:"+calculateResponseData.getCalculationStatus().getResultCode()+",durationTime:"+durationTime+timeUnit;
 										            	
-										            	StringManagerUtils.printLog("Write back the calculated data,wellname:"+calculateRequestData.getWellName()+",acqtime:"+fesdiagramAcqtimeStr+",resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",resultCode:"+calculateResponseData.getCalculationStatus().getResultCode()+",durationTime:"+durationTime+timeUnit);
-														logger.info("Write back the calculated data,wellname:"+calculateRequestData.getWellName()+",acqtime:"+fesdiagramAcqtimeStr+",resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",resultCode:"+calculateResponseData.getCalculationStatus().getResultCode()+",durationTime:"+durationTime+timeUnit);
+										            	if(calculateResponseData.getCalculationStatus().getResultStatus()!=1){
+										            		logInfo+=",requestData:"+gson.toJson(calculateRequestData);
+										            	}
+										            	
+										            	StringManagerUtils.printLog(logInfo);
+														logger.info(logInfo);
 										            }
 										        }catch(RuntimeException re){  
 										        	re.printStackTrace();
@@ -659,14 +672,28 @@ public class RPCWellDataSyncThread  extends Thread{
 										        }
 											}
 										}
-										
+									}else{
+										StringManagerUtils.printLog("Write back database connection failure");
+										logger.info("Write back database connection failure");
 									}
 								} catch (SQLException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 									logger.error("error", e);
+									StringManagerUtils.printLog("sql:"+writeBackSql);
+									logger.error("sql:"+writeBackSql);
+								} catch (Exception e1) {
+									e1.printStackTrace();
+									logger.error("error", e1);
 								} finally{
 									OracleJdbcUtis.closeDBConnection(writeBackConn, writeBackPstmt, writeBackRs);
+								}
+							}else{
+								if(dataResponseConfig==null || !dataResponseConfig.isEnable()){
+									StringManagerUtils.printLog("Write back database connection failure");
+									logger.info("Write back database connection failure");
+								}else if(calculateResponseData==null){
+									StringManagerUtils.printLog("Calculation failed, no response data");
+									logger.info("Calculation failed, no response data");
 								}
 							}
 							dataReadTimeInfoMap.put(calculateRequestData.getWellName(), fesdiagramAcqtimeStr);
@@ -684,12 +711,25 @@ public class RPCWellDataSyncThread  extends Thread{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				logger.error("error", e);
+				StringManagerUtils.printLog("sql:"+finalSql);
+				logger.error("sql:"+finalSql);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+				logger.error("error", e1);
 			} finally{
 				OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
+				StringManagerUtils.printLog("Create thread to read fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime+",recordCount:"+recordCount+",writeBackCount:"+writeBackCount);
+				logger.info("Create thread to read fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime+",recordCount:"+recordCount+",writeBackCount:"+writeBackCount);
 			}
 		}else{
-			StringManagerUtils.printLog("The configuration information of the diagram data table is incorrect");
-			logger.info("The configuration information of the diagram data table is incorrect");
+			if(calculateRequestData==null){
+				StringManagerUtils.printLog("calculateRequestData is null");
+				logger.info("calculateRequestData is null");
+			}else{
+				StringManagerUtils.printLog("The configuration information of the diagram data table is incorrect");
+				logger.info("The configuration information of the diagram data table is incorrect");
+			}
+			
 		}
 	}
 	
