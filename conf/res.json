@@ -62,7 +62,7 @@
                 "Enable": true
             },
             "ResultName": {
-                "Column": "ResultNmae",
+                "Column": "ResultName",
                 "Type": "varchar2",
                 "Ratio": 1,
                 "Enable": true
@@ -76,6 +76,12 @@
             "OptimizationSuggestion": {
                 "Column": "OptimizationSuggestion",
                 "Type": "varchar2",
+                "Ratio": 1,
+                "Enable": true
+            },
+            "ResultStatus": {
+                "Column": "ResultStatus",
+                "Type": "number",
                 "Ratio": 1,
                 "Enable": true
             },
