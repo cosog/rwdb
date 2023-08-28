@@ -1,6 +1,8 @@
 package com.cosog.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -162,5 +164,16 @@ public class MemoryDataUtils {
 			workTypeMap=(Map<Integer,WorkType>) map.get("workTypeMap");
 		}
 		return workTypeMap;
+	}
+	
+	public static void initDiagramCalculateFailureData(){
+		Map<String, Object> map = DataModelMap.getMapObject();
+		Map<String,List<Long>> calculateFailureMap=new HashMap<String,List<Long>>();
+		map.put("diagramCalculateFailureMap", calculateFailureMap);
+		
+		calculateFailureMap.put("well1", new ArrayList<Long>());
+		
+		List<Long> lsit=calculateFailureMap.get("well1");
+		lsit.add((long) 123);
 	}
 }

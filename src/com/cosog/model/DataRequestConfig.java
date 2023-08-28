@@ -112,7 +112,9 @@ public class DataRequestConfig {
 	
 	public static class FESDiagramTableColumns
 	{
-	    private ColumnInfo WellName;
+		private ColumnInfo DiagramId;
+		
+		private ColumnInfo WellName;
 
 	    private ColumnInfo AcqTime;
 
@@ -200,6 +202,14 @@ public class DataRequestConfig {
 
 		public void setKWatt(ColumnInfo kWatt) {
 			KWatt = kWatt;
+		}
+
+		public ColumnInfo getDiagramId() {
+			return DiagramId;
+		}
+
+		public void setDiagramId(ColumnInfo diagramId) {
+			DiagramId = diagramId;
 		}
 	}
 	

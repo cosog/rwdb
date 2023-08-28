@@ -79,12 +79,6 @@
                 "Ratio": 1,
                 "Enable": true
             },
-            "ResultStatus": {
-                "Column": "ResultStatus",
-                "Type": "number",
-                "Ratio": 1,
-                "Enable": true
-            },
             "LiquidVolumetricProduction": {
                 "Column": "LiquidVolumetricProduction",
                 "Type": "number",
