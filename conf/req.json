@@ -12,7 +12,10 @@
         "TableInfo": {
             "Name": "pc_fd_pumpjack_fdyna_dia_t",
             "Columns": {
-                "WellName": {
+                "DiagramId": {
+                    "Column": "dyna_id",
+                    "Type": "number"
+                },"WellName": {
                     "Column": "well_common_name",
                     "Type": "varchar2"
                 },

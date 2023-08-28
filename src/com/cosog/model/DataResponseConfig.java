@@ -139,8 +139,6 @@ public class DataResponseConfig {
 	    private ColumnInfo ResultCode;
 
 	    private ColumnInfo OptimizationSuggestion;
-	    
-	    private ColumnInfo ResultStatus;
 
 	    private ColumnInfo LiquidVolumetricProduction;
 
@@ -448,14 +446,6 @@ public class DataResponseConfig {
 
 		public void setEnergyPer100mLift(ColumnInfo energyPer100mLift) {
 			EnergyPer100mLift = energyPer100mLift;
-		}
-
-		public ColumnInfo getResultStatus() {
-			return ResultStatus;
-		}
-
-		public void setResultStatus(ColumnInfo resultStatus) {
-			ResultStatus = resultStatus;
 		}
 	}
 	
