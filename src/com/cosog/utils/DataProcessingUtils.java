@@ -1,5 +1,6 @@
 package com.cosog.utils;
 
+import java.util.List;
 import java.util.Map;
 
 import com.cosog.model.DataRequestConfig;
@@ -478,7 +479,7 @@ public class DataProcessingUtils {
 		return sql;
 	}
 	
-	public static String getProductionDataSql(){
+	public static String getProductionDataSql(List<String> wellList){
 		StringBuffer sqlBuff=new StringBuffer();
 		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
 		if(dataRequestConfig!=null 
@@ -591,10 +592,13 @@ public class DataProcessingUtils {
 			//反演液面校正值
 			sqlBuff.append(" "+dataRequestConfig.getProductionDataTable().getTableInfo().getColumns().getLevelCorrectValue().getColumn());
 			
-			sqlBuff.append(" from "+dataRequestConfig.getProductionDataTable().getTableInfo().getName()+" t");
+			sqlBuff.append(" from "+dataRequestConfig.getProductionDataTable().getTableInfo().getName()+" t where 1=1");
+			if( wellList!=null && wellList.size()>0 ){
+				sqlBuff.append(" and t."+dataRequestConfig.getProductionDataTable().getTableInfo().getColumns().getWellName().getColumn()+" in ("+StringManagerUtils.joinStringArr2(wellList, ",")+")");
+			}
 			
 			if(StringManagerUtils.isNotNull(dataRequestConfig.getProductionDataTable().getTableInfo().getColumns().getSaveTime().getColumn())){
-				sqlBuff.append(" where t."+dataRequestConfig.getProductionDataTable().getTableInfo().getColumns().getSaveTime().getColumn());
+				sqlBuff.append(" and t."+dataRequestConfig.getProductionDataTable().getTableInfo().getColumns().getSaveTime().getColumn());
 				sqlBuff.append("= (select max(t2."+dataRequestConfig.getProductionDataTable().getTableInfo().getColumns().getSaveTime().getColumn()+") from "+dataRequestConfig.getProductionDataTable().getTableInfo().getName()+" t2 where t2."+dataRequestConfig.getProductionDataTable().getTableInfo().getColumns().getWellName().getColumn()+"=t."+dataRequestConfig.getProductionDataTable().getTableInfo().getColumns().getWellName().getColumn()+" )");
 			}
 		}

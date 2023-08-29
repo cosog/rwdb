@@ -168,12 +168,7 @@ public class MemoryDataUtils {
 	
 	public static void initDiagramCalculateFailureData(){
 		Map<String, Object> map = DataModelMap.getMapObject();
-		Map<String,List<Long>> calculateFailureMap=new HashMap<String,List<Long>>();
+		Map<String,Map<Integer,List<Long>>> calculateFailureMap=new HashMap<String,Map<Integer,List<Long>>>();
 		map.put("diagramCalculateFailureMap", calculateFailureMap);
-		
-		calculateFailureMap.put("well1", new ArrayList<Long>());
-		
-		List<Long> lsit=calculateFailureMap.get("well1");
-		lsit.add((long) 123);
 	}
 }

@@ -75,7 +75,7 @@ public class AgileCalculate {
 				wellCount=0;
 				rpcCalculateRequestDataList=new ArrayList<RPCCalculateRequestData>();
 				if(acStatusProbeResonanceData!=null){
-					String sql=DataProcessingUtils.getProductionDataSql();
+					String sql=DataProcessingUtils.getProductionDataSql(null);
 					if(StringManagerUtils.isNotNull(sql)){
 						try {
 							//判断生产数据表连接配置是否有效，是否和功图数据表连接配置相同

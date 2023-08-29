@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -80,11 +81,11 @@ public class RPCWellDataSyncThread  extends Thread{
 				writeBackConn=OracleJdbcUtis.getDataWriteBackConnection();
 				if(conn!=null && writeBackConn!=null){
 					Map<String, Object> map = DataModelMap.getMapObject();
-					List<Long> calculateFailureList=new ArrayList<>();
+					Map<Integer,List<Long>> calculateFailureMap=new HashMap<Integer,List<Long>>();
 					if(map.containsKey("diagramCalculateFailureMap")){
-						Map<String,List<Long>> calculateFailureMap=(Map<String, List<Long>>) map.get("diagramCalculateFailureMap");
-						if(calculateFailureMap.containsKey(calculateRequestData.getWellName())){
-							calculateFailureList=calculateFailureMap.get(calculateRequestData.getWellName());
+						Map<String,Map<Integer,List<Long>>> diagramCalculateFailureMap=(Map<String,Map<Integer,List<Long>>>) map.get("diagramCalculateFailureMap");
+						if(diagramCalculateFailureMap.containsKey(calculateRequestData.getWellName())){
+							calculateFailureMap=diagramCalculateFailureMap.get(calculateRequestData.getWellName());
 						}
 					}
 					
@@ -224,7 +225,12 @@ public class RPCWellDataSyncThread  extends Thread{
 							            }
 									}
 								}else{
-									calculateFailureList.add(diagramId);
+									//记录计算失败数据
+									if(!calculateFailureMap.containsKey(calculateResponseData.getCalculationStatus().getResultStatus())){
+										calculateFailureMap.put(calculateResponseData.getCalculationStatus().getResultStatus(), new ArrayList<Long>());
+									}
+									calculateFailureMap.get(calculateResponseData.getCalculationStatus().getResultStatus()).add(diagramId);
+									
 									StringManagerUtils.printLog("Calculation resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime());
 									logger.info("Calculation resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime());
 								}
@@ -243,12 +249,6 @@ public class RPCWellDataSyncThread  extends Thread{
 							logger.error("error", e1);
 						} finally{
 							
-						}
-					}
-					if(calculateFailureList.size()>0){
-						if(map.containsKey("diagramCalculateFailureMap")){
-							Map<String,List<Long>> calculateFailureMap=(Map<String, List<Long>>) map.get("diagramCalculateFailureMap");
-							calculateFailureMap.put(calculateRequestData.getWellName(), calculateFailureList);
 						}
 					}
 				}else{
