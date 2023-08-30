@@ -24,6 +24,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -635,5 +636,165 @@ public class StringManagerUtils {
     
     public static void printLog(String x) {
         System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss") + ":" + x);
+    }
+    
+    public static String join(Object objarr[], String sign) {
+        StringBuffer result = new StringBuffer();
+        int length = objarr != null ? objarr.length : 0;
+        for (int i = 0; objarr != null && i < length; i++) {
+            result.append(objarr[i] + "");
+            if (i < length - 1) {
+                result.append(sign);
+            }
+        }
+        return result.toString();
+    }
+    
+    public static String join(long objarr[], String sign) {
+        StringBuffer result = new StringBuffer();
+        int length = objarr != null ? objarr.length : 0;
+        for (int i = 0; objarr != null && i < length; i++) {
+            result.append(objarr[i] + "");
+            if (i < length - 1) {
+                result.append(sign);
+            }
+        }
+        return result.toString();
+    }
+
+    public static String join(List < Object > objarr, String sign) {
+        StringBuffer result = new StringBuffer();
+        int length = objarr != null ? objarr.size() : 0;
+        for (int i = 0; objarr != null && i < length; i++) {
+            result.append(objarr.get(i) + "");
+            if (i < length - 1) {
+                result.append(sign);
+            }
+        }
+        return result.toString();
+    }
+    
+    public static String join_long(List < Long > objarr, String sign) {
+        StringBuffer result = new StringBuffer();
+        int length = objarr != null ? objarr.size() : 0;
+        for (int i = 0; objarr != null && i < length; i++) {
+            result.append(objarr.get(i) + "");
+            if (i < length - 1) {
+                result.append(sign);
+            }
+        }
+        return result.toString();
+    }
+
+    public static String joinStringArr(String objarr[], String sign) {
+        StringBuffer result = new StringBuffer();
+        int length = objarr != null ? objarr.length : 0;
+        for (int i = 0; objarr != null && i < length; i++) {
+            result.append("\"" + objarr[i] + "\"");
+            if (i < length - 1) {
+                result.append(sign);
+            }
+        }
+        return result.toString();
+    }
+
+    public static String joinStringArr(List < String > objarr, String sign) {
+        StringBuffer result = new StringBuffer();
+        int length = objarr != null ? objarr.size() : 0;
+        for (int i = 0; objarr != null && i < length; i++) {
+            result.append("\"" + objarr.get(i) + "\"");
+            if (i < length - 1) {
+                result.append(sign);
+            }
+        }
+        return result.toString();
+    }
+
+    public static String joinStringArr2(List < String > objarr, String sign) {
+        StringBuffer result = new StringBuffer();
+        int length = objarr != null ? objarr.size() : 0;
+        for (int i = 0; objarr != null && i < length; i++) {
+            result.append("'" + objarr.get(i) + "'");
+            if (i < length - 1) {
+                result.append(sign);
+            }
+        }
+        return result.toString();
+    }
+    
+    public static String joinStringArr2(String[] objarr, String sign) {
+        StringBuffer result = new StringBuffer();
+        int length = objarr != null ? objarr.length : 0;
+        for (int i = 0; objarr != null && i < length; i++) {
+            result.append("'" + objarr[i] + "'");
+            if (i < length - 1) {
+                result.append(sign);
+            }
+        }
+        return result.toString();
+    }
+    
+    public static boolean existOrNot(String data[], String key) {
+        boolean flag = false;
+        if(data!=null){
+        	for (String d: data) {
+                if (d.equalsIgnoreCase(key)) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+
+    public static boolean existOrNot(String data[], String key, boolean caseSensitive) {
+        boolean flag = false;
+        if(data!=null){
+        	for (int i = 0; i < data.length; i++) {
+                boolean match = false;
+                if (caseSensitive) {
+                    match = data[i].equals(key);
+                } else {
+                    match = data[i].equalsIgnoreCase(key);
+                }
+                if (match) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+    
+    public static boolean existOrNot_long(List < Long > list, long value) {
+        boolean flag = false;
+        if(list!=null){
+        	for (int i = 0; i < list.size(); i++) {
+                if (list.get(i)==value) {
+                	flag=true;
+                	break;
+                }
+            }
+        }
+        return flag;
+    }
+
+    public static boolean existOrNot(List < String > list, String key, boolean caseSensitive) {
+        boolean flag = false;
+        if(list!=null){
+        	for (int i = 0; i < list.size(); i++) {
+                boolean match = false;
+                if (caseSensitive) {
+                    match = list.get(i).equals(key);
+                } else {
+                    match = list.get(i).equalsIgnoreCase(key);
+                }
+                if (match) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        return flag;
     }
 }
