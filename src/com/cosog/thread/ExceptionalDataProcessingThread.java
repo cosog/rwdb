@@ -11,14 +11,17 @@ import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.cosog.model.AppRunStatusProbeResonanceData;
+import com.cosog.model.DiagramExceptionData;
+import com.cosog.utils.CalculateUtils;
 import com.cosog.utils.DataModelMap;
+import com.cosog.utils.StringManagerUtils;
 
 public class ExceptionalDataProcessingThread  extends Thread{
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	public void run(){
 		Map<String, Object> map = DataModelMap.getMapObject();
-		Map<String,Map<Integer,List<Long>>> diagramCalculateFailureMap=(Map<String,Map<Integer,List<Long>>>) map.get("diagramCalculateFailureMap");
-		
 		ThreadPool executor = new ThreadPool("diagramExceptionDataProcessing",
 				10, 
 				10, 
@@ -26,25 +29,25 @@ public class ExceptionalDataProcessingThread  extends Thread{
 				TimeUnit.SECONDS, 
 				0);
 		do{
-			if(map.containsKey("diagramCalculateFailureMap")){
-				Iterator<Map.Entry<String,Map<Integer,List<Long>>>> iterator = diagramCalculateFailureMap.entrySet().iterator();
+			AppRunStatusProbeResonanceData acStatusProbeResonanceData=CalculateUtils.appProbe("");
+			String currentTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
+			if(acStatusProbeResonanceData!=null && map.containsKey("diagramCalculateFailureMap")){
+				Map<String,DiagramExceptionData> diagramCalculateFailureMap=(Map<String, DiagramExceptionData>) map.get("diagramCalculateFailureMap");
+				Iterator<Map.Entry<String,DiagramExceptionData>> iterator = diagramCalculateFailureMap.entrySet().iterator();
 				while (iterator.hasNext()) {
-					Map.Entry<String,Map<Integer,List<Long>>> entry = iterator.next();
+					Map.Entry<String,DiagramExceptionData> entry = iterator.next();
 					String wellName=entry.getKey();
-					Map<Integer,List<Long>> calculateFailureMap=entry.getValue();
-					int recordCount=0;
-					if(calculateFailureMap!=null){
-						Iterator<Map.Entry<Integer,List<Long>>> wellIterator=calculateFailureMap.entrySet().iterator();
-						while(wellIterator.hasNext()){
-							Map.Entry<Integer,List<Long>> wellEntry = wellIterator.next();
-							List<Long> list=wellEntry.getValue();
-							recordCount+=list.size();
-						}
-					}
+					DiagramExceptionData diagramExceptionData=entry.getValue();
+					int recordCount=diagramExceptionData.getExceptionDataCount();
 					if(recordCount==0){
 						iterator.remove();
 					}else{
-						executor.execute(new SingleWellExceptionDataProcessingThread(wellName,calculateFailureMap));
+						if(diagramExceptionData.getReCalculateTimes()<=5 
+								|| (diagramExceptionData.getReCalculateTimes()>5 && diagramExceptionData.getReCalculateTimes()<=10 && StringManagerUtils.getTimeDifference(diagramExceptionData.getLastCalculateTime(), currentTime, "yyyy-MM-dd HH:mm:ss")>=5*60*1000  )
+								|| (diagramExceptionData.getReCalculateTimes()>10 && StringManagerUtils.getTimeDifference(diagramExceptionData.getLastCalculateTime(), currentTime, "yyyy-MM-dd HH:mm:ss")>=10*60*1000  )
+								){
+							executor.execute(new SingleWellExceptionDataProcessingThread(wellName,diagramExceptionData));
+						}
 					}
 				}
 				while (!executor.isCompletedByTaskCount()) {
@@ -55,12 +58,13 @@ public class ExceptionalDataProcessingThread  extends Thread{
 						logger.error("error", e);
 					}
 			    }
-				try {
-					Thread.sleep(1*1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					logger.error("error", e);
-				}
+			}
+
+			try {
+				Thread.sleep(60*1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				logger.error("error", e);
 			}
 		}while(true);
 	}

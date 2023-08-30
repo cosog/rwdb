@@ -11,6 +11,7 @@ import com.cosog.main.AgileCalculate;
 import com.cosog.model.DataReadTimeInfo;
 import com.cosog.model.DataRequestConfig;
 import com.cosog.model.DataResponseConfig;
+import com.cosog.model.DiagramExceptionData;
 import com.cosog.model.WorkType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -168,7 +169,7 @@ public class MemoryDataUtils {
 	
 	public static void initDiagramCalculateFailureData(){
 		Map<String, Object> map = DataModelMap.getMapObject();
-		Map<String,Map<Integer,List<Long>>> calculateFailureMap=new HashMap<String,Map<Integer,List<Long>>>();
+		Map<String,DiagramExceptionData> calculateFailureMap=new HashMap<String,DiagramExceptionData>();
 		map.put("diagramCalculateFailureMap", calculateFailureMap);
 	}
 }

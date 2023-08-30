@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import com.cosog.model.DataRequestConfig;
 import com.cosog.model.DataResponseConfig;
+import com.cosog.model.DiagramExceptionData;
+import com.cosog.model.DiagramExceptionData.ExceptionInfo;
 import com.cosog.model.RPCCalculateRequestData;
 import com.cosog.model.RPCCalculateResponseData;
 import com.cosog.utils.CalculateUtils;
@@ -26,14 +28,14 @@ import com.google.gson.Gson;
 public class SingleWellExceptionDataProcessingThread extends Thread{
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	private String wellName;
-	private Map<Integer,List<Long>> calculateFailureMap;
-	public SingleWellExceptionDataProcessingThread(String wellName, Map<Integer, List<Long>> calculateFailureMap) {
+	private DiagramExceptionData diagramExceptionData;
+	public SingleWellExceptionDataProcessingThread(String wellName, DiagramExceptionData diagramExceptionData) {
 		super();
 		this.wellName = wellName;
-		this.calculateFailureMap = calculateFailureMap;
+		this.diagramExceptionData = diagramExceptionData;
 	}
 	public void run(){
-		if(calculateFailureMap!=null && StringManagerUtils.isNotNull(wellName)){
+		if(diagramExceptionData!=null && diagramExceptionData.getExceptionDataList()!=null && diagramExceptionData.getExceptionDataCount()>0 && StringManagerUtils.isNotNull(wellName)){
 			DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
 			DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
 			
@@ -216,13 +218,13 @@ public class SingleWellExceptionDataProcessingThread extends Thread{
 						}
 					}
 					
-					Iterator<Map.Entry<Integer,List<Long>>> wellIterator=calculateFailureMap.entrySet().iterator();
+					Iterator<ExceptionInfo> wellIterator = diagramExceptionData.getExceptionDataList().iterator();
+					List<Long> reCalSucessList=new ArrayList<>();
 					String diagramSql="";
 					while(wellIterator.hasNext()){
-						Map.Entry<Integer,List<Long>> wellEntry = wellIterator.next();
-						int resultStatus=wellEntry.getKey();
-						List<Long> list=wellEntry.getValue();
-						List<Long> reCalSucessList=new ArrayList<>();
+						ExceptionInfo exceptionInfo = wellIterator.next();
+						int resultStatus=exceptionInfo.getResultStatus();
+						List<Long> list=exceptionInfo.getDiagramIdList();
 						if(list==null || list.size()==0){
 							wellIterator.remove();
 						}else{
@@ -310,15 +312,6 @@ public class SingleWellExceptionDataProcessingThread extends Thread{
 											
 										}
 									}
-								 //将计算成功的记录移除
-								 if(reCalSucessList.size()>0){
-									 Iterator<Long> it = list.iterator();
-									 while(it.hasNext()){
-										 if(StringManagerUtils.existOrNot_long(reCalSucessList, it.next())){
-											 it.remove();
-										 }
-									 }
-								 }
 							 } catch (SQLException e1) {
 									e1.printStackTrace();
 									logger.error("error", e1);
@@ -330,9 +323,31 @@ public class SingleWellExceptionDataProcessingThread extends Thread{
 								}
 						}
 					}
+
+					 //将计算成功的记录移除
+					if(reCalSucessList.size()>0){
+						diagramExceptionData.setReCalculateTimes(0);
+						wellIterator = diagramExceptionData.getExceptionDataList().iterator();
+						while(wellIterator.hasNext()){
+							ExceptionInfo exceptionInfo = wellIterator.next();
+							int resultStatus=exceptionInfo.getResultStatus();
+							List<Long> list=exceptionInfo.getDiagramIdList();
+							if(list==null || list.size()==0){
+								wellIterator.remove();
+							}else{
+								Iterator<Long> it = list.iterator();
+								while(it.hasNext()){
+									if(StringManagerUtils.existOrNot_long(reCalSucessList, it.next())){
+										it.remove();
+									}
+								}
+							}
+						}
+					}else{
+						diagramExceptionData.setReCalculateTimes(diagramExceptionData.getReCalculateTimes()+1);
+					}
+					diagramExceptionData.setLastCalculateTime(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss"));
 				}
-				
-				
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 				logger.error("error", e1);
@@ -346,17 +361,7 @@ public class SingleWellExceptionDataProcessingThread extends Thread{
 				OracleJdbcUtis.closeDBConnection(prodConn, prodPstmt, prodRs);
 				OracleJdbcUtis.closeDBConnection(writeBackConn, writeBackPstmt, writeBackRs);
 			}
-			
-			
-			
-			
-			
-			
-			
-			
 		}
-		
-		
 	}
 	public String getWellName() {
 		return wellName;
@@ -364,10 +369,10 @@ public class SingleWellExceptionDataProcessingThread extends Thread{
 	public void setWellName(String wellName) {
 		this.wellName = wellName;
 	}
-	public Map<Integer, List<Long>> getCalculateFailureMap() {
-		return calculateFailureMap;
+	public DiagramExceptionData getDiagramExceptionData() {
+		return diagramExceptionData;
 	}
-	public void setCalculateFailureMap(Map<Integer, List<Long>> calculateFailureMap) {
-		this.calculateFailureMap = calculateFailureMap;
+	public void setDiagramExceptionData(DiagramExceptionData diagramExceptionData) {
+		this.diagramExceptionData = diagramExceptionData;
 	}
 }
