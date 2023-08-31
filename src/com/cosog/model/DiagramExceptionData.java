@@ -1,6 +1,9 @@
 package com.cosog.model;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.cosog.model.DiagramExceptionData.ExceptionInfo;
 
 public class DiagramExceptionData {
 	public String wellName;
@@ -70,6 +73,48 @@ public class DiagramExceptionData {
 		}
 		return result;
 	}
+	
+	public boolean containsResultStatus(int resultStatus){
+		boolean bool=false;
+		if(this!=null && this.exceptionDataList!=null && this.exceptionDataList.size()>0){
+			for(int i=0;i<this.exceptionDataList.size();i++){
+				if(this.exceptionDataList.get(i).getResultStatus()==resultStatus){
+					if(this.exceptionDataList.get(i).getDiagramIdList()==null){
+						this.exceptionDataList.get(i).setDiagramIdList(new ArrayList<Long>());
+					}
+					bool=true;
+					break;
+				}
+			}
+		}
+		return bool;
+	}
+	
+	public void addDiagramId(int resultStatus,long diagramId){
+		if(this!=null){
+			if(this.exceptionDataList==null){
+				this.setExceptionDataList(new ArrayList<ExceptionInfo>());
+			}
+			if(containsResultStatus(resultStatus)){
+				for(int i=0;i<this.exceptionDataList.size();i++){
+					if(this.exceptionDataList.get(i).getResultStatus()==resultStatus){
+						if(this.exceptionDataList.get(i).getDiagramIdList()==null){
+							this.exceptionDataList.get(i).setDiagramIdList(new ArrayList<Long>());
+						}
+						this.exceptionDataList.get(i).getDiagramIdList().add(diagramId);
+						break;
+					}
+				}
+			}else{
+				ExceptionInfo exceptionInfo=new ExceptionInfo();
+				exceptionInfo.setResultStatus(resultStatus);
+				exceptionInfo.setDiagramIdList(new ArrayList<Long>());
+				exceptionInfo.getDiagramIdList().add(diagramId);
+				this.exceptionDataList.add(exceptionInfo);
+			}
+		}
+	}
+	
 
 	public List<ExceptionInfo> getExceptionDataList() {
 		return exceptionDataList;

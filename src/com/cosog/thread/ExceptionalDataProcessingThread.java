@@ -58,6 +58,9 @@ public class ExceptionalDataProcessingThread  extends Thread{
 						logger.error("error", e);
 					}
 			    }
+			}else{
+				StringManagerUtils.printLog("No ac program detected.");
+				logger.error("No ac program detected.");
 			}
 
 			try {
