@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import com.cosog.model.DataRequestConfig;
 import com.cosog.model.DataResponseConfig;
+import com.cosog.model.DiagramExceptionData;
+import com.cosog.model.DiagramExceptionData.ExceptionInfo;
 import com.cosog.model.RPCCalculateRequestData;
 import com.cosog.model.RPCCalculateResponseData;
 import com.cosog.model.WorkType;
@@ -81,11 +83,12 @@ public class RPCWellDataSyncThread  extends Thread{
 				writeBackConn=OracleJdbcUtis.getDataWriteBackConnection();
 				if(conn!=null && writeBackConn!=null){
 					Map<String, Object> map = DataModelMap.getMapObject();
-					Map<Integer,List<Long>> calculateFailureMap=new HashMap<Integer,List<Long>>();
+					DiagramExceptionData diagramExceptionData=null;
+					Map<String,DiagramExceptionData> diagramCalculateFailureMap=null;
 					if(map.containsKey("diagramCalculateFailureMap")){
-						Map<String,Map<Integer,List<Long>>> diagramCalculateFailureMap=(Map<String,Map<Integer,List<Long>>>) map.get("diagramCalculateFailureMap");
+						diagramCalculateFailureMap=(Map<String, DiagramExceptionData>) map.get("diagramCalculateFailureMap");
 						if(diagramCalculateFailureMap.containsKey(calculateRequestData.getWellName())){
-							calculateFailureMap=diagramCalculateFailureMap.get(calculateRequestData.getWellName());
+							diagramExceptionData=diagramCalculateFailureMap.get(calculateRequestData.getWellName());
 						}
 					}
 					
@@ -226,10 +229,19 @@ public class RPCWellDataSyncThread  extends Thread{
 									}
 								}else{
 									//记录计算失败数据
-									if(!calculateFailureMap.containsKey(calculateResponseData.getCalculationStatus().getResultStatus())){
-										calculateFailureMap.put(calculateResponseData.getCalculationStatus().getResultStatus(), new ArrayList<Long>());
+									if(diagramCalculateFailureMap!=null){
+										if(diagramExceptionData==null){
+											diagramExceptionData=new DiagramExceptionData();
+											diagramExceptionData.setWellName(calculateRequestData.getWellName());
+											diagramExceptionData.setReCalculateTimes(0);
+											diagramExceptionData.setLastCalculateTime(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss"));
+											diagramExceptionData.setExceptionDataList(new ArrayList<ExceptionInfo>());
+											
+											diagramCalculateFailureMap.put(calculateRequestData.getWellName(), diagramExceptionData);
+											diagramExceptionData=diagramCalculateFailureMap.get(calculateRequestData.getWellName());
+										}
+										diagramExceptionData.addDiagramId(calculateResponseData.getCalculationStatus().getResultStatus(), diagramId);
 									}
-									calculateFailureMap.get(calculateResponseData.getCalculationStatus().getResultStatus()).add(diagramId);
 									
 									StringManagerUtils.printLog("Calculation resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime());
 									logger.info("Calculation resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime());
