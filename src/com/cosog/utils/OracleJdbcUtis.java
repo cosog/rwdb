@@ -31,7 +31,7 @@ public class OracleJdbcUtis {
 		
 		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
 		
-		if(dataRequestConfig!=null && dataRequestConfig.getDiagramTable()!=null && dataRequestConfig.getDiagramTable().getConnectInfo()!=null && dataRequestConfig.getDiagramTable().getEnable()){
+		if(dataRequestConfig!=null && dataRequestConfig.getDiagramTable()!=null && DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo()) ){
 			
 			outerDiagramDataSource = new BasicDataSource();
 			
@@ -57,17 +57,17 @@ public class OracleJdbcUtis {
 		
 		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
 		
-		if(dataRequestConfig!=null && dataRequestConfig.getProductionDataTable()!=null && dataRequestConfig.getProductionDataTable().getConnectInfo()!=null && dataRequestConfig.getProductionDataTable().getEnable()){
+		if(dataRequestConfig!=null && dataRequestConfig.getProductionTable()!=null && DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getProductionTable().getConnectInfo()) ){
 			
 			outerProductionDataSource = new BasicDataSource();
 			
 			outerProductionDataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 
-			outerProductionDataSource.setUrl("jdbc:oracle:thin:@"+dataRequestConfig.getProductionDataTable().getConnectInfo().getIP()+":"+dataRequestConfig.getProductionDataTable().getConnectInfo().getPort()+(dataRequestConfig.getProductionDataTable().getConnectInfo().getVersion()>=12?"/":":")+dataRequestConfig.getProductionDataTable().getConnectInfo().getInstanceName()+"");
+			outerProductionDataSource.setUrl("jdbc:oracle:thin:@"+dataRequestConfig.getProductionTable().getConnectInfo().getIP()+":"+dataRequestConfig.getProductionTable().getConnectInfo().getPort()+(dataRequestConfig.getProductionTable().getConnectInfo().getVersion()>=12?"/":":")+dataRequestConfig.getProductionTable().getConnectInfo().getInstanceName()+"");
 
-			outerProductionDataSource.setUsername(dataRequestConfig.getProductionDataTable().getConnectInfo().getUser());
+			outerProductionDataSource.setUsername(dataRequestConfig.getProductionTable().getConnectInfo().getUser());
 
-			outerProductionDataSource.setPassword(dataRequestConfig.getProductionDataTable().getConnectInfo().getPassword());
+			outerProductionDataSource.setPassword(dataRequestConfig.getProductionTable().getConnectInfo().getPassword());
 
 			outerProductionDataSource.setInitialSize(5); // 初始化连接数
 
@@ -83,17 +83,19 @@ public class OracleJdbcUtis {
 		
 		DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
 		
-		if(dataResponseConfig!=null && dataResponseConfig.getConnectInfo()!=null && dataResponseConfig.isEnable()){
+		if(dataResponseConfig!=null 
+				&& dataResponseConfig.getDiagramTable()!=null
+				&& DataResponseConfig.ConnectInfoEffective(dataResponseConfig.getDiagramTable().getConnectInfo())){
 			
 			outerDataWriteBackDataSource = new BasicDataSource();
 			
 			outerDataWriteBackDataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 
-			outerDataWriteBackDataSource.setUrl("jdbc:oracle:thin:@"+dataResponseConfig.getConnectInfo().getIP()+":"+dataResponseConfig.getConnectInfo().getPort()+(dataResponseConfig.getConnectInfo().getVersion()>=12?"/":":")+dataResponseConfig.getConnectInfo().getInstanceName()+"");
+			outerDataWriteBackDataSource.setUrl("jdbc:oracle:thin:@"+dataResponseConfig.getDiagramTable().getConnectInfo().getIP()+":"+dataResponseConfig.getDiagramTable().getConnectInfo().getPort()+(dataResponseConfig.getDiagramTable().getConnectInfo().getVersion()>=12?"/":":")+dataResponseConfig.getDiagramTable().getConnectInfo().getInstanceName()+"");
 
-			outerDataWriteBackDataSource.setUsername(dataResponseConfig.getConnectInfo().getUser());
+			outerDataWriteBackDataSource.setUsername(dataResponseConfig.getDiagramTable().getConnectInfo().getUser());
 
-			outerDataWriteBackDataSource.setPassword(dataResponseConfig.getConnectInfo().getPassword());
+			outerDataWriteBackDataSource.setPassword(dataResponseConfig.getDiagramTable().getConnectInfo().getPassword());
 
 			outerDataWriteBackDataSource.setInitialSize(5); // 初始化连接数
 

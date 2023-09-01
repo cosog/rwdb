@@ -21,11 +21,15 @@ public class DIagramSimulateDataThread extends Thread{
 		DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
 		if(dataRequestConfig!=null 
 				&& dataRequestConfig.getDiagramTable()!=null 
-				&& dataRequestConfig.getDiagramTable().getEnable() 
 				&& dataRequestConfig.getDiagramTable().getTableInfo()!=null 
 				&& dataRequestConfig.getDiagramTable().getTableInfo().getColumns()!=null 
 				&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo())
-				&& dataResponseConfig!=null && dataResponseConfig.isEnable()){
+				&& dataResponseConfig!=null 
+				&& dataResponseConfig.getDiagramTable()!=null
+				&& dataResponseConfig.getDiagramTable().getTableInfo()!=null
+				&& dataResponseConfig.getDiagramTable().getTableInfo().getColumns()!=null
+				&& DataResponseConfig.ConnectInfoEffective(dataResponseConfig.getDiagramTable().getConnectInfo())
+				){
 			String time="";
 			String writeDataInsertSql="";
 			String diagramDataInsertSql="";
@@ -54,8 +58,8 @@ public class DIagramSimulateDataThread extends Thread{
 							}else{
 								wellName="rpc"+i;
 							}
-							writeDataInsertSql="insert into "+dataResponseConfig.getDiagramResult().getTableName()
-									+"("+dataResponseConfig.getDiagramResult().getColumns().getWellName().getColumn()+","+dataResponseConfig.getDiagramResult().getColumns().getAcqTime().getColumn()+") "
+							writeDataInsertSql="insert into "+dataResponseConfig.getDiagramTable().getTableInfo().getName()
+									+"("+dataResponseConfig.getDiagramTable().getTableInfo().getColumns().getWellName().getColumn()+","+dataResponseConfig.getDiagramTable().getTableInfo().getColumns().getAcqTime().getColumn()+") "
 									+ " values('"+wellName+"',to_date('"+time+"','yyyy-mm-dd hh24:mi:ss'))";
 							writeBackPstmt=writeBackConn.prepareStatement(writeDataInsertSql);
 				            iNum=writeBackPstmt.executeUpdate();

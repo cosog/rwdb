@@ -53,16 +53,15 @@ public class RPCWellDataSyncThread  extends Thread{
 		if(calculateRequestData!=null 
 				&& dataRequestConfig!=null 
 				&& dataRequestConfig.getDiagramTable()!=null 
-				&& dataRequestConfig.getDiagramTable().getEnable() 
 				&& dataRequestConfig.getDiagramTable().getTableInfo()!=null 
 				&& dataRequestConfig.getDiagramTable().getTableInfo().getColumns()!=null 
 				&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo())
 				
 				&& dataResponseConfig!=null 
-				&& dataResponseConfig.isEnable() 
-				&& dataResponseConfig.getDiagramResult().getEnable()
-				&& dataResponseConfig.getDiagramResult().getColumns()!=null
-				&& DataResponseConfig.ConnectInfoEffective(dataResponseConfig.getConnectInfo())
+				&& dataResponseConfig.getDiagramTable()!=null
+				&& dataResponseConfig.getDiagramTable().getTableInfo()!=null
+				&& dataResponseConfig.getDiagramTable().getTableInfo().getColumns()!=null
+				&& DataResponseConfig.ConnectInfoEffective(dataResponseConfig.getDiagramTable().getConnectInfo())
 				){
 			Connection conn = null;
 			PreparedStatement pstmt = null;
@@ -295,15 +294,14 @@ public class RPCWellDataSyncThread  extends Thread{
 				logger.info("calculateRequestData is null");
 			}else if(!(dataRequestConfig!=null 
 					&& dataRequestConfig.getDiagramTable()!=null 
-					&& dataRequestConfig.getDiagramTable().getEnable() 
 					&& dataRequestConfig.getDiagramTable().getTableInfo()!=null 
 					&& dataRequestConfig.getDiagramTable().getTableInfo().getColumns()!=null 
 					&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo()))){
 				StringManagerUtils.printLog("The configuration information of the diagram data table is incorrect");
 				logger.info("The configuration information of the diagram data table is incorrect");
 			}else{
-				StringManagerUtils.printLog("The configuration information of the diagram data table is incorrect");
-				logger.info("The configuration information of the diagram data table is incorrect");
+				StringManagerUtils.printLog("The configuration information of the write back diagram table is incorrect");
+				logger.info("The configuration information of the write back diagram table is incorrect");
 			}
 		}
 	}

@@ -1,6 +1,5 @@
 {
     "DiagramTable": {
-        "Enable": true,
         "ConnectInfo": {
             "IP": "127.0.0.1",
             "Port": 1521,
@@ -54,8 +53,7 @@
             }
         }
     },
-     "ProductionDataTable": {
-        "Enable": true,
+     "ProductionTable": {
         "ConnectInfo": {
             "IP": "127.0.0.1",
             "Port": 1521,

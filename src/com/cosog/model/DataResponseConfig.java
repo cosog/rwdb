@@ -1,17 +1,10 @@
 package com.cosog.model;
 
-import com.cosog.model.DataRequestConfig.ConnectInfoConfig;
 import com.cosog.utils.StringManagerUtils;
 
 public class DataResponseConfig {
 
-	private boolean Enable;
-
-    private String WriteType;
-    
-    private ConnectInfoConfig ConnectInfo;
-
-    private DiagramResultConfig DiagramResult;
+	private DiagramTableConfig DiagramTable;
     
     public static boolean ConnectInfoEffective(ConnectInfoConfig info){
     	boolean result=false;
@@ -116,7 +109,7 @@ public class DataResponseConfig {
 		}
 	}
 	
-	public static class DiagramResultColumn
+	public static class DiagramTableColumn
 	{
 	    private ColumnInfo WellName;
 
@@ -449,63 +442,60 @@ public class DataResponseConfig {
 		}
 	}
 	
-	public static class DiagramResultConfig
+	public static class DiagramTableInfo
 	{
-	    private String TableName;
+	    private String Name;
 
-	    private boolean Enable;
+	    private DiagramTableColumn Columns;
 
-	    private DiagramResultColumn Columns;
+		public DiagramTableColumn getColumns() {
+			return Columns;
+		}
 
-	    public void setTableName(String TableName){
-	        this.TableName = TableName;
-	    }
-	    public String getTableName(){
-	        return this.TableName;
-	    }
-	    public void setEnable(boolean Enable){
-	        this.Enable = Enable;
-	    }
-	    public boolean getEnable(){
-	        return this.Enable;
-	    }
-	    public void setColumns(DiagramResultColumn Columns){
-	        this.Columns = Columns;
-	    }
-	    public DiagramResultColumn getColumns(){
-	        return this.Columns;
-	    }
+		public void setColumns(DiagramTableColumn columns) {
+			Columns = columns;
+		}
+
+		public String getName() {
+			return Name;
+		}
+
+		public void setName(String name) {
+			Name = name;
+		}
 	}
 
-	public boolean isEnable() {
-		return Enable;
+	public static class DiagramTableConfig{
+		private String WriteType;
+		private ConnectInfoConfig ConnectInfo;
+		private DiagramTableInfo TableInfo;
+		public String getWriteType() {
+			return WriteType;
+		}
+		public void setWriteType(String writeType) {
+			WriteType = writeType;
+		}
+		public ConnectInfoConfig getConnectInfo() {
+			return ConnectInfo;
+		}
+		public void setConnectInfo(ConnectInfoConfig connectInfo) {
+			ConnectInfo = connectInfo;
+		}
+		public DiagramTableInfo getTableInfo() {
+			return TableInfo;
+		}
+		public void setTableInfo(DiagramTableInfo tableInfo) {
+			TableInfo = tableInfo;
+		}
+		
 	}
 
-	public void setEnable(boolean enable) {
-		Enable = enable;
+	public DiagramTableConfig getDiagramTable() {
+		return DiagramTable;
 	}
 
-	public String getWriteType() {
-		return WriteType;
+	public void setDiagramTable(DiagramTableConfig diagramTable) {
+		DiagramTable = diagramTable;
 	}
-
-	public void setWriteType(String writeType) {
-		WriteType = writeType;
-	}
-
-	public DiagramResultConfig getDiagramResult() {
-		return DiagramResult;
-	}
-
-	public void setDiagramResult(DiagramResultConfig diagramResult) {
-		DiagramResult = diagramResult;
-	}
-
-	public ConnectInfoConfig getConnectInfo() {
-		return ConnectInfo;
-	}
-
-	public void setConnectInfo(ConnectInfoConfig connectInfo) {
-		ConnectInfo = connectInfo;
-	}
+	
 }
