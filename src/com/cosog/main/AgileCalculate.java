@@ -20,6 +20,7 @@ import com.cosog.model.DataResponseConfig;
 import com.cosog.model.RPCCalculateRequestData;
 import com.cosog.model.AppRunStatusProbeResonanceData;
 import com.cosog.thread.DIagramSimulateDataThread;
+import com.cosog.thread.ExceptionalDataProcessingThread;
 import com.cosog.thread.RPCWellDataSyncThread;
 import com.cosog.thread.ThreadPool;
 import com.cosog.utils.CalculateUtils;
@@ -46,17 +47,18 @@ public class AgileCalculate {
 		DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
 		MemoryDataUtils.initDiagramCalculateFailureData();
 		
+//		ExceptionalDataProcessingThread exceptionalDataProcessingThread=new ExceptionalDataProcessingThread();
+//		exceptionalDataProcessingThread.start();
+		
 		if(dataRequestConfig!=null 
 				&& dataRequestConfig.getDiagramTable()!=null 
-				&& dataRequestConfig.getDiagramTable().getEnable() 
 				&& dataRequestConfig.getDiagramTable().getTableInfo()!=null 
 				&& dataRequestConfig.getDiagramTable().getTableInfo().getColumns()!=null 
 				&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo())
 				
-				&& dataRequestConfig.getProductionDataTable()!=null 
-				&& dataRequestConfig.getProductionDataTable().getEnable() 
-				&& dataRequestConfig.getProductionDataTable().getTableInfo()!=null
-				&& dataRequestConfig.getProductionDataTable().getTableInfo().getColumns()!=null){
+				&& dataRequestConfig.getProductionTable()!=null 
+				&& dataRequestConfig.getProductionTable().getTableInfo()!=null
+				&& dataRequestConfig.getProductionTable().getTableInfo().getColumns()!=null){
 			Connection conn = null;
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
@@ -79,7 +81,7 @@ public class AgileCalculate {
 					if(StringManagerUtils.isNotNull(sql)){
 						try {
 							//判断生产数据表连接配置是否有效，是否和功图数据表连接配置相同
-							if( (!DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getProductionDataTable().getConnectInfo())) || DataRequestConfig.ConnectInfoEquals(dataRequestConfig.getProductionDataTable().getConnectInfo(), dataRequestConfig.getDiagramTable().getConnectInfo())  ){
+							if( (!DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getProductionTable().getConnectInfo())) || DataRequestConfig.ConnectInfoEquals(dataRequestConfig.getProductionTable().getConnectInfo(), dataRequestConfig.getDiagramTable().getConnectInfo())  ){
 								conn=OracleJdbcUtis.getDiagramConnection();//配置无效或者和功图数据表连接配置相同，获取功图数据表连接
 							}else{
 								conn=OracleJdbcUtis.getProductionDataConnection();

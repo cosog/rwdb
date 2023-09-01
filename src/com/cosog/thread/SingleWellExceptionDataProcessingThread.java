@@ -57,7 +57,7 @@ public class SingleWellExceptionDataProcessingThread extends Thread{
 			String writeBackSql="";
 			Gson gson = new Gson();
 			try{
-				if( (!DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getProductionDataTable().getConnectInfo())) || DataRequestConfig.ConnectInfoEquals(dataRequestConfig.getProductionDataTable().getConnectInfo(), dataRequestConfig.getDiagramTable().getConnectInfo())  ){
+				if( (!DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getProductionTable().getConnectInfo())) || DataRequestConfig.ConnectInfoEquals(dataRequestConfig.getProductionTable().getConnectInfo(), dataRequestConfig.getDiagramTable().getConnectInfo())  ){
 					prodConn=OracleJdbcUtis.getDiagramConnection();//配置无效或者和功图数据表连接配置相同，获取功图数据表连接
 				}else{
 					prodConn=OracleJdbcUtis.getProductionDataConnection();

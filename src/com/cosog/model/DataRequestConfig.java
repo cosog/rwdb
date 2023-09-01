@@ -6,7 +6,7 @@ public class DataRequestConfig {
 	
 	private DiagramTableConfig DiagramTable;
 
-    private ProductionDataTableConfig ProductionDataTable;
+    private ProductionTableConfig ProductionTable;
     
     public static boolean ConnectInfoEquals(ConnectInfoConfig info1,ConnectInfoConfig info2){
     	boolean result=false;
@@ -235,18 +235,11 @@ public class DataRequestConfig {
 	
 	public static class DiagramTableConfig
 	{
-	    private boolean Enable;
 
 	    private ConnectInfoConfig ConnectInfo;
 
 	    private FESDiagramTableStructure TableInfo;
-
-	    public void setEnable(boolean Enable){
-	        this.Enable = Enable;
-	    }
-	    public boolean getEnable(){
-	        return this.Enable;
-	    }
+	    
 	    public void setConnectInfo(ConnectInfoConfig ConnectInfo){
 	        this.ConnectInfo = ConnectInfo;
 	    }
@@ -804,20 +797,13 @@ public class DataRequestConfig {
 	    }
 	}
 	
-	public static class ProductionDataTableConfig
+	public static class ProductionTableConfig
 	{
-	    private boolean Enable;
 
 	    private ConnectInfoConfig ConnectInfo;
 
 	    private ProductionDataTableStructure TableInfo;
 
-	    public void setEnable(boolean Enable){
-	        this.Enable = Enable;
-	    }
-	    public boolean getEnable(){
-	        return this.Enable;
-	    }
 	    public void setConnectInfo(ConnectInfoConfig ConnectInfo){
 	        this.ConnectInfo = ConnectInfo;
 	    }
@@ -840,11 +826,11 @@ public class DataRequestConfig {
 		DiagramTable = diagramTable;
 	}
 
-	public ProductionDataTableConfig getProductionDataTable() {
-		return ProductionDataTable;
+	public ProductionTableConfig getProductionTable() {
+		return ProductionTable;
 	}
 
-	public void setProductionDataTable(ProductionDataTableConfig productionDataTable) {
-		ProductionDataTable = productionDataTable;
+	public void setProductionTable(ProductionTableConfig productionTable) {
+		ProductionTable = productionTable;
 	}
 }
