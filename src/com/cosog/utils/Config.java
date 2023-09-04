@@ -11,9 +11,10 @@ public class Config {
 	
 	public static Config getInstance(){
 		if(configFile==null){
-			Yaml yaml = new Yaml(new Constructor(ConfigFile.class));
-			InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("config/config.yml");
-			configFile = yaml.load(inputStream);
+//			Yaml yaml = new Yaml(new Constructor(ConfigFile.class));
+//			InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("config/config.yml");
+//			configFile = yaml.load(inputStream);
+			configFile=MemoryDataUtils.getSystemConfig();
 		}
 		return instance;
 	}

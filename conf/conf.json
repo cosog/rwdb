@@ -1,0 +1,28 @@
+{
+    "ac": {
+        "probe": {
+            "app": "http://8.142.92.84:18100/api/probe/app",
+            "mem": "http://8.142.92.84:18100/api/probe/mem",
+            "disk": "http://8.142.92.84:18100/api/probe/disk",
+            "host": "http://8.142.92.84:18100/api/probe/host",
+            "cpu": "http://8.142.92.84:18100/api/probe/cpu"
+        },
+        "FESDiagram": "http://8.142.92.84:18100/api/calc/rpc/fesdiagram/pro",
+        "RPM": "http://8.142.92.84:18100/api/calc/pcp/rpm",
+        "communication": "http://8.142.92.84:18100/api/calc/plugin/timeeff/comm",
+        "run": "http://8.142.92.84:18100/api/calc/plugin/timeeff/run",
+        "energy": "http://8.142.92.84:18100/api/calc/plugin/energy",
+        "totalCalculation": "http://8.142.92.84:18100/api/analy/total/well"
+    },
+    "threadPool": {
+        "outerDatabaseSync": {
+            "corePoolSize": 80,
+            "maximumPoolSize": 100,
+            "keepAliveTime": 5,
+            "wattingCount": 0
+        }
+    },
+    "other": {
+        "defaultTimeSpan": 0
+    }
+}

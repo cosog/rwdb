@@ -1,5 +1,7 @@
 package com.cosog.utils;
 
+import com.cosog.utils.ConfigFile.Ac;
+
 public class ConfigFile {
 
     private Ac ac;
@@ -7,6 +9,64 @@ public class ConfigFile {
     private ThreadPool threadPool;
     
     private Other other;
+    
+    public void init(){
+		if(this.getAc()==null){
+			this.setAc(new Ac());
+		}
+		if(this.getAc().getProbe()==null){
+			this.getAc().setProbe(new AcProbe());
+		}
+		if(!StringManagerUtils.isNotNull(this.getAc().getProbe().getApp())){
+			this.getAc().getProbe().setApp("http://127.0.0.1:18100/api/probe/app");
+		}
+		if(!StringManagerUtils.isNotNull(this.getAc().getProbe().getMem())){
+			this.getAc().getProbe().setMem("http://127.0.0.1:18100/api/probe/mem");
+		}
+		if(!StringManagerUtils.isNotNull(this.getAc().getProbe().getDisk())){
+			this.getAc().getProbe().setDisk("http://127.0.0.1:18100/api/probe/disk");
+		}
+		if(!StringManagerUtils.isNotNull(this.getAc().getProbe().getHost())){
+			this.getAc().getProbe().setHost("http://127.0.0.1:18100/api/probe/host");
+		}
+		if(!StringManagerUtils.isNotNull(this.getAc().getProbe().getCpu())){
+			this.getAc().getProbe().setCpu("http://127.0.0.1:18100/api/probe/cpu");
+		}
+		if(!StringManagerUtils.isNotNull(this.getAc().getFESDiagram())){
+			this.getAc().setFESDiagram("http://127.0.0.1:18100/api/calc/rpc/fesdiagram/pro");
+		}
+		if(!StringManagerUtils.isNotNull(this.getAc().getRPM())){
+			this.getAc().setRPM("http://127.0.0.1:18100/api/calc/pcp/rpm");
+		}
+		if(!StringManagerUtils.isNotNull(this.getAc().getCommunication())){
+			this.getAc().setCommunication("http://127.0.0.1:18100/api/calc/plugin/timeeff/comm");
+		}
+		if(!StringManagerUtils.isNotNull(this.getAc().getRun())){
+			this.getAc().setRun("http://127.0.0.1:18100/api/calc/plugin/timeeff/run");
+		}
+		if(!StringManagerUtils.isNotNull(this.getAc().getEnergy())){
+			this.getAc().setEnergy("http://127.0.0.1:18100/api/calc/plugin/energy");
+		}
+		if(!StringManagerUtils.isNotNull(this.getAc().getTotalCalculation())){
+			this.getAc().setTotalCalculation("http://127.0.0.1:18100/api/analy/total/well");
+		}
+		
+		if(this.getThreadPool()==null){
+			this.setThreadPool(new ThreadPool());
+		}
+		if(this.getThreadPool().getOuterDatabaseSync()==null){
+			this.getThreadPool().setOuterDatabaseSync(new ThreadPoolConfig());
+			this.getThreadPool().getOuterDatabaseSync().setCorePoolSize(80);
+			this.getThreadPool().getOuterDatabaseSync().setMaximumPoolSize(100);
+			this.getThreadPool().getOuterDatabaseSync().setKeepAliveTime(5);
+			this.getThreadPool().getOuterDatabaseSync().setWattingCount(0);
+		}
+		
+		if(this.getOther()==null){
+			this.setOther(new Other());
+			this.getOther().setDefaultTimeSpan(0);
+		}
+    }
 	
 	public static class AcProbe
 	{

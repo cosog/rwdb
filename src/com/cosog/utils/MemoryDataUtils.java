@@ -13,11 +13,38 @@ import com.cosog.model.DataRequestConfig;
 import com.cosog.model.DataResponseConfig;
 import com.cosog.model.DiagramExceptionData;
 import com.cosog.model.WorkType;
+import com.cosog.utils.ConfigFile.Ac;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class MemoryDataUtils {
 	private static final Logger logger = Logger.getLogger(AgileCalculate.class.getName());
+	
+	public static void loadSystemConfig(){
+		Gson gson = new Gson();
+		java.lang.reflect.Type type=null;
+		Map<String, Object> map = DataModelMap.getMapObject();
+		StringManagerUtils stringManagerUtils=new StringManagerUtils();
+		String path=stringManagerUtils.getFilePath("conf.json","conf/");
+		String data=StringManagerUtils.readFile(path,"utf-8").replaceAll(" ", "");
+		type = new TypeToken<ConfigFile>() {}.getType();
+		ConfigFile configFile=gson.fromJson(data, type);
+		if(configFile==null){
+			configFile=new ConfigFile();
+		}
+		configFile.init();
+		map.put("systemConfig", configFile);
+	}
+	
+	public static ConfigFile getSystemConfig(){
+		Map<String, Object> map = DataModelMap.getMapObject();
+		ConfigFile configFile=(ConfigFile) map.get("systemConfig");
+		if(configFile==null){
+			loadSystemConfig();
+			configFile=(ConfigFile) map.get("systemConfig");
+		}
+		return configFile;
+	}
 	
 	public static void loadDataReqConfig(){
 		Gson gson = new Gson();
