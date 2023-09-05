@@ -25,6 +25,7 @@ import com.cosog.thread.RPCWellDataSyncThread;
 import com.cosog.thread.ThreadPool;
 import com.cosog.utils.CalculateUtils;
 import com.cosog.utils.Config;
+import com.cosog.utils.ConfigFile;
 import com.cosog.utils.DataModelMap;
 import com.cosog.utils.DataProcessingUtils;
 import com.cosog.utils.MemoryDataUtils;
