@@ -55,7 +55,7 @@ public class AgileCalculate {
 				&& dataRequestConfig.getDiagramTable()!=null 
 				&& dataRequestConfig.getDiagramTable().getTableInfo()!=null 
 				&& dataRequestConfig.getDiagramTable().getTableInfo().getColumns()!=null 
-				&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo())
+				&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo()) 
 				
 				&& dataRequestConfig.getProductionTable()!=null 
 				&& dataRequestConfig.getProductionTable().getTableInfo()!=null
@@ -226,11 +226,11 @@ public class AgileCalculate {
 										rpcCalculateRequestDataList.add(rpcCalculateRequestData);
 									}catch (Exception e) {
 										e.printStackTrace();
-										logger.error("error", e);
+										StringManagerUtils.printLogFile(logger, "error", e, "error");
 									}
 								}
 								StringManagerUtils.printLog("Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
-								logger.info("Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
+								StringManagerUtils.printLogFile(logger, "Traverse the well data,well count:"+rpcCalculateRequestDataList.size(),"info");
 								if(rpcCalculateRequestDataList.size()>0){
 									for(RPCCalculateRequestData rpcCalculateRequestData:rpcCalculateRequestDataList){
 										executor.execute(new RPCWellDataSyncThread(rpcCalculateRequestData));
@@ -241,7 +241,7 @@ public class AgileCalculate {
 										Thread.sleep(1000*1);
 									}catch (Exception e) {
 										e.printStackTrace();
-										logger.error("error", e);
+										StringManagerUtils.printLogFile(logger, "error", e, "error");
 									}
 							    }
 								//将读取数据时间保存到本地
@@ -266,35 +266,34 @@ public class AgileCalculate {
 								}
 							}else{
 								StringManagerUtils.printLog("Production data database connection failure");
-								logger.info("Production data database connection failure");
+								StringManagerUtils.printLogFile(logger, "Production data database connection failure","info");
 							}
 						} catch (SQLException e1) {
 							e1.printStackTrace();
-							logger.error("error", e1);
+							StringManagerUtils.printLogFile(logger, "error", e1, "error");
 							StringManagerUtils.printLog("Failed to query production data,sql:"+sql);
-							logger.error("Failed to query production data,sql:"+sql);
+							StringManagerUtils.printLogFile(logger, "Failed to query production data,sql:"+sql,"error");
 						} catch (Exception e1) {
 							e1.printStackTrace();
-							logger.error("error", e1);
+							StringManagerUtils.printLogFile(logger, "error", e1, "error");
 						}finally{
 							OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
 						}
 					}
 				}else{
 					StringManagerUtils.printLog("No ac program detected.");
-					logger.error("No ac program detected.");
+					StringManagerUtils.printLogFile(logger, "No ac program detected.", "error");
 				}
 				try {
 					Thread.sleep(1*1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-					logger.error("error", e);
+					StringManagerUtils.printLogFile(logger, "error", e, "error");
 				}
-			
 			}while(true);
 		}else{
 			StringManagerUtils.printLog("The configuration information of the database is incorrect,program exit!");
-			logger.info("The configuration information of the database is incorrect,program exit!");
+			StringManagerUtils.printLogFile(logger, "The configuration information of the database is incorrect,program exit!","info");
 		}
 	}
 

@@ -49,7 +49,7 @@ public class DIagramSimulateDataThread extends Thread{
 						String wellName="";
 						int iNum=0;
 						StringManagerUtils.printLog("Insert simulate data");
-						logger.info("Insert simulate data");
+						StringManagerUtils.printLogFile(logger, "Insert simulate data","info");
 						for(int i=1;i<=100;i++){
 							if(i<10){
 								wellName="rpc00"+i;
@@ -95,19 +95,19 @@ public class DIagramSimulateDataThread extends Thread{
 					}else{
 						if(conn==null){
 							StringManagerUtils.printLog("Diagram data database connection failure");
-							logger.info("Diagram data database connection failure");
+							StringManagerUtils.printLogFile(logger, "Diagram data database connection failure","info");
 						}
 						if(writeBackConn==null){
 							StringManagerUtils.printLog("Write back database connection failure");
-							logger.info("Write back database connection failure");
+							StringManagerUtils.printLogFile(logger, "Write back database connection failure","info");
 						}
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
-					logger.error("error", e);
+					StringManagerUtils.printLogFile(logger, "error", e, "error");
 				} catch (Exception e1) {
 					e1.printStackTrace();
-					logger.error("error", e1);
+					StringManagerUtils.printLogFile(logger, "error", e1, "error");
 				} finally{
 					OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
 					OracleJdbcUtis.closeDBConnection(writeBackConn, writeBackPstmt, writeBackRs);
@@ -116,13 +116,13 @@ public class DIagramSimulateDataThread extends Thread{
 					Thread.sleep(60*1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-					logger.error("error", e);
+					StringManagerUtils.printLogFile(logger, "error", e, "error");
 				}
 			}while(true);
 			
 		}else{
 			StringManagerUtils.printLog("The configuration information of the database is incorrect");
-			logger.info("The configuration information of the database is incorrect");
+			StringManagerUtils.printLogFile(logger, "The configuration information of the database is incorrect","info");
 		}
 	}
 }

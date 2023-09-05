@@ -8,6 +8,8 @@ public class ConfigFile {
     
     private ThreadPool threadPool;
     
+    private Log log;
+    
     private Other other;
     
     public void init(){
@@ -60,6 +62,12 @@ public class ConfigFile {
 			this.getThreadPool().getOuterDatabaseSync().setMaximumPoolSize(100);
 			this.getThreadPool().getOuterDatabaseSync().setKeepAliveTime(5);
 			this.getThreadPool().getOuterDatabaseSync().setWattingCount(0);
+		}
+		
+		if(this.log==null){
+			this.setLog(new Log());
+			this.getLog().setStdout(true);
+			this.getLog().setFile(true);
 		}
 		
 		if(this.getOther()==null){
@@ -249,6 +257,24 @@ public class ConfigFile {
 		}
 	}
 	
+	public static class Log{
+		public boolean stdout;
+		public boolean file;
+		
+		public boolean getStdout() {
+			return stdout;
+		}
+		public void setStdout(boolean stdout) {
+			this.stdout = stdout;
+		}
+		public boolean getFile() {
+			return file;
+		}
+		public void setFile(boolean file) {
+			this.file = file;
+		}
+	}
+	
 	public static class Other{
 		
 		public int defaultTimeSpan;
@@ -284,5 +310,13 @@ public class ConfigFile {
 
 	public void setOther(Other other) {
 		this.other = other;
+	}
+
+	public Log getLog() {
+		return log;
+	}
+
+	public void setLog(Log log) {
+		this.log = log;
 	}
 }

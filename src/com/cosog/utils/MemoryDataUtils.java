@@ -61,7 +61,7 @@ public class MemoryDataUtils {
 		map.put("dataRequestConfig", dataRequestConfig);
 		if(dataRequestConfig==null){
 			StringManagerUtils.printLog("Parsing the req.json file failed");
-			logger.info("Parsing the req.json file failed");
+			StringManagerUtils.printLogFile(logger, "Parsing the req.json file failed","info");
 		}
 	}
 	
@@ -91,7 +91,7 @@ public class MemoryDataUtils {
 		
 		if(dataResponseConfig==null){
 			StringManagerUtils.printLog("Parsing the res.json file failed");
-			logger.info("Parsing the res.json file failed");
+			StringManagerUtils.printLogFile(logger, "Parsing the res.json file failed","info");
 		}
 	}
 	
