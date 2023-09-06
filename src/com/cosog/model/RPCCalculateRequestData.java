@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import com.cosog.utils.StringManagerUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -1083,15 +1084,15 @@ public class RPCCalculateRequestData implements Serializable {
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			logger.error("error", e);
+			StringManagerUtils.printLogFile(logger, "error", e, "error");;
 		} catch (JsonMappingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			logger.error("error", e);
+			StringManagerUtils.printLogFile(logger, "error", e, "error");;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			logger.error("error", e);
+			StringManagerUtils.printLogFile(logger, "error", e, "error");;
 		}
         return result;
 	}

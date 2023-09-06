@@ -214,7 +214,7 @@ public class SingleWellExceptionDataProcessingThread extends Thread{
 							}
 						}catch (Exception e) {
 							e.printStackTrace();
-							logger.error("error", e);
+							StringManagerUtils.printLogFile(logger, "error", e, "error");
 						}
 					}
 					
@@ -298,28 +298,28 @@ public class SingleWellExceptionDataProcessingThread extends Thread{
 												}
 											}else{
 												StringManagerUtils.printLog("Calculation failed, no response data"+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime());
-												logger.info("Calculation failed, no response data"+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime());
+												StringManagerUtils.printLogFile(logger, "Calculation failed, no response data"+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime(),"info");
 											}
 										} catch (SQLException e) {
 											e.printStackTrace();
-											logger.error("error", e);
+											StringManagerUtils.printLogFile(logger, "error", e, "error");
 											StringManagerUtils.printLog("sql:"+writeBackSql);
-											logger.error("sql:"+writeBackSql);
+											StringManagerUtils.printLogFile(logger, "sql:"+writeBackSql, "error");
 										} catch (Exception e1) {
 											e1.printStackTrace();
-											logger.error("error", e1);
+											StringManagerUtils.printLogFile(logger, "error", e1, "error");
 										} finally{
 											
 										}
 									}
 							 } catch (SQLException e1) {
 									e1.printStackTrace();
-									logger.error("error", e1);
+									StringManagerUtils.printLogFile(logger, "error", e1, "error");
 									StringManagerUtils.printLog("Failed to query production data,sql:"+sql);
-									logger.error("Failed to query production data,sql:"+sql);
+									StringManagerUtils.printLogFile(logger, "Failed to query production data,sql:"+sql, "error");
 								} catch (Exception e1) {
 									e1.printStackTrace();
-									logger.error("error", e1);
+									StringManagerUtils.printLogFile(logger, "error", e1, "error");
 								}
 						}
 					}
@@ -350,12 +350,12 @@ public class SingleWellExceptionDataProcessingThread extends Thread{
 				}
 			} catch (SQLException e1) {
 				e1.printStackTrace();
-				logger.error("error", e1);
+				StringManagerUtils.printLogFile(logger, "error", e1, "error");
 				StringManagerUtils.printLog("Failed to query production data,sql:"+sql);
-				logger.error("Failed to query production data,sql:"+sql);
+				StringManagerUtils.printLogFile(logger, "Failed to query production data,sql:"+sql, "error");
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				logger.error("error", e1);
+				StringManagerUtils.printLogFile(logger, "error", e1, "error");
 			}finally{
 				OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
 				OracleJdbcUtis.closeDBConnection(prodConn, prodPstmt, prodRs);

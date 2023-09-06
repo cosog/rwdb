@@ -55,19 +55,19 @@ public class ExceptionalDataProcessingThread  extends Thread{
 						Thread.sleep(1000*1);
 					}catch (Exception e) {
 						e.printStackTrace();
-						logger.error("error", e);
+						StringManagerUtils.printLogFile(logger, "error", e, "error");
 					}
 			    }
 			}else{
 				StringManagerUtils.printLog("No ac program detected.");
-				logger.error("No ac program detected.");
+				StringManagerUtils.printLogFile(logger, "No ac program detected.", "error");
 			}
 
 			try {
 				Thread.sleep(60*1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-				logger.error("error", e);
+				StringManagerUtils.printLogFile(logger, "error", e, "error");
 			}
 		}while(true);
 	}

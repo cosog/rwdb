@@ -22,6 +22,10 @@
             "wattingCount": 0
         }
     },
+    "log": {
+        "stdout": true,
+        "file": true
+    },
     "other": {
         "defaultTimeSpan": 0
     }

@@ -223,7 +223,7 @@ public class RPCWellDataSyncThread  extends Thread{
 							            		logInfo+=",requestData:"+gson.toJson(calculateRequestData);
 							            	}
 							            	StringManagerUtils.printLog(logInfo);
-											logger.info(logInfo);
+							            	StringManagerUtils.printLogFile(logger, logInfo,"info");
 							            }
 									}
 								}else{
@@ -242,66 +242,69 @@ public class RPCWellDataSyncThread  extends Thread{
 										diagramExceptionData.addDiagramId(calculateResponseData.getCalculationStatus().getResultStatus(), diagramId);
 									}
 									
-									StringManagerUtils.printLog("Calculation resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime());
-									logger.info("Calculation resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime());
+									StringManagerUtils.printLog("Calculation failure,resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime());
+									StringManagerUtils.printLogFile(logger, "Calculation failure,resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime(),"info");
 								}
-								dataReadTimeInfoMap.put(calculateRequestData.getWellName(), fesdiagramAcqtimeStr);
+								
+								fesdiagramacqtime=fesdiagramAcqtimeStr;
 							}else{
 								StringManagerUtils.printLog("Calculation failed, no response data"+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime());
-								logger.info("Calculation failed, no response data"+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime());
+								StringManagerUtils.printLogFile(logger, "Calculation failed, no response data"+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime(),"info");
 							}
 						} catch (SQLException e) {
 							e.printStackTrace();
-							logger.error("error", e);
+							StringManagerUtils.printLogFile(logger, "error", e, "error");
 							StringManagerUtils.printLog("sql:"+writeBackSql);
-							logger.error("sql:"+writeBackSql);
+							StringManagerUtils.printLogFile(logger, "sql:"+writeBackSql, "error");
 						} catch (Exception e1) {
 							e1.printStackTrace();
-							logger.error("error", e1);
+							StringManagerUtils.printLogFile(logger, "error", e1, "error");
 						} finally{
 							
 						}
 					}
+					
 				}else{
 					if(conn==null){
 						StringManagerUtils.printLog("Diagram data database connection failure");
-						logger.info("Diagram data database connection failure");
+						StringManagerUtils.printLogFile(logger, "Diagram data database connection failure","info");
 					}else if(writeBackConn==null){
 						StringManagerUtils.printLog("Write back database connection failure");
-						logger.info("Write back database connection failure");
+						StringManagerUtils.printLogFile(logger, "Write back database connection failure","info");
 					}
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				logger.error("error", e);
+				StringManagerUtils.printLogFile(logger, "error", e, "error");
 				StringManagerUtils.printLog("sql:"+finalSql);
-				logger.error("sql:"+finalSql);
+				StringManagerUtils.printLogFile(logger, "sql:"+finalSql, "error");
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				logger.error("error", e1);
+				StringManagerUtils.printLogFile(logger, "error", e1, "error");
 			} finally{
 				OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
 				OracleJdbcUtis.closeDBConnection(writeBackConn, writeBackPstmt, writeBackRs);
 				if(recordCount>0 || writeBackCount>0){
 					StringManagerUtils.printLog("Get fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime+",recordCount:"+recordCount+",writeBackCount:"+writeBackCount);
-					logger.info("Get fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime+",recordCount:"+recordCount+",writeBackCount:"+writeBackCount);
+					StringManagerUtils.printLogFile(logger, "Get fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime+",recordCount:"+recordCount+",writeBackCount:"+writeBackCount,"info");
 				}
+				dataReadTimeInfoMap.put(calculateRequestData.getWellName(), fesdiagramacqtime);
 			}
 		}else{
 			if(calculateRequestData==null){
 				StringManagerUtils.printLog("calculateRequestData is null");
-				logger.info("calculateRequestData is null");
+				StringManagerUtils.printLogFile(logger, "calculateRequestData is null","info");
 			}else if(!(dataRequestConfig!=null 
 					&& dataRequestConfig.getDiagramTable()!=null 
 					&& dataRequestConfig.getDiagramTable().getTableInfo()!=null 
 					&& dataRequestConfig.getDiagramTable().getTableInfo().getColumns()!=null 
 					&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo()))){
 				StringManagerUtils.printLog("The configuration information of the diagram data table is incorrect");
-				logger.info("The configuration information of the diagram data table is incorrect");
+				StringManagerUtils.printLogFile(logger, "The configuration information of the diagram data table is incorrect","info");
 			}else{
 				StringManagerUtils.printLog("The configuration information of the write back diagram table is incorrect");
-				logger.info("The configuration information of the write back diagram table is incorrect");
+				StringManagerUtils.printLogFile(logger, "The configuration information of the write back diagram table is incorrect","info");
 			}
 		}
 	}

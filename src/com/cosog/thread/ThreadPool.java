@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cosog.utils.StringManagerUtils;
+
 public class ThreadPool {
 	private static Map<String, Object> map = new Hashtable<>();
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -152,7 +154,7 @@ public class ThreadPool {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-				logger.error("error", e);
+				StringManagerUtils.printLogFile(logger, "error", e, "error");
 			}
 		}
 	}

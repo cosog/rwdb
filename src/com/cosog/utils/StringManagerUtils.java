@@ -83,7 +83,7 @@ public class StringManagerUtils {
             s_date = (Date) sdf.parse(strDate);
         } catch (ParseException e) {
             e.printStackTrace();
-            logger.error("error", e);
+            StringManagerUtils.printLogFile(logger, "error", e, "error");;
         }
         return s_date;
     }
@@ -128,7 +128,7 @@ public class StringManagerUtils {
             result = new String(byte_data);
         } catch (SQLException e) {
             e.printStackTrace();
-            logger.error("error", e);
+            StringManagerUtils.printLogFile(logger, "error", e, "error");;
         }
         return result;
     }
@@ -156,7 +156,7 @@ public class StringManagerUtils {
         } catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("error", e);
+            StringManagerUtils.printLogFile(logger, "error", e, "error");;
         }
         return newStr;
     }
@@ -314,7 +314,7 @@ public class StringManagerUtils {
             path = URLDecoder.decode(path, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            logger.error("error", e);
+            StringManagerUtils.printLogFile(logger, "error", e, "error");;
         }
         path = path + path0 + index4Str;
         return path;
@@ -346,7 +346,7 @@ public class StringManagerUtils {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("error", e);
+            StringManagerUtils.printLogFile(logger, "error", e, "error");;
         }
         return fileContent;
     }
@@ -363,15 +363,15 @@ public class StringManagerUtils {
             result = true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            logger.error("error", e);
+            StringManagerUtils.printLogFile(logger, "error", e, "error");;
             result = false;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            logger.error("error", e);
+            StringManagerUtils.printLogFile(logger, "error", e, "error");;
             result = false;
         } catch (IOException e) {
             e.printStackTrace();
-            logger.error("error", e);
+            StringManagerUtils.printLogFile(logger, "error", e, "error");;
             result = false;
         } finally {
             try {
@@ -379,7 +379,7 @@ public class StringManagerUtils {
                 fileOutputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                logger.error("error", e);
+                StringManagerUtils.printLogFile(logger, "error", e, "error");;
             }
         }
 
@@ -428,7 +428,7 @@ public class StringManagerUtils {
         } catch (Exception e) {
             // TODO: handle exception
             e.printStackTrace();
-            logger.error("error", e);
+            StringManagerUtils.printLogFile(logger, "error", e, "error");;
         } finally {
             //不要忘记关闭
             if (pw != null) {
@@ -522,7 +522,7 @@ public class StringManagerUtils {
         } catch (Exception e) {
             flag = false;
             e.printStackTrace();
-            logger.error("error", e);
+            StringManagerUtils.printLogFile(logger, "error", e, "error");;
         }
 
         // 返回是否成功的标记
@@ -586,9 +586,8 @@ public class StringManagerUtils {
         	printLog("发送 POST 请求出现异常！" + e);
         	printLog("url:" + url + ",param:" + param);
             e.printStackTrace();
-            logger.info("发送 POST 请求出现异常！" + e);
-            logger.info("url:" + url + ",param:" + param);
-            logger.error("error", e);
+            StringManagerUtils.printLogFile(logger, "url:" + url + ",param:" + param,"info");
+            StringManagerUtils.printLogFile(logger, "发送 POST 请求出现异常！", e, "error");;
         } finally {
             try {
                 if (os != null) {
@@ -627,7 +626,7 @@ public class StringManagerUtils {
             long to = toDate.getTime();
             result = to - from;
         } catch (ParseException e) {
-        	logger.error("error", e);
+        	StringManagerUtils.printLogFile(logger, "error", e, "error");;
             e.printStackTrace();
             result = 0;
         }
@@ -635,7 +634,59 @@ public class StringManagerUtils {
     }
     
     public static void printLog(String x) {
-        System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss") + ":" + x);
+        if(Config.getInstance().configFile.getLog().getStdout()){
+        	System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss") + ":" + x);
+        }
+    }
+    
+    public static void printLogFile(org.apache.log4j.Logger logger,String x,String level){
+    	if(logger!=null && Config.getInstance().configFile.getLog().getFile()){
+    		if("debug".equalsIgnoreCase(level)){
+    			logger.debug(x);
+    		}else if("warn".equalsIgnoreCase(level)){
+    			logger.warn(x);
+    		}else if("error".equalsIgnoreCase(level)){
+    			logger.error(x);
+    		}else if("fatal".equalsIgnoreCase(level)){
+    			logger.fatal(x);
+    		}else{
+    			logger.info(x);
+    		}
+        }
+    }
+    
+    public static void printLogFile(org.apache.log4j.Logger logger, Object message, Throwable t,String level){
+    	if(logger!=null && Config.getInstance().configFile.getLog().getFile()){
+    		if("error".equalsIgnoreCase(level)){
+    			logger.error(message,t);
+    		}else{
+    			logger.info(message);
+    		}
+    	}
+    }
+    
+    public static void printLogFile(org.slf4j.Logger logger,String x,String level){
+    	if(logger!=null && Config.getInstance().configFile.getLog().getFile()){
+    		if("debug".equalsIgnoreCase(level)){
+    			logger.debug(x);
+    		}else if("warn".equalsIgnoreCase(level)){
+    			logger.warn(x);
+    		}else if("error".equalsIgnoreCase(level)){
+    			logger.error(x);
+    		}else{
+    			logger.info(x);
+    		}
+        }
+    }
+    
+    public static void printLogFile(org.slf4j.Logger logger, String message, Throwable t,String level){
+    	if(logger!=null && Config.getInstance().configFile.getLog().getFile()){
+    		if("error".equalsIgnoreCase(level)){
+    			logger.error(message, t);;
+    		}else{
+    			logger.info(message);
+    		}
+    	}
     }
     
     public static String join(Object objarr[], String sign) {

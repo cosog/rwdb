@@ -1424,7 +1424,7 @@ public class RPCCalculateResponseData implements Serializable, Comparable<RPCCal
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("error", e);
+			StringManagerUtils.printLogFile(logger, "error", e, "error");
 		}
 		return (int)(to-from);   // 根据值或者位升序排列，降序修改相减顺序即�?
 	}
