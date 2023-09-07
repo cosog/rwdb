@@ -63,12 +63,14 @@ public class CalculateUtils {
 	}
 	
 	public static RPCCalculateResponseData fesDiagramCalculate(String requestDataStr){
+		long startTime=System.nanoTime();
 		Gson gson=new Gson();
 		java.lang.reflect.Type type=null;
 		String responseDataStr=StringManagerUtils.sendPostMethod(FESDiagramUrl, requestDataStr,"utf-8",0,0);
 		type = new TypeToken<RPCCalculateResponseData>() {}.getType();
 		RPCCalculateResponseData responseData=gson.fromJson(responseDataStr, type);
-		
+		long endTime=System.nanoTime();
+		System.out.println(responseData.getWellName()+"单张功图计算时间："+StringManagerUtils.getTimeDiff(startTime, endTime));
 		return responseData;
 	}
 	

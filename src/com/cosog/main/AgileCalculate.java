@@ -41,11 +41,12 @@ public class AgileCalculate {
 	}
 	@SuppressWarnings({ "static-access", "unused" })
 	public static void main(String[] args) {
-		DIagramSimulateDataThread dIagramSimulateDataThread=new DIagramSimulateDataThread();
-		dIagramSimulateDataThread.start();
+//		DIagramSimulateDataThread dIagramSimulateDataThread=new DIagramSimulateDataThread();
+//		dIagramSimulateDataThread.start();
 		
 		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
 		DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
+		Map<String,String> dataReadTimeInfoMap=MemoryDataUtils.getDataReadTimeInfo();
 		MemoryDataUtils.initDiagramCalculateFailureData();
 		
 //		ExceptionalDataProcessingThread exceptionalDataProcessingThread=new ExceptionalDataProcessingThread();
@@ -229,41 +230,6 @@ public class AgileCalculate {
 										StringManagerUtils.printLogFile(logger, "error", e, "error");
 									}
 								}
-								StringManagerUtils.printLog("Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
-								StringManagerUtils.printLogFile(logger, "Traverse the well data,well count:"+rpcCalculateRequestDataList.size(),"info");
-								if(rpcCalculateRequestDataList.size()>0){
-									for(RPCCalculateRequestData rpcCalculateRequestData:rpcCalculateRequestDataList){
-										executor.execute(new RPCWellDataSyncThread(rpcCalculateRequestData));
-									}
-								}
-								while (!executor.isCompletedByTaskCount()) {
-									try {
-										Thread.sleep(1000*1);
-									}catch (Exception e) {
-										e.printStackTrace();
-										StringManagerUtils.printLogFile(logger, "error", e, "error");
-									}
-							    }
-								//将读取数据时间保存到本地
-								Map<String, Object> map = DataModelMap.getMapObject();
-								if(map.containsKey("dataReadTimeInfoMap") && map.get("dataReadTimeInfoMap")!=null){
-									Map<String,String> dataReadTimeInfoMap=(Map<String, String>) map.get("dataReadTimeInfoMap");
-									if(dataReadTimeInfoMap!=null){
-										DataReadTimeInfo dataReadTimeInfo=new DataReadTimeInfo();
-										dataReadTimeInfo.setWellList(new ArrayList<DataReadTimeInfo.DataReadTime>());
-										
-										Iterator<Map.Entry<String, String>> iterator = dataReadTimeInfoMap.entrySet().iterator();
-										while (iterator.hasNext()) {
-											Map.Entry<String, String> entry = iterator.next();
-											DataReadTimeInfo.DataReadTime dataReadTime=new DataReadTimeInfo.DataReadTime();
-											dataReadTime.setWellName(entry.getKey());
-											dataReadTime.setReadTime(entry.getValue());
-											dataReadTimeInfo.getWellList().add(dataReadTime);
-										}
-										String path=stringManagerUtils.getFilePath("timestamp.json","conf/");
-										StringManagerUtils.writeFile(path,StringManagerUtils.jsonStringFormat(gson.toJson(dataReadTimeInfo)));
-									}
-								}
 							}else{
 								StringManagerUtils.printLog("Production data database connection failure");
 								StringManagerUtils.printLogFile(logger, "Production data database connection failure","info");
@@ -278,6 +244,46 @@ public class AgileCalculate {
 							StringManagerUtils.printLogFile(logger, "error", e1, "error");
 						}finally{
 							OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
+						}
+						
+						System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
+						StringManagerUtils.printLog("Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
+						StringManagerUtils.printLogFile(logger, "Traverse the well data,well count:"+rpcCalculateRequestDataList.size(),"info");
+						if(rpcCalculateRequestDataList.size()>0){
+							for(RPCCalculateRequestData rpcCalculateRequestData:rpcCalculateRequestDataList){
+								executor.execute(new RPCWellDataSyncThread(rpcCalculateRequestData));
+							}
+						}
+						while (!executor.isCompletedByTaskCount()) {
+							try {
+								System.out.println("TaskCount:"+executor.getExecutor().getTaskCount()
+										+",CompletedTaskCount:"+executor.getExecutor().getCompletedTaskCount()
+										+",ActiveCount:"+executor.getExecutor().getActiveCount()
+										+",connCount:"+OracleJdbcUtis.outerDiagramDataSource.getNumActive()
+										+",writeBackConnCount:"+OracleJdbcUtis.outerDataWriteBackDataSource.getNumActive()
+										);
+								
+								Thread.sleep(1000*1);
+							}catch (Exception e) {
+								e.printStackTrace();
+								StringManagerUtils.printLogFile(logger, "error", e, "error");
+							}
+					    }
+						//将读取数据时间保存到本地
+						if(dataReadTimeInfoMap!=null){
+							DataReadTimeInfo dataReadTimeInfo=new DataReadTimeInfo();
+							dataReadTimeInfo.setWellList(new ArrayList<DataReadTimeInfo.DataReadTime>());
+							
+							Iterator<Map.Entry<String, String>> iterator = dataReadTimeInfoMap.entrySet().iterator();
+							while (iterator.hasNext()) {
+								Map.Entry<String, String> entry = iterator.next();
+								DataReadTimeInfo.DataReadTime dataReadTime=new DataReadTimeInfo.DataReadTime();
+								dataReadTime.setWellName(entry.getKey());
+								dataReadTime.setReadTime(entry.getValue());
+								dataReadTimeInfo.getWellList().add(dataReadTime);
+							}
+							String path=stringManagerUtils.getFilePath("timestamp.json","conf/");
+							StringManagerUtils.writeFile(path,StringManagerUtils.jsonStringFormat(gson.toJson(dataReadTimeInfo)));
 						}
 					}
 				}else{

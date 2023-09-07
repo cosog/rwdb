@@ -5,10 +5,75 @@ import java.util.Map;
 
 import com.cosog.model.DataRequestConfig;
 import com.cosog.model.DataResponseConfig;
+import com.cosog.model.DiagramExceptionData;
 import com.cosog.model.RPCCalculateResponseData;
 import com.cosog.model.WorkType;
 
 public class DataProcessingUtils {
+	public static String getDiagramQuerySql(String wellName,String fesdiagramacqtime){
+		String sql="";
+		String finalSql="";
+		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
+		if(dataRequestConfig!=null 
+				&& dataRequestConfig.getDiagramTable()!=null 
+				&& dataRequestConfig.getDiagramTable().getTableInfo()!=null 
+				&& dataRequestConfig.getDiagramTable().getTableInfo().getColumns()!=null 
+				&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo())
+				){
+			String currentDate=StringManagerUtils.getCurrentTime("yyyy-MM-dd");
+			int defaultTimeSpan=Config.getInstance().configFile.getOther().getDefaultTimeSpan();
+			String diagramIdColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getDiagramId().getColumn();
+			String wellNameColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getWellName().getColumn();
+			String acqTimeColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getAcqTime().getColumn();
+			String strokeColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getStroke().getColumn();
+			String spmColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getSPM().getColumn();
+			String pointCountColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getPointCount().getColumn();
+			String sColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getS().getColumn();
+			String fColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getF().getColumn();
+			String iColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getI().getColumn();
+			String KWattColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getKWatt().getColumn();
+			sql="select "+diagramIdColumn+","
+					+ wellNameColumn+","
+					+ "to_char("+acqTimeColumn+",'yyyy-mm-dd hh24:mi:ss') as "+acqTimeColumn+", "
+					+ strokeColumn+", "
+					+ spmColumn+", "
+					+ pointCountColumn+", "
+					+ sColumn+", "
+					+ fColumn+", "
+					+ iColumn+", "
+					+ KWattColumn+" "
+					+ " from "+dataRequestConfig.getDiagramTable().getTableInfo().getName()+" t "
+					+ " where t."+wellNameColumn+"='"+wellName+"'";
+			if(StringManagerUtils.isNotNull(fesdiagramacqtime)){
+				sql+=" and "+acqTimeColumn+" > to_date('"+fesdiagramacqtime+"','yyyy-mm-dd hh24:mi:ss') order by "+acqTimeColumn;
+			}else{
+//				sql+="order by "+acqTimeColumn+" desc";
+				sql+=" and "+acqTimeColumn+" > to_date('"+currentDate+"','yyyy-mm-dd')-"+defaultTimeSpan+" order by "+acqTimeColumn;
+			}
+			
+			finalSql="select "+diagramIdColumn+","
+					+ wellNameColumn+","
+					+ acqTimeColumn+", "
+					+ strokeColumn+", "
+					+ spmColumn+", "
+					+ pointCountColumn+", "
+					+ sColumn+", "
+					+ fColumn+", "
+					+ iColumn+", "
+					+ KWattColumn+" "
+					+ " from ("+sql+") v";
+			if(StringManagerUtils.isNotNull(fesdiagramacqtime)){
+				finalSql+=" where rownum<=100";
+			}else{
+				finalSql+=" where rownum<=100";
+//				finalSql+=" where rownum<=1";//取最新数据
+			}
+		}
+		
+		return finalSql;
+	}
+	
+	
 	public static String getWriteBackSql(RPCCalculateResponseData calculateResponseData){
 		String sql="";
 		DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
@@ -601,6 +666,8 @@ public class DataProcessingUtils {
 				sqlBuff.append(" and t."+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getSaveTime().getColumn());
 				sqlBuff.append("= (select max(t2."+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getSaveTime().getColumn()+") from "+dataRequestConfig.getProductionTable().getTableInfo().getName()+" t2 where t2."+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getWellName().getColumn()+"=t."+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getWellName().getColumn()+" )");
 			}
+			
+//			sqlBuff.append(" and t.prod_id<=12");
 		}
 		return sqlBuff.toString();
 	}

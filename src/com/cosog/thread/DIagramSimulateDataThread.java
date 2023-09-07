@@ -40,6 +40,9 @@ public class DIagramSimulateDataThread extends Thread{
 			Connection writeBackConn = null;
 			PreparedStatement writeBackPstmt = null;
 			ResultSet writeBackRs = null;
+			
+			int totalCount=100000;
+			int count=0; 
 			do{
 				try {
 					conn=OracleJdbcUtis.getDiagramConnection();
@@ -50,24 +53,32 @@ public class DIagramSimulateDataThread extends Thread{
 						int iNum=0;
 						StringManagerUtils.printLog("Insert simulate data");
 						StringManagerUtils.printLogFile(logger, "Insert simulate data","info");
+//						for(int i=1;i<=100;i++){
+//							if(i<10){
+//								wellName="rpc0000"+i;
+//							}else if(i>=10&& i<100){
+//								wellName="rpc000"+i;
+//							}else if(i>=100&& i<1000){
+//								wellName="rpc00"+i;
+//							}else if(i>=1000&& i<10000){
+//								wellName="rpc0"+i;
+//							}else{
+//								wellName="rpc"+i;
+//							}
+//							writeDataInsertSql="insert into "+dataResponseConfig.getDiagramTable().getTableInfo().getName()
+//									+"("+dataResponseConfig.getDiagramTable().getTableInfo().getColumns().getWellName().getColumn()+","+dataResponseConfig.getDiagramTable().getTableInfo().getColumns().getAcqTime().getColumn()+") "
+//									+ " values('"+wellName+"',to_date('"+time+"','yyyy-mm-dd hh24:mi:ss'))";
+//							writeBackPstmt=writeBackConn.prepareStatement(writeDataInsertSql);
+//				            iNum=writeBackPstmt.executeUpdate();
+//						}
 						for(int i=1;i<=100;i++){
 							if(i<10){
-								wellName="rpc00"+i;
+								wellName="rpc0000"+i;
 							}else if(i>=10&& i<100){
-								wellName="rpc0"+i;
-							}else{
-								wellName="rpc"+i;
-							}
-							writeDataInsertSql="insert into "+dataResponseConfig.getDiagramTable().getTableInfo().getName()
-									+"("+dataResponseConfig.getDiagramTable().getTableInfo().getColumns().getWellName().getColumn()+","+dataResponseConfig.getDiagramTable().getTableInfo().getColumns().getAcqTime().getColumn()+") "
-									+ " values('"+wellName+"',to_date('"+time+"','yyyy-mm-dd hh24:mi:ss'))";
-							writeBackPstmt=writeBackConn.prepareStatement(writeDataInsertSql);
-				            iNum=writeBackPstmt.executeUpdate();
-						}
-						for(int i=1;i<=100;i++){
-							if(i<10){
+								wellName="rpc000"+i;
+							}else if(i>=100&& i<1000){
 								wellName="rpc00"+i;
-							}else if(i>=10&& i<100){
+							}else if(i>=1000&& i<10000){
 								wellName="rpc0"+i;
 							}else{
 								wellName="rpc"+i;
@@ -91,6 +102,7 @@ public class DIagramSimulateDataThread extends Thread{
 									+ "'31.91;31.38;30.85;30.32;29.78;29.43;29.26;29.28;29.30;29.32;29.34;29.36;29.54;29.86;30.32;30.78;31.24;31.70;32.18;32.74;33.40;34.12;34.84;35.56;36.28;36.95;37.57;38.12;38.67;39.22;39.77;40.32;40.80;41.21;41.55;41.89;42.23;42.57;42.91;43.38;43.98;44.71;45.44;46.17;46.91;47.61;48.26;48.85;49.44;50.03;50.62;51.22;50.00;46.95;42.05;37.15;32.25;27.35;22.45;17.55;12.65;7.73;4.48;2.89;2.97;3.05;3.13;3.21;3.29;3.37;3.45;3.54;5.21;8.47;13.29;18.11;22.93;27.75;32.57;37.39;42.21;47.05;50.04;51.16;50.39;49.62;48.85;48.08;47.31;46.54;45.77;44.97;44.48;44.29;44.43;44.57;44.71;44.85;44.99;45.13;45.28;45.18;44.82;44.18;43.54;42.90;42.26;41.61;41.07;40.65;40.34;40.03;39.72;39.41;39.08;38.69;38.25;37.76;37.27;36.78;36.28;35.91;35.65;35.51;35.37;35.23;35.09;34.95;34.94;35.08;35.35;35.62;35.89;36.16;36.43;36.89;37.56;38.42;39.28;40.14;41.00;41.91;42.89;43.92;44.95;45.98;47.01;48.04;46.77;43.22;37.37;31.52;25.67;19.82;13.97;8.09;4.15;2.14;2.08;2.02;1.96;1.90;1.84;1.78;1.72;1.65;3.05;5.90;10.21;14.52;18.83;23.14;27.45;31.76;36.07;40.39;43.08;44.16;43.60;43.04;42.48;41.92;41.36;40.80;40.24;39.66;39.08;38.51;37.95;37.39;36.83;36.27;35.71;35.15;34.59;34.01;33.51;33.10;32.59;32.02')";
 							pstmt=conn.prepareStatement(diagramDataInsertSql);
 				            iNum=pstmt.executeUpdate();
+				            count+=iNum;
 						}
 					}else{
 						if(conn==null){
@@ -113,13 +125,14 @@ public class DIagramSimulateDataThread extends Thread{
 					OracleJdbcUtis.closeDBConnection(writeBackConn, writeBackPstmt, writeBackRs);
 				}
 				try {
-					Thread.sleep(60*1000);
+					Thread.sleep(1*1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 					StringManagerUtils.printLogFile(logger, "error", e, "error");
 				}
-			}while(true);
-			
+				StringManagerUtils.printLog("模拟数据插入"+count+"条记录");
+			}while(count<totalCount);
+			StringManagerUtils.printLog("模拟数据插入完成，共"+count+"条记录");
 		}else{
 			StringManagerUtils.printLog("The configuration information of the database is incorrect");
 			StringManagerUtils.printLogFile(logger, "The configuration information of the database is incorrect","info");

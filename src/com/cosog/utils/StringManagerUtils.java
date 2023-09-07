@@ -848,4 +848,23 @@ public class StringManagerUtils {
         }
         return flag;
     }
+    
+    public static String getTimeDiff(long startTime,long endTime){
+    	long diffTime=endTime-startTime;
+    	double durationTime=0;
+    	String timeUnit="";
+    	if(diffTime<1000){
+    		timeUnit="ns";
+    	}else if(diffTime>=1000 && diffTime<1000*1000){
+    		timeUnit="us";
+    		durationTime=(double)(Math.round(diffTime*100/1000)/100.0);
+    	}else if(diffTime>=1000*1000 && diffTime<1000*1000*1000){
+    		timeUnit="ms";
+    		durationTime=(double)(Math.round(diffTime*100/(1000*1000))/100.0);
+    	}else if(diffTime>=1000*1000*1000){
+    		timeUnit="s";
+    		durationTime=(double)(Math.round(diffTime*100/(1000*1000*1000))/100.0);
+    	}
+    	return durationTime+timeUnit;
+    }
 }
