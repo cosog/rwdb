@@ -3,13 +3,16 @@ package com.cosog.utils;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.cosog.model.DataRequestConfig;
 import com.cosog.model.DataResponseConfig;
-import com.cosog.model.DiagramExceptionData;
+import com.cosog.model.RPCCalculateRequestData;
 import com.cosog.model.RPCCalculateResponseData;
 import com.cosog.model.WorkType;
 
 public class DataProcessingUtils {
+	private static final Logger logger = Logger.getLogger(DataProcessingUtils.class.getName());
 	public static String getDiagramQuerySql(String wellName,String fesdiagramacqtime){
 		String sql="";
 		String finalSql="";
@@ -670,6 +673,143 @@ public class DataProcessingUtils {
 //			sqlBuff.append(" and t.prod_id<=12");
 		}
 		return sqlBuff.toString();
+	}
+	
+	public static RPCCalculateRequestData getRPCCalculateRequestData(List<Object> list){
+		RPCCalculateRequestData rpcCalculateRequestData=null;
+		try{
+			rpcCalculateRequestData=new RPCCalculateRequestData();
+			rpcCalculateRequestData.init();
+			rpcCalculateRequestData.setWellName(list.get(1)+"");
+			rpcCalculateRequestData.getFluidPVT().setCrudeOilDensity(StringManagerUtils.stringToFloat(list.get(2)+""));
+			rpcCalculateRequestData.getFluidPVT().setWaterDensity(StringManagerUtils.stringToFloat(list.get(3)+""));
+			rpcCalculateRequestData.getFluidPVT().setNaturalGasRelativeDensity(StringManagerUtils.stringToFloat(list.get(4)+""));
+			rpcCalculateRequestData.getFluidPVT().setSaturationPressure(StringManagerUtils.stringToFloat(list.get(5)+""));
+			
+			rpcCalculateRequestData.getReservoir().setDepth(StringManagerUtils.stringToFloat(list.get(6)+""));
+			rpcCalculateRequestData.getReservoir().setTemperature(StringManagerUtils.stringToFloat(list.get(7)+""));
+			
+			rpcCalculateRequestData.getProduction().setTubingPressure(StringManagerUtils.stringToFloat(list.get(8)+""));
+			rpcCalculateRequestData.getProduction().setCasingPressure(StringManagerUtils.stringToFloat(list.get(9)+""));
+			rpcCalculateRequestData.getProduction().setWellHeadTemperature(StringManagerUtils.stringToFloat(list.get(10)+""));
+			rpcCalculateRequestData.getProduction().setWaterCut(StringManagerUtils.stringToFloat(list.get(11)+""));
+			rpcCalculateRequestData.getProduction().setProductionGasOilRatio(StringManagerUtils.stringToFloat(list.get(12)+""));
+			rpcCalculateRequestData.getProduction().setProducingfluidLevel(StringManagerUtils.stringToFloat(list.get(13)+""));
+			rpcCalculateRequestData.getProduction().setPumpSettingDepth(StringManagerUtils.stringToFloat(list.get(14)+""));
+			
+			rpcCalculateRequestData.getPump().setBarrelType("组合泵".equals(list.get(15)+"")?"L":"H");
+			rpcCalculateRequestData.getPump().setPumpGrade(StringManagerUtils.stringToInteger(list.get(16)+""));
+			rpcCalculateRequestData.getPump().setPumpBoreDiameter( (float)(StringManagerUtils.stringToInteger(list.get(17)+"") *0.001) );
+			rpcCalculateRequestData.getPump().setPlungerLength(StringManagerUtils.stringToFloat(list.get(18)+""));
+			
+			rpcCalculateRequestData.getTubingString().getEveryTubing().get(0).setInsideDiameter( (float)(StringManagerUtils.stringToInteger(list.get(19)+"") *0.001) );
+			
+			rpcCalculateRequestData.getCasingString().getEveryCasing().get(0).setInsideDiameter( (float)(StringManagerUtils.stringToInteger(list.get(20)+"") *0.001) );
+			
+			float rodStringLength1=0,rodStringLength2=0,rodStringLength3=0,rodStringLength4=0;
+			rodStringLength1=StringManagerUtils.stringToFloat(list.get(24)+"");
+			rodStringLength2=StringManagerUtils.stringToFloat(list.get(28)+"");
+			rodStringLength3=StringManagerUtils.stringToFloat(list.get(32)+"");
+			rodStringLength4=StringManagerUtils.stringToFloat(list.get(36)+"");
+			if(rodStringLength1>0){
+				RPCCalculateRequestData.EveryRod everyRod=new RPCCalculateRequestData.EveryRod();
+				everyRod.setGrade(list.get(21)+"");
+				everyRod.setOutsideDiameter( (float)(StringManagerUtils.stringToInteger(list.get(22)+"") *0.001) );
+				everyRod.setInsideDiameter( (float)(StringManagerUtils.stringToInteger(list.get(23)+"") *0.001) );
+				everyRod.setLength(rodStringLength1);
+				rpcCalculateRequestData.getRodString().getEveryRod().add(everyRod);
+			}
+			if(rodStringLength2>0){
+				RPCCalculateRequestData.EveryRod everyRod=new RPCCalculateRequestData.EveryRod();
+				everyRod.setGrade(list.get(25)+"");
+				everyRod.setOutsideDiameter( (float)(StringManagerUtils.stringToInteger(list.get(26)+"") *0.001) );
+				everyRod.setInsideDiameter( (float)(StringManagerUtils.stringToInteger(list.get(27)+"") *0.001) );
+				everyRod.setLength(rodStringLength2);
+				rpcCalculateRequestData.getRodString().getEveryRod().add(everyRod);
+			}
+			if(rodStringLength3>0){
+				RPCCalculateRequestData.EveryRod everyRod=new RPCCalculateRequestData.EveryRod();
+				everyRod.setGrade(list.get(29)+"");
+				everyRod.setOutsideDiameter( (float)(StringManagerUtils.stringToInteger(list.get(30)+"") *0.001) );
+				everyRod.setInsideDiameter( (float)(StringManagerUtils.stringToInteger(list.get(31)+"") *0.001) );
+				everyRod.setLength(rodStringLength3);
+				rpcCalculateRequestData.getRodString().getEveryRod().add(everyRod);
+			}
+			if(rodStringLength4>0){
+				RPCCalculateRequestData.EveryRod everyRod=new RPCCalculateRequestData.EveryRod();
+				everyRod.setGrade(list.get(33)+"");
+				everyRod.setOutsideDiameter( (float)(StringManagerUtils.stringToInteger(list.get(34)+"") *0.001) );
+				everyRod.setInsideDiameter( (float)(StringManagerUtils.stringToInteger(list.get(35)+"") *0.001) );
+				everyRod.setLength(rodStringLength4);
+				rpcCalculateRequestData.getRodString().getEveryRod().add(everyRod);
+			}
+			
+			String crankRotationDirection=list.get(37)+"";
+			float offsetAngleOfCrank=StringManagerUtils.stringToFloat(list.get(38)+"");
+			float balanceWeight1=StringManagerUtils.stringToFloat(list.get(39)+"");
+			float balanceWeight2=StringManagerUtils.stringToFloat(list.get(40)+"");
+			float balanceWeight3=StringManagerUtils.stringToFloat(list.get(41)+"");
+			float balanceWeight4=StringManagerUtils.stringToFloat(list.get(42)+"");
+			float balanceWeight5=StringManagerUtils.stringToFloat(list.get(43)+"");
+			float balanceWeight6=StringManagerUtils.stringToFloat(list.get(44)+"");
+			float balanceWeight7=StringManagerUtils.stringToFloat(list.get(45)+"");
+			float balanceWeight8=StringManagerUtils.stringToFloat(list.get(46)+"");
+			
+			if(balanceWeight1>0 || balanceWeight2>0 || balanceWeight3>0 || balanceWeight4>0 || balanceWeight1>5 || balanceWeight6>0 || balanceWeight7>0 || balanceWeight8>0){
+				rpcCalculateRequestData.getPumpingUnit().setCrankRotationDirection("顺时针".equals(crankRotationDirection)?"Clockwise":"Anticlockwise");
+				rpcCalculateRequestData.getPumpingUnit().setOffsetAngleOfCrank(offsetAngleOfCrank);
+				if(balanceWeight1>0){
+					RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
+					everyBalance.setWeight(balanceWeight1);
+					rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
+				}
+				if(balanceWeight2>0){
+					RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
+					everyBalance.setWeight(balanceWeight2);
+					rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
+				}
+				if(balanceWeight3>0){
+					RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
+					everyBalance.setWeight(balanceWeight3);
+					rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
+				}
+				if(balanceWeight4>0){
+					RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
+					everyBalance.setWeight(balanceWeight4);
+					rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
+				}
+				if(balanceWeight5>0){
+					RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
+					everyBalance.setWeight(balanceWeight5);
+					rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
+				}
+				if(balanceWeight6>0){
+					RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
+					everyBalance.setWeight(balanceWeight6);
+					rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
+				}
+				if(balanceWeight7>0){
+					RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
+					everyBalance.setWeight(balanceWeight7);
+					rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
+				}
+				if(balanceWeight8>0){
+					RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
+					everyBalance.setWeight(balanceWeight8);
+					rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
+				}
+				
+				rpcCalculateRequestData.getManualIntervention().setCode(StringManagerUtils.stringToInteger(list.get(47)+""));
+				rpcCalculateRequestData.getManualIntervention().setNetGrossRatio(StringManagerUtils.stringToFloat(list.get(48)+""));
+				rpcCalculateRequestData.getManualIntervention().setNetGrossValue(StringManagerUtils.stringToFloat(list.get(49)+""));
+				rpcCalculateRequestData.getManualIntervention().setLevelCorrectValue(StringManagerUtils.stringToFloat(list.get(50)+""));
+			}
+		}catch (Exception e) {
+			rpcCalculateRequestData=null;
+			e.printStackTrace();
+			StringManagerUtils.printLogFile(logger, "error", e, "error");
+		}
+		return rpcCalculateRequestData;
 	}
 	
 	public static String getOperaValue(String value,String type,float ratio){

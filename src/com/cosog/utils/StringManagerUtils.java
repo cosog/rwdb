@@ -39,7 +39,7 @@ import oracle.sql.CLOB;
 
 public class StringManagerUtils {
 	private final static String DATEPATTERN = "yyyy-MM-dd";
-	private static final Logger logger = Logger.getLogger(AgileCalculate.class.getName());
+	private static final Logger logger = Logger.getLogger(StringManagerUtils.class.getName());
 	public static boolean isNotNull(String value) {
         boolean flag = false;
         if (value != null && value.trim().length() > 0 && (!"".equals(value.trim())) && !"null".equalsIgnoreCase(value)) {
@@ -242,6 +242,22 @@ public class StringManagerUtils {
                     sum = (int) Math.floor(Double.parseDouble(value));
                 } else {
                     sum = Integer.parseInt(value);
+                }
+            } catch (Exception e) {
+                return 0;
+            }
+        }
+        return sum;
+    }
+    
+    public static long stringToLong(String value) {
+    	long sum = 0;
+        if (StringManagerUtils.isNotNull(value)) {
+            try {
+                if (value.contains(".")) {
+                    sum = (long) Math.floor(Long.parseLong(value));
+                } else {
+                    sum = Long.parseLong(value);
                 }
             } catch (Exception e) {
                 return 0;
@@ -585,9 +601,8 @@ public class StringManagerUtils {
         } catch (Exception e) {
         	printLog("发送 POST 请求出现异常！" + e);
         	printLog("url:" + url + ",param:" + param);
-            e.printStackTrace();
             StringManagerUtils.printLogFile(logger, "url:" + url + ",param:" + param,"info");
-            StringManagerUtils.printLogFile(logger, "发送 POST 请求出现异常！", e, "error");;
+            StringManagerUtils.printLogFile(logger, "发送 POST 请求出现异常！", e, "error");
         } finally {
             try {
                 if (os != null) {
