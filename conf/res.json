@@ -10,16 +10,16 @@
             "Password": "a11ck_123"
         },
         "TableInfo": {
-            "Name": "diagramWriteBackTable",
+            "Name": "pc_fd_pumpjack_fdyna_dia_t",
             "Columns": {
                 "WellName": {
-                    "Column": "WellName",
+                    "Column": "well_common_name",
                     "Type": "varchar2",
                     "Ratio": 1,
                     "Enable": true
                 },
                 "AcqTime": {
-                    "Column": "AcqTime",
+                    "Column": "dyna_create_time",
                     "Type": "date",
                     "Ratio": 1,
                     "Enable": true

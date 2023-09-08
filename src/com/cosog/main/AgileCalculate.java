@@ -41,11 +41,12 @@ public class AgileCalculate {
 	}
 	@SuppressWarnings({ "static-access", "unused" })
 	public static void main(String[] args) {
-		DIagramSimulateDataThread dIagramSimulateDataThread=new DIagramSimulateDataThread();
-		dIagramSimulateDataThread.start();
+//		DIagramSimulateDataThread dIagramSimulateDataThread=new DIagramSimulateDataThread();
+//		dIagramSimulateDataThread.start();
 		
 		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
 		DataResponseConfig dataResponseConfig=MemoryDataUtils.getDataResponseConfig();
+		Map<String,String> dataReadTimeInfoMap=MemoryDataUtils.getDataReadTimeInfo();
 		MemoryDataUtils.initDiagramCalculateFailureData();
 		
 //		ExceptionalDataProcessingThread exceptionalDataProcessingThread=new ExceptionalDataProcessingThread();
@@ -60,9 +61,7 @@ public class AgileCalculate {
 				&& dataRequestConfig.getProductionTable()!=null 
 				&& dataRequestConfig.getProductionTable().getTableInfo()!=null
 				&& dataRequestConfig.getProductionTable().getTableInfo().getColumns()!=null){
-			Connection conn = null;
-			PreparedStatement pstmt = null;
-			ResultSet rs = null;
+			
 			Gson gson=new Gson();
 			StringManagerUtils stringManagerUtils=new StringManagerUtils();
 			List<RPCCalculateRequestData> rpcCalculateRequestDataList=null;
@@ -80,204 +79,59 @@ public class AgileCalculate {
 				if(acStatusProbeResonanceData!=null){
 					String sql=DataProcessingUtils.getProductionDataSql(null);
 					if(StringManagerUtils.isNotNull(sql)){
-						try {
-							//判断生产数据表连接配置是否有效，是否和功图数据表连接配置相同
-							if( (!DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getProductionTable().getConnectInfo())) || DataRequestConfig.ConnectInfoEquals(dataRequestConfig.getProductionTable().getConnectInfo(), dataRequestConfig.getDiagramTable().getConnectInfo())  ){
-								conn=OracleJdbcUtis.getDiagramConnection();//配置无效或者和功图数据表连接配置相同，获取功图数据表连接
-							}else{
-								conn=OracleJdbcUtis.getProductionDataConnection();
+						List<List<Object>> prodList=OracleJdbcUtis.queryProductionData(sql);
+						if(prodList!=null && prodList.size()>0){
+							for(int i=0;i<prodList.size();i++){
+								List<Object> list=prodList.get(i);
+								wellCount++;
+								RPCCalculateRequestData rpcCalculateRequestData=DataProcessingUtils.getRPCCalculateRequestData(list);
+								rpcCalculateRequestDataList.add(rpcCalculateRequestData);
 							}
-							if(conn!=null){
-								pstmt = conn.prepareStatement(sql);
-								rs=pstmt.executeQuery();
-								while(rs.next()){
-									wellCount++;
-									try{
-										RPCCalculateRequestData rpcCalculateRequestData=new RPCCalculateRequestData();
-										rpcCalculateRequestData.init();
-										rpcCalculateRequestData.setWellName(rs.getString(2));
-										rpcCalculateRequestData.getFluidPVT().setCrudeOilDensity(rs.getFloat(3));
-										rpcCalculateRequestData.getFluidPVT().setWaterDensity(rs.getFloat(4));
-										rpcCalculateRequestData.getFluidPVT().setNaturalGasRelativeDensity(rs.getFloat(5));
-										rpcCalculateRequestData.getFluidPVT().setSaturationPressure(rs.getFloat(6));
-										
-										rpcCalculateRequestData.getReservoir().setDepth(rs.getFloat(7));
-										rpcCalculateRequestData.getReservoir().setTemperature(rs.getFloat(8));
-										
-										rpcCalculateRequestData.getProduction().setTubingPressure(rs.getFloat(9));
-										rpcCalculateRequestData.getProduction().setCasingPressure(rs.getFloat(10));
-										rpcCalculateRequestData.getProduction().setWellHeadTemperature(rs.getFloat(11));
-										rpcCalculateRequestData.getProduction().setWaterCut(rs.getFloat(12));
-										rpcCalculateRequestData.getProduction().setProductionGasOilRatio(rs.getFloat(13));
-										rpcCalculateRequestData.getProduction().setProducingfluidLevel(rs.getFloat(14));
-										rpcCalculateRequestData.getProduction().setPumpSettingDepth(rs.getFloat(15));
-										
-										rpcCalculateRequestData.getPump().setBarrelType("组合泵".equals(rs.getString(16))?"L":"H");
-										rpcCalculateRequestData.getPump().setPumpGrade(rs.getInt(17));
-										rpcCalculateRequestData.getPump().setPumpBoreDiameter( (float)(rs.getInt(18) *0.001) );
-										rpcCalculateRequestData.getPump().setPlungerLength(rs.getFloat(19));
-										
-										RPCCalculateRequestData.EveryTubing everyTubing=new RPCCalculateRequestData.EveryTubing();
-										everyTubing.setInsideDiameter( (float)(rs.getInt(20) *0.001) );
-										rpcCalculateRequestData.getTubingString().getEveryTubing().add(everyTubing);
-										
-										RPCCalculateRequestData.EveryCasing everyCasing=new RPCCalculateRequestData.EveryCasing();
-										everyCasing.setInsideDiameter( (float)(rs.getInt(21) *0.001) );
-										rpcCalculateRequestData.getCasingString().getEveryCasing().add(everyCasing);
-										
-										float rodStringLength1=0,rodStringLength2=0,rodStringLength3=0,rodStringLength4=0;
-										rodStringLength1=rs.getFloat(25);
-										rodStringLength2=rs.getFloat(29);
-										rodStringLength3=rs.getFloat(33);
-										rodStringLength4=rs.getFloat(37);
-										if(rodStringLength1>0){
-											RPCCalculateRequestData.EveryRod everyRod=new RPCCalculateRequestData.EveryRod();
-											everyRod.setGrade(rs.getString(22));
-											everyRod.setOutsideDiameter( (float)(rs.getInt(23) *0.001) );
-											everyRod.setInsideDiameter( (float)(rs.getInt(24) *0.001) );
-											everyRod.setLength(rodStringLength1);
-											rpcCalculateRequestData.getRodString().getEveryRod().add(everyRod);
-										}
-										if(rodStringLength2>0){
-											RPCCalculateRequestData.EveryRod everyRod=new RPCCalculateRequestData.EveryRod();
-											everyRod.setGrade(rs.getString(26));
-											everyRod.setOutsideDiameter( (float)(rs.getInt(27) *0.001) );
-											everyRod.setInsideDiameter( (float)(rs.getInt(28) *0.001) );
-											everyRod.setLength(rodStringLength2);
-											rpcCalculateRequestData.getRodString().getEveryRod().add(everyRod);
-										}
-										if(rodStringLength3>0){
-											RPCCalculateRequestData.EveryRod everyRod=new RPCCalculateRequestData.EveryRod();
-											everyRod.setGrade(rs.getString(30));
-											everyRod.setOutsideDiameter( (float)(rs.getInt(31) *0.001) );
-											everyRod.setInsideDiameter( (float)(rs.getInt(32) *0.001) );
-											everyRod.setLength(rodStringLength3);
-											rpcCalculateRequestData.getRodString().getEveryRod().add(everyRod);
-										}
-										if(rodStringLength4>0){
-											RPCCalculateRequestData.EveryRod everyRod=new RPCCalculateRequestData.EveryRod();
-											everyRod.setGrade(rs.getString(34));
-											everyRod.setOutsideDiameter( (float)(rs.getInt(35) *0.001) );
-											everyRod.setInsideDiameter( (float)(rs.getInt(36) *0.001) );
-											everyRod.setLength(rodStringLength4);
-											rpcCalculateRequestData.getRodString().getEveryRod().add(everyRod);
-										}
-										
-										String crankRotationDirection=rs.getString(38);
-										float offsetAngleOfCrank=rs.getFloat(39);
-										float balanceWeight1=rs.getInt(40);
-										float balanceWeight2=rs.getInt(41);
-										float balanceWeight3=rs.getInt(42);
-										float balanceWeight4=rs.getInt(43);
-										float balanceWeight5=rs.getInt(44);
-										float balanceWeight6=rs.getInt(45);
-										float balanceWeight7=rs.getInt(46);
-										float balanceWeight8=rs.getInt(47);
-										
-										if(balanceWeight1>0 || balanceWeight2>0 || balanceWeight3>0 || balanceWeight4>0 || balanceWeight1>5 || balanceWeight6>0 || balanceWeight7>0 || balanceWeight8>0){
-											rpcCalculateRequestData.getPumpingUnit().setCrankRotationDirection("顺时针".equals(crankRotationDirection)?"Clockwise":"Anticlockwise");
-											rpcCalculateRequestData.getPumpingUnit().setOffsetAngleOfCrank(offsetAngleOfCrank);
-											if(balanceWeight1>0){
-												RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
-												everyBalance.setWeight(balanceWeight1);
-												rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
-											}
-											if(balanceWeight2>0){
-												RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
-												everyBalance.setWeight(balanceWeight2);
-												rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
-											}
-											if(balanceWeight3>0){
-												RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
-												everyBalance.setWeight(balanceWeight3);
-												rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
-											}
-											if(balanceWeight4>0){
-												RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
-												everyBalance.setWeight(balanceWeight4);
-												rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
-											}
-											if(balanceWeight5>0){
-												RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
-												everyBalance.setWeight(balanceWeight5);
-												rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
-											}
-											if(balanceWeight6>0){
-												RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
-												everyBalance.setWeight(balanceWeight6);
-												rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
-											}
-											if(balanceWeight7>0){
-												RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
-												everyBalance.setWeight(balanceWeight7);
-												rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
-											}
-											if(balanceWeight8>0){
-												RPCCalculateRequestData.EveryBalance everyBalance=new RPCCalculateRequestData.EveryBalance();
-												everyBalance.setWeight(balanceWeight8);
-												rpcCalculateRequestData.getPumpingUnit().getBalance().getEveryBalance().add(everyBalance);
-											}
-											
-											rpcCalculateRequestData.getManualIntervention().setCode(rs.getInt(48));
-											rpcCalculateRequestData.getManualIntervention().setNetGrossRatio(rs.getFloat(49));
-											rpcCalculateRequestData.getManualIntervention().setNetGrossValue(rs.getFloat(50));
-											rpcCalculateRequestData.getManualIntervention().setLevelCorrectValue(rs.getFloat(51));
-										}
-										rpcCalculateRequestDataList.add(rpcCalculateRequestData);
-									}catch (Exception e) {
-										e.printStackTrace();
-										StringManagerUtils.printLogFile(logger, "error", e, "error");
-									}
-								}
-								StringManagerUtils.printLog("Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
-								StringManagerUtils.printLogFile(logger, "Traverse the well data,well count:"+rpcCalculateRequestDataList.size(),"info");
-								if(rpcCalculateRequestDataList.size()>0){
-									for(RPCCalculateRequestData rpcCalculateRequestData:rpcCalculateRequestDataList){
-										executor.execute(new RPCWellDataSyncThread(rpcCalculateRequestData));
-									}
-								}
-								while (!executor.isCompletedByTaskCount()) {
-									try {
-										Thread.sleep(1000*1);
-									}catch (Exception e) {
-										e.printStackTrace();
-										StringManagerUtils.printLogFile(logger, "error", e, "error");
-									}
-							    }
-								//将读取数据时间保存到本地
-								Map<String, Object> map = DataModelMap.getMapObject();
-								if(map.containsKey("dataReadTimeInfoMap") && map.get("dataReadTimeInfoMap")!=null){
-									Map<String,String> dataReadTimeInfoMap=(Map<String, String>) map.get("dataReadTimeInfoMap");
-									if(dataReadTimeInfoMap!=null){
-										DataReadTimeInfo dataReadTimeInfo=new DataReadTimeInfo();
-										dataReadTimeInfo.setWellList(new ArrayList<DataReadTimeInfo.DataReadTime>());
-										
-										Iterator<Map.Entry<String, String>> iterator = dataReadTimeInfoMap.entrySet().iterator();
-										while (iterator.hasNext()) {
-											Map.Entry<String, String> entry = iterator.next();
-											DataReadTimeInfo.DataReadTime dataReadTime=new DataReadTimeInfo.DataReadTime();
-											dataReadTime.setWellName(entry.getKey());
-											dataReadTime.setReadTime(entry.getValue());
-											dataReadTimeInfo.getWellList().add(dataReadTime);
-										}
-										String path=stringManagerUtils.getFilePath("timestamp.json","conf/");
-										StringManagerUtils.writeFile(path,StringManagerUtils.jsonStringFormat(gson.toJson(dataReadTimeInfo)));
-									}
-								}
-							}else{
-								StringManagerUtils.printLog("Production data database connection failure");
-								StringManagerUtils.printLogFile(logger, "Production data database connection failure","info");
+						}
+						System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
+						logger.info(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
+						StringManagerUtils.printLog("Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
+						StringManagerUtils.printLogFile(logger, "Traverse the well data,well count:"+rpcCalculateRequestDataList.size(),"info");
+						if(rpcCalculateRequestDataList.size()>0){
+							for(RPCCalculateRequestData rpcCalculateRequestData:rpcCalculateRequestDataList){
+								executor.execute(new RPCWellDataSyncThread(rpcCalculateRequestData));
 							}
-						} catch (SQLException e1) {
-							e1.printStackTrace();
-							StringManagerUtils.printLogFile(logger, "error", e1, "error");
-							StringManagerUtils.printLog("Failed to query production data,sql:"+sql);
-							StringManagerUtils.printLogFile(logger, "Failed to query production data,sql:"+sql,"error");
-						} catch (Exception e1) {
-							e1.printStackTrace();
-							StringManagerUtils.printLogFile(logger, "error", e1, "error");
-						}finally{
-							OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
+						}
+						while (!executor.isCompletedByTaskCount()) {
+							try {
+//								System.out.println("TaskCount:"+executor.getExecutor().getTaskCount()
+//										+",CompletedTaskCount:"+executor.getExecutor().getCompletedTaskCount()
+//										+",ActiveCount:"+executor.getExecutor().getActiveCount()
+//										+",connCount:"+(OracleJdbcUtis.outerDiagramDataSource!=null?OracleJdbcUtis.outerDiagramDataSource.getNumActive():0)
+//										+",writeBackConnCount:"+(OracleJdbcUtis.outerDataWriteBackDataSource!=null?OracleJdbcUtis.outerDataWriteBackDataSource.getNumActive():0)
+//										);
+//								logger.info("TaskCount:"+executor.getExecutor().getTaskCount()
+//										+",CompletedTaskCount:"+executor.getExecutor().getCompletedTaskCount()
+//										+",ActiveCount:"+executor.getExecutor().getActiveCount()
+//										+",connCount:"+(OracleJdbcUtis.outerDiagramDataSource!=null?OracleJdbcUtis.outerDiagramDataSource.getNumActive():0)
+//										+",writeBackConnCount:"+(OracleJdbcUtis.outerDataWriteBackDataSource!=null?OracleJdbcUtis.outerDataWriteBackDataSource.getNumActive():0)
+//										);
+								Thread.sleep(1000*1);
+							}catch (Exception e) {
+								e.printStackTrace();
+								StringManagerUtils.printLogFile(logger, "error", e, "error");
+							}
+					    }
+						//将读取数据时间保存到本地
+						if(dataReadTimeInfoMap!=null){
+							DataReadTimeInfo dataReadTimeInfo=new DataReadTimeInfo();
+							dataReadTimeInfo.setWellList(new ArrayList<DataReadTimeInfo.DataReadTime>());
+							
+							Iterator<Map.Entry<String, String>> iterator = dataReadTimeInfoMap.entrySet().iterator();
+							while (iterator.hasNext()) {
+								Map.Entry<String, String> entry = iterator.next();
+								DataReadTimeInfo.DataReadTime dataReadTime=new DataReadTimeInfo.DataReadTime();
+								dataReadTime.setWellName(entry.getKey());
+								dataReadTime.setReadTime(entry.getValue());
+								dataReadTimeInfo.getWellList().add(dataReadTime);
+							}
+							String path=stringManagerUtils.getFilePath("timestamp.json","conf/");
+							StringManagerUtils.writeFile(path,StringManagerUtils.jsonStringFormat(gson.toJson(dataReadTimeInfo)));
 						}
 					}
 				}else{

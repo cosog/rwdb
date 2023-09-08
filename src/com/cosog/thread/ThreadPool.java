@@ -163,7 +163,7 @@ public class ThreadPool {
 	 * 判断线程池的所有任务是否执行完
 	 */
 	public boolean isCompletedByTaskCount() {
-	    return executor.getTaskCount() == executor.getCompletedTaskCount();
+		return executor.getTaskCount() == executor.getCompletedTaskCount();
 	}
 	
 	/**

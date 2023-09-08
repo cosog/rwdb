@@ -3,6 +3,9 @@ package com.cosog.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import com.cosog.main.AgileCalculate;
 import com.cosog.model.AppRunStatusProbeResonanceData;
 import com.cosog.model.CommResponseData;
 import com.cosog.model.DiskProbeResponseData;
@@ -34,6 +37,7 @@ public class CalculateUtils {
 	private final static String hostProbe=Config.getInstance().configFile.getAc().getProbe().getHost();
 	private final static String cpuProbe=Config.getInstance().configFile.getAc().getProbe().getCpu();
 	
+	private static final Logger logger = Logger.getLogger(CalculateUtils.class.getName());
 	
 	public static CommResponseData commCalculate(String requestDataStr){
 		Gson gson=new Gson();
@@ -68,7 +72,6 @@ public class CalculateUtils {
 		String responseDataStr=StringManagerUtils.sendPostMethod(FESDiagramUrl, requestDataStr,"utf-8",0,0);
 		type = new TypeToken<RPCCalculateResponseData>() {}.getType();
 		RPCCalculateResponseData responseData=gson.fromJson(responseDataStr, type);
-		
 		return responseData;
 	}
 	
