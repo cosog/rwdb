@@ -671,8 +671,48 @@ public class DataProcessingUtils {
 			}
 			
 //			sqlBuff.append(" and t.prod_id<=12");
+//			sqlBuff.append(" and t."+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getWellName().getColumn()+" in('rpc00001')");
 		}
 		return sqlBuff.toString();
+	}
+	
+	public static String getDiagramQuerySql(String wellName,List<Long> list){
+		String sql="";
+		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
+		if(dataRequestConfig!=null 
+				&& dataRequestConfig.getDiagramTable()!=null 
+				&& dataRequestConfig.getDiagramTable().getTableInfo()!=null 
+				&& dataRequestConfig.getDiagramTable().getTableInfo().getColumns()!=null 
+				&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo())
+				){
+			String currentDate=StringManagerUtils.getCurrentTime("yyyy-MM-dd");
+			int defaultTimeSpan=Config.getInstance().configFile.getOther().getDefaultTimeSpan();
+			String diagramIdColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getDiagramId().getColumn();
+			String wellNameColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getWellName().getColumn();
+			String acqTimeColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getAcqTime().getColumn();
+			String strokeColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getStroke().getColumn();
+			String spmColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getSPM().getColumn();
+			String pointCountColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getPointCount().getColumn();
+			String sColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getS().getColumn();
+			String fColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getF().getColumn();
+			String iColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getI().getColumn();
+			String KWattColumn=dataRequestConfig.getDiagramTable().getTableInfo().getColumns().getKWatt().getColumn();
+			sql="select "+diagramIdColumn+","
+					+ wellNameColumn+","
+					+ "to_char("+acqTimeColumn+",'yyyy-mm-dd hh24:mi:ss') as "+acqTimeColumn+", "
+					+ strokeColumn+", "
+					+ spmColumn+", "
+					+ pointCountColumn+", "
+					+ sColumn+", "
+					+ fColumn+", "
+					+ iColumn+", "
+					+ KWattColumn+" "
+					+ " from "+dataRequestConfig.getDiagramTable().getTableInfo().getName()+" t "
+					+ " where t."+wellNameColumn+"='"+wellName+"' "
+					+ " and t.diagramIdColumn in("+StringManagerUtils.join_long(list, ",")+")";
+		}
+		
+		return sql;
 	}
 	
 	public static RPCCalculateRequestData getRPCCalculateRequestData(List<Object> list){

@@ -538,7 +538,7 @@ public class StringManagerUtils {
         } catch (Exception e) {
             flag = false;
             e.printStackTrace();
-            StringManagerUtils.printLogFile(logger, "error", e, "error");;
+            StringManagerUtils.printLogFile(logger, "error", e, "error");
         }
 
         // 返回是否成功的标记
