@@ -202,12 +202,6 @@ public class RPCWellDataSyncThread  extends Thread{
 							e1.printStackTrace();
 							StringManagerUtils.printLogFile(logger, "error", e1, "error");
 						}
-						try {
-							Thread.sleep(10);
-						}catch (Exception e) {
-							e.printStackTrace();
-							StringManagerUtils.printLogFile(logger, "error", e, "error");
-						}
 					}
 				}
 				

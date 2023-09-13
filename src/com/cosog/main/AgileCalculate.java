@@ -18,6 +18,7 @@ import com.cosog.model.DataReadTimeInfo;
 import com.cosog.model.DataRequestConfig;
 import com.cosog.model.DataResponseConfig;
 import com.cosog.model.RPCCalculateRequestData;
+import com.cosog.model.RPCCalculateResponseData;
 import com.cosog.model.AppRunStatusProbeResonanceData;
 import com.cosog.thread.DIagramSimulateDataThread;
 import com.cosog.thread.ExceptionalDataProcessingThread;
@@ -32,15 +33,42 @@ import com.cosog.utils.MemoryDataUtils;
 import com.cosog.utils.OracleJdbcUtis;
 import com.cosog.utils.StringManagerUtils;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class AgileCalculate {
 	private static Logger logger=null;
+	private static int count=0;
 	static{
 		logPathConfig();
 		logger = Logger.getLogger(AgileCalculate.class.getName());
 	}
 	@SuppressWarnings({ "static-access", "unused" })
 	public static void main(String[] args) {
+//		Gson gson = new Gson();
+//		java.lang.reflect.Type type=null;
+//		StringManagerUtils stringManagerUtils=new StringManagerUtils();
+//		String path=stringManagerUtils.getFilePath("test.json","conf/");
+//		String data=StringManagerUtils.readFile(path,"utf-8").replaceAll(" ", "");
+//		
+//		
+//		for(int i=1;i<=100;i++){
+//			String wellName="rpc"+i;
+//			TestThread testThread=new TestThread(data,wellName);
+//			testThread.start();
+//		}
+//		
+//		while(true){
+//			int times1=count;
+//			try {
+//				Thread.sleep(60*1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			int times2=count;
+//			System.out.println("一分钟计算次数："+(times2-times1));
+//		}
+		
 //		DIagramSimulateDataThread dIagramSimulateDataThread=new DIagramSimulateDataThread();
 //		dIagramSimulateDataThread.start();
 		
@@ -61,7 +89,6 @@ public class AgileCalculate {
 				&& dataRequestConfig.getProductionTable()!=null 
 				&& dataRequestConfig.getProductionTable().getTableInfo()!=null
 				&& dataRequestConfig.getProductionTable().getTableInfo().getColumns()!=null){
-			
 			Gson gson=new Gson();
 			StringManagerUtils stringManagerUtils=new StringManagerUtils();
 			List<RPCCalculateRequestData> rpcCalculateRequestDataList=null;
@@ -149,6 +176,35 @@ public class AgileCalculate {
 			StringManagerUtils.printLog("The configuration information of the database is incorrect,program exit!");
 			StringManagerUtils.printLogFile(logger, "The configuration information of the database is incorrect,program exit!","info");
 		}
+	}
+	
+	public static class TestThread   extends Thread{
+		private String wellName;
+		private String data;
+
+		public TestThread(String data,String wellName) {
+			super();
+			this.data = data;
+			this.wellName = wellName;
+		}
+		public void run(){
+			long time1=0,time2=0;
+			RPCCalculateResponseData calculateResponseData=null;
+			Gson gson = new Gson();
+			java.lang.reflect.Type type=null;
+			type = new TypeToken<RPCCalculateRequestData>() {}.getType();
+			RPCCalculateRequestData calculateRequestData=gson.fromJson(data, type);
+			calculateRequestData.setWellName(wellName);
+			do{
+				calculateRequestData.getFESDiagram().setAcqTime(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss"));
+				time1=System.nanoTime();
+				calculateResponseData=CalculateUtils.fesDiagramCalculate(gson.toJson(calculateRequestData));
+				time2=System.nanoTime();
+//				System.out.println(calculateRequestData.getWellName()+"单张功图计算时间："+StringManagerUtils.getTimeDiff(time1, time2));
+				count++;
+			}while(true);
+		}
+		
 	}
 
 	public static void logPathConfig(){
