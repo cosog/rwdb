@@ -18,6 +18,7 @@ import com.cosog.model.DiagramExceptionData.ExceptionInfo;
 import com.cosog.model.RPCCalculateRequestData;
 import com.cosog.model.RPCCalculateResponseData;
 import com.cosog.utils.CalculateUtils;
+import com.cosog.utils.CounterUtils;
 import com.cosog.utils.DataModelMap;
 import com.cosog.utils.DataProcessingUtils;
 import com.cosog.utils.MemoryDataUtils;
@@ -132,33 +133,19 @@ public class RPCWellDataSyncThread  extends Thread{
 							
 							//功图计算
 							RPCCalculateResponseData calculateResponseData=null;
-							if("rpc00001".equalsIgnoreCase(calculateRequestData.getWellName())){
-								long calculateStartTime=System.nanoTime();
-								calculateResponseData=CalculateUtils.fesDiagramCalculate(gson.toJson(calculateRequestData));
-								long calculateEndTime=System.nanoTime();
-								System.out.println(calculateRequestData.getWellName()+"单张功图计算时间："+StringManagerUtils.getTimeDiff(calculateStartTime, calculateEndTime));
-								logger.info(calculateRequestData.getWellName()+"单张功图计算时间："+StringManagerUtils.getTimeDiff(calculateStartTime, calculateEndTime));
-							}else{
-								long calculateStartTime=System.nanoTime();
-								calculateResponseData=CalculateUtils.fesDiagramCalculate(gson.toJson(calculateRequestData));
-								long calculateEndTime=System.nanoTime();
-//								System.out.println(calculateRequestData.getWellName()+"单张功图计算时间："+StringManagerUtils.getTimeDiff(calculateStartTime, calculateEndTime));
-								logger.info(calculateRequestData.getWellName()+"单张功图计算时间："+StringManagerUtils.getTimeDiff(calculateStartTime, calculateEndTime));
-							}
-							
-							
+
+							long calculateStartTime=System.nanoTime();
+							calculateResponseData=CalculateUtils.fesDiagramCalculate(gson.toJson(calculateRequestData));
+							long calculateEndTime=System.nanoTime();
+//							System.out.println(calculateRequestData.getWellName()+"单张功图计算时间："+StringManagerUtils.getTimeDiff(calculateStartTime, calculateEndTime));
+//							logger.info(calculateRequestData.getWellName()+"单张功图计算时间："+StringManagerUtils.getTimeDiff(calculateStartTime, calculateEndTime));
+						
 							//结果回写
 							if(calculateResponseData!=null){
 								if(calculateResponseData.getCalculationStatus().getResultStatus()==1){
 									writeBackSql=DataProcessingUtils.getWriteBackSql(calculateResponseData);
 									if(StringManagerUtils.isNotNull(writeBackSql)){
-										long t1=System.nanoTime();
 							            int iNum=OracleJdbcUtis.writeBackDiagramCalculateData(writeBackSql);
-							            long t2=System.nanoTime();
-							            if("rpc00001".equalsIgnoreCase(calculateRequestData.getWellName())){
-							            	System.out.println(calculateRequestData.getWellName()+"单张功图回写时间："+StringManagerUtils.getTimeDiff(t1, t2));
-							            }
-							            logger.info(calculateRequestData.getWellName()+"单张功图回写时间："+StringManagerUtils.getTimeDiff(t1, t2));
 							            if(iNum>0){
 							            	writeBackCount++;
 							            	endTime=System.nanoTime();
@@ -198,14 +185,13 @@ public class RPCWellDataSyncThread  extends Thread{
 								StringManagerUtils.printLog("Calculation failed, no response data"+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime());
 								StringManagerUtils.printLogFile(logger, "Calculation failed, no response data"+",wellName:"+calculateRequestData.getWellName()+",acqTime:"+calculateRequestData.getFESDiagram().getAcqTime(),"info");
 							}
+							CounterUtils.incr();//计数器加一
 						} catch (Exception e1) {
 							e1.printStackTrace();
 							StringManagerUtils.printLogFile(logger, "error", e1, "error");
 						}
 					}
 				}
-				
-			
 			}catch (Exception e1) {
 				e1.printStackTrace();
 				StringManagerUtils.printLogFile(logger, "error", e1, "error");
@@ -237,6 +223,7 @@ public class RPCWellDataSyncThread  extends Thread{
 		String timeDiffStr=StringManagerUtils.getTimeDiff(time1, time2);
 		System.out.println("Get fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime+",recordCount:"+recordCount+",writeBackCount:"+writeBackCount+",durationTime:"+timeDiffStr);
 		logger.info("Get fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime+",recordCount:"+recordCount+",writeBackCount:"+writeBackCount+",durationTime:"+timeDiffStr);
+		CounterUtils.countDown();
 	}
 
 	public RPCCalculateRequestData getCalculateRequestData() {
