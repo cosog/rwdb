@@ -1,3 +1,404 @@
 {
-  "wellList": []
+  "wellList": [
+    {
+      "wellName": "rpc00021",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00022",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00020",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00025",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00026",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00023",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00024",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00029",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00027",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00028",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00098",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00010",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00099",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00011",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00096",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00097",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00014",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00015",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00012",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00013",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00090",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00091",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00094",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00095",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00092",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00093",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00018",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00019",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00016",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00017",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00043",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00044",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00041",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00042",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00047",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00048",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00045",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00046",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00040",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00049",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00032",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00033",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00030",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00031",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00036",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00037",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00034",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00035",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00038",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00039",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00065",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00066",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00063",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00064",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00069",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00100",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00067",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00068",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00061",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00062",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00060",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00054",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00055",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00052",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00053",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00058",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00059",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00056",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00057",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00050",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00051",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00087",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00088",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00085",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00086",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00003",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00004",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00001",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00089",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00002",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00080",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00083",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00084",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00081",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00082",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00007",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00008",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00005",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00006",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00009",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00076",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00077",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00074",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00075",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00078",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00079",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00072",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00073",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00070",
+      "readTime": ""
+    },
+    {
+      "wellName": "rpc00071",
+      "readTime": ""
+    }
+  ]
 }

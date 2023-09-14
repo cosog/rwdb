@@ -27,6 +27,7 @@ import com.cosog.thread.ThreadPool;
 import com.cosog.utils.CalculateUtils;
 import com.cosog.utils.Config;
 import com.cosog.utils.ConfigFile;
+import com.cosog.utils.CounterUtils;
 import com.cosog.utils.DataModelMap;
 import com.cosog.utils.DataProcessingUtils;
 import com.cosog.utils.MemoryDataUtils;
@@ -44,31 +45,6 @@ public class AgileCalculate {
 	}
 	@SuppressWarnings({ "static-access", "unused" })
 	public static void main(String[] args) {
-//		Gson gson = new Gson();
-//		java.lang.reflect.Type type=null;
-//		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-//		String path=stringManagerUtils.getFilePath("test.json","conf/");
-//		String data=StringManagerUtils.readFile(path,"utf-8").replaceAll(" ", "");
-//		
-//		
-//		for(int i=1;i<=100;i++){
-//			String wellName="rpc"+i;
-//			TestThread testThread=new TestThread(data,wellName);
-//			testThread.start();
-//		}
-//		
-//		while(true){
-//			int times1=count;
-//			try {
-//				Thread.sleep(60*1000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			int times2=count;
-//			System.out.println("一分钟计算次数："+(times2-times1));
-//		}
-		
 //		DIagramSimulateDataThread dIagramSimulateDataThread=new DIagramSimulateDataThread();
 //		dIagramSimulateDataThread.start();
 		
@@ -101,7 +77,6 @@ public class AgileCalculate {
 					Config.getInstance().configFile.getThreadPool().getOuterDatabaseSync().getWattingCount());
 			do{
 				AppRunStatusProbeResonanceData acStatusProbeResonanceData=CalculateUtils.appProbe("");
-				wellCount=0;
 				rpcCalculateRequestDataList=new ArrayList<RPCCalculateRequestData>();
 				if(acStatusProbeResonanceData!=null){
 					String sql=DataProcessingUtils.getProductionDataSql(null);
@@ -119,31 +94,32 @@ public class AgileCalculate {
 						logger.info(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
 						StringManagerUtils.printLog("Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
 						StringManagerUtils.printLogFile(logger, "Traverse the well data,well count:"+rpcCalculateRequestDataList.size(),"info");
+						
+						
 						if(rpcCalculateRequestDataList.size()>0){
+							CounterUtils.initCountDownLatch(rpcCalculateRequestDataList.size());
+							CounterUtils.reset();//加法计数器清零
+							long calculateStartTime=System.nanoTime();
 							for(RPCCalculateRequestData rpcCalculateRequestData:rpcCalculateRequestDataList){
 								executor.execute(new RPCWellDataSyncThread(rpcCalculateRequestData));
 							}
-						}
-						while (!executor.isCompletedByTaskCount()) {
 							try {
-//								System.out.println("TaskCount:"+executor.getExecutor().getTaskCount()
-//										+",CompletedTaskCount:"+executor.getExecutor().getCompletedTaskCount()
-//										+",ActiveCount:"+executor.getExecutor().getActiveCount()
-//										+",connCount:"+(OracleJdbcUtis.outerDiagramDataSource!=null?OracleJdbcUtis.outerDiagramDataSource.getNumActive():0)
-//										+",writeBackConnCount:"+(OracleJdbcUtis.outerDataWriteBackDataSource!=null?OracleJdbcUtis.outerDataWriteBackDataSource.getNumActive():0)
-//										);
-//								logger.info("TaskCount:"+executor.getExecutor().getTaskCount()
-//										+",CompletedTaskCount:"+executor.getExecutor().getCompletedTaskCount()
-//										+",ActiveCount:"+executor.getExecutor().getActiveCount()
-//										+",connCount:"+(OracleJdbcUtis.outerDiagramDataSource!=null?OracleJdbcUtis.outerDiagramDataSource.getNumActive():0)
-//										+",writeBackConnCount:"+(OracleJdbcUtis.outerDataWriteBackDataSource!=null?OracleJdbcUtis.outerDataWriteBackDataSource.getNumActive():0)
-//										);
-								Thread.sleep(1000*1);
-							}catch (Exception e) {
+								CounterUtils.await();//等待所有线程执行完毕
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
 								e.printStackTrace();
 								StringManagerUtils.printLogFile(logger, "error", e, "error");
 							}
-					    }
+							long calculateEndTime=System.nanoTime();
+							long sum=CounterUtils.sum();//获取计算的功图数量
+							System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":计算功图数量:"+sum+",用时:"+StringManagerUtils.getTimeDiff(calculateStartTime, calculateEndTime));
+						}
+						try {
+							Thread.sleep(1000*1);
+						}catch (Exception e) {
+							e.printStackTrace();
+							StringManagerUtils.printLogFile(logger, "error", e, "error");
+						}
 						//将读取数据时间保存到本地
 						if(dataReadTimeInfoMap!=null){
 							DataReadTimeInfo dataReadTimeInfo=new DataReadTimeInfo();
