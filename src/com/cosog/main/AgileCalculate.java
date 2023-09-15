@@ -75,6 +75,8 @@ public class AgileCalculate {
 					Config.getInstance().configFile.getThreadPool().getOuterDatabaseSync().getKeepAliveTime(), 
 					TimeUnit.SECONDS, 
 					Config.getInstance().configFile.getThreadPool().getOuterDatabaseSync().getWattingCount());
+			CounterUtils.reset();//加法计数器清零
+			CounterUtils.calculateSpeedTimer();//创建统计计算速度计时器
 			do{
 				AppRunStatusProbeResonanceData acStatusProbeResonanceData=CalculateUtils.appProbe("");
 				rpcCalculateRequestDataList=new ArrayList<RPCCalculateRequestData>();
@@ -90,15 +92,15 @@ public class AgileCalculate {
 								rpcCalculateRequestDataList.add(rpcCalculateRequestData);
 							}
 						}
-						System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
-						logger.info(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
-						StringManagerUtils.printLog("Traverse the well data,well count:"+rpcCalculateRequestDataList.size());
-						StringManagerUtils.printLogFile(logger, "Traverse the well data,well count:"+rpcCalculateRequestDataList.size(),"info");
+						System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":Traverse the well data,well count:"+rpcCalculateRequestDataList.size()+",waiting thread execution...");
+						StringManagerUtils.printLog("Traverse the well data,well count:"+rpcCalculateRequestDataList.size()+",waiting thread execution...");
+						StringManagerUtils.printLogFile(logger, "Traverse the well data,well count:"+rpcCalculateRequestDataList.size()+",waiting thread execution...","info");
 						
 						
 						if(rpcCalculateRequestDataList.size()>0){
 							CounterUtils.initCountDownLatch(rpcCalculateRequestDataList.size());
-							CounterUtils.reset();//加法计数器清零
+							
+							long sum1=CounterUtils.sum();
 							long calculateStartTime=System.nanoTime();
 							for(RPCCalculateRequestData rpcCalculateRequestData:rpcCalculateRequestDataList){
 								executor.execute(new RPCWellDataSyncThread(rpcCalculateRequestData));
@@ -111,8 +113,8 @@ public class AgileCalculate {
 								StringManagerUtils.printLogFile(logger, "error", e, "error");
 							}
 							long calculateEndTime=System.nanoTime();
-							long sum=CounterUtils.sum();//获取计算的功图数量
-							System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":计算功图数量:"+sum+",用时:"+StringManagerUtils.getTimeDiff(calculateStartTime, calculateEndTime));
+							long sum2=CounterUtils.sum();//获取计算的功图数量
+							System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":Thread complete，calculated count:"+(sum2-sum1)+",time:"+StringManagerUtils.getTimeDiff(calculateStartTime, calculateEndTime));
 						}
 						try {
 							Thread.sleep(1000*1);

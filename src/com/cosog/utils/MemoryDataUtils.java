@@ -21,19 +21,30 @@ public class MemoryDataUtils {
 	private static final Logger logger = Logger.getLogger(AgileCalculate.class.getName());
 	
 	public static void loadSystemConfig(){
-		Gson gson = new Gson();
-		java.lang.reflect.Type type=null;
+		ConfigFile configFile=null;
 		Map<String, Object> map = DataModelMap.getMapObject();
-		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-		String path=stringManagerUtils.getFilePath("conf.json","conf/");
-		String data=StringManagerUtils.readFile(path,"utf-8").replaceAll(" ", "");
-		type = new TypeToken<ConfigFile>() {}.getType();
-		ConfigFile configFile=gson.fromJson(data, type);
+		boolean flag=true;
+		try{
+			Gson gson = new Gson();
+			java.lang.reflect.Type type=null;
+			StringManagerUtils stringManagerUtils=new StringManagerUtils();
+			String path=stringManagerUtils.getFilePath("conf.json","conf/");
+			String data=StringManagerUtils.readFile(path,"utf-8").replaceAll(" ", "");
+			type = new TypeToken<ConfigFile>() {}.getType();
+			configFile=gson.fromJson(data, type);
+		} catch (Exception e) {
+			e.printStackTrace();
+			flag=false;
+		}
 		if(configFile==null){
 			configFile=new ConfigFile();
 		}
 		configFile.init();
 		map.put("systemConfig", configFile);
+		if(!flag){
+			StringManagerUtils.printLog("Parsing the conf.json file failed");
+			StringManagerUtils.printLogFile(logger, "Parsing the conf.json file failed","info");
+		}
 	}
 	
 	public static ConfigFile getSystemConfig(){
@@ -47,22 +58,24 @@ public class MemoryDataUtils {
 	}
 	
 	public static void loadDataReqConfig(){
-		Gson gson = new Gson();
-		java.lang.reflect.Type type=null;
-		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-		
-		String path=stringManagerUtils.getFilePath("req.json","conf/");
-		String data=StringManagerUtils.readFile(path,"utf-8").replaceAll(" ", "");
-		
-		type = new TypeToken<DataRequestConfig>() {}.getType();
-		DataRequestConfig dataRequestConfig=gson.fromJson(data, type);
-		
-		Map<String, Object> map = DataModelMap.getMapObject();
-		map.put("dataRequestConfig", dataRequestConfig);
-		if(dataRequestConfig==null){
+		DataRequestConfig dataRequestConfig=null;
+		try{
+			Gson gson = new Gson();
+			java.lang.reflect.Type type=null;
+			StringManagerUtils stringManagerUtils=new StringManagerUtils();
+			
+			String path=stringManagerUtils.getFilePath("req.json","conf/");
+			String data=StringManagerUtils.readFile(path,"utf-8").replaceAll(" ", "");
+			
+			type = new TypeToken<DataRequestConfig>() {}.getType();
+			dataRequestConfig=gson.fromJson(data, type);
+		} catch (Exception e) {
+			e.printStackTrace();
 			StringManagerUtils.printLog("Parsing the req.json file failed");
 			StringManagerUtils.printLogFile(logger, "Parsing the req.json file failed","info");
 		}
+		Map<String, Object> map = DataModelMap.getMapObject();
+		map.put("dataRequestConfig", dataRequestConfig);
 	}
 	
 	public static DataRequestConfig getDataReqConfig(){
@@ -76,23 +89,25 @@ public class MemoryDataUtils {
 	}
 	
 	public static void loadDataResponseConfig(){
-		Gson gson = new Gson();
-		java.lang.reflect.Type type=null;
-		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-		
-		String path=stringManagerUtils.getFilePath("res.json","conf/");
-		String data=stringManagerUtils.readFile(path,"utf-8");
-		
-		type = new TypeToken<DataResponseConfig>() {}.getType();
-		DataResponseConfig dataResponseConfig=gson.fromJson(data, type);
-		
-		Map<String, Object> map = DataModelMap.getMapObject();
-		map.put("dataResponseConfig", dataResponseConfig);
-		
-		if(dataResponseConfig==null){
+		DataResponseConfig dataResponseConfig=null;
+		try{
+			Gson gson = new Gson();
+			java.lang.reflect.Type type=null;
+			StringManagerUtils stringManagerUtils=new StringManagerUtils();
+			
+			String path=stringManagerUtils.getFilePath("res.json","conf/");
+			String data=stringManagerUtils.readFile(path,"utf-8");
+			
+			type = new TypeToken<DataResponseConfig>() {}.getType();
+			dataResponseConfig=gson.fromJson(data, type);
+		} catch (Exception e) {
+			e.printStackTrace();
 			StringManagerUtils.printLog("Parsing the res.json file failed");
 			StringManagerUtils.printLogFile(logger, "Parsing the res.json file failed","info");
 		}
+		
+		Map<String, Object> map = DataModelMap.getMapObject();
+		map.put("dataResponseConfig", dataResponseConfig);
 	}
 	
 	public static DataResponseConfig getDataResponseConfig(){
