@@ -14,6 +14,7 @@ import com.cosog.model.DiagramExceptionData.ExceptionInfo;
 import com.cosog.model.RPCCalculateRequestData;
 import com.cosog.model.RPCCalculateResponseData;
 import com.cosog.utils.CalculateUtils;
+import com.cosog.utils.CounterUtils;
 import com.cosog.utils.DataProcessingUtils;
 import com.cosog.utils.MemoryDataUtils;
 import com.cosog.utils.OracleJdbcUtis;
@@ -114,6 +115,7 @@ public class SingleWellExceptionDataProcessingThread extends Thread {
                                                 }
                                                 reCalSucessList.add(diagramId);
                                             }
+                                            CounterUtils.exceptionCalCountIncr();
                                         } else {
                                             StringManagerUtils.printLog("Calculation failed, no response data" + ",wellName:" + calculateRequestData.getWellName() + ",acqTime:" + calculateRequestData.getFESDiagram().getAcqTime());
                                             StringManagerUtils.printLogFile(logger, "Calculation failed, no response data" + ",wellName:" + calculateRequestData.getWellName() + ",acqTime:" + calculateRequestData.getFESDiagram().getAcqTime(), "info");

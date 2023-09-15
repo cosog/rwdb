@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.cosog.model.AppRunStatusProbeResonanceData;
 import com.cosog.model.DiagramExceptionData;
 import com.cosog.utils.CalculateUtils;
+import com.cosog.utils.CounterUtils;
 import com.cosog.utils.DataModelMap;
 import com.cosog.utils.StringManagerUtils;
 
@@ -28,6 +29,7 @@ public class ExceptionalDataProcessingThread  extends Thread{
 				5, 
 				TimeUnit.SECONDS, 
 				0);
+		CounterUtils.exceptionCalCountReset();
 		do{
 			AppRunStatusProbeResonanceData acStatusProbeResonanceData=CalculateUtils.appProbe("");
 			String currentTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
