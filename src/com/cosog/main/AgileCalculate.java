@@ -115,6 +115,8 @@ public class AgileCalculate {
 							long calculateEndTime=System.nanoTime();
 							long sum2=CounterUtils.sum();//获取计算的功图数量
 							System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":Thread complete，calculated count:"+(sum2-sum1)+",time:"+StringManagerUtils.getTimeDiff(calculateStartTime, calculateEndTime));
+							StringManagerUtils.printLog("Thread complete，calculated count:"+(sum2-sum1)+",time:"+StringManagerUtils.getTimeDiff(calculateStartTime, calculateEndTime));
+							StringManagerUtils.printLogFile(logger, "Thread complete，calculated count:"+(sum2-sum1)+",time:"+StringManagerUtils.getTimeDiff(calculateStartTime, calculateEndTime), "error");
 						}
 						try {
 							Thread.sleep(1000*1);

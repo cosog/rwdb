@@ -23,8 +23,8 @@
         }
     },
     "log": {
-        "stdout": false,
-        "file": false
+        "stdout": true,
+        "file": true
     },
     "other": {
         "defaultTimeSpan": 0
