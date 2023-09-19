@@ -40,6 +40,9 @@ public class RPCWellDataSyncThread  extends Thread{
 		int recordCount=0;
 		int writeBackCount=0;
 		
+		long totalCalTime=0,totalWriteBackTime=0;
+		long queryDiagramTime=0;
+		
 		Map<String,String> dataReadTimeInfoMap=MemoryDataUtils.getDataReadTimeInfo();
 		
 		String fesdiagramacqtime="";
@@ -65,6 +68,10 @@ public class RPCWellDataSyncThread  extends Thread{
 			String sql="";
 			Gson gson = new Gson();
 			try {
+				long endTime=0,startTime=0;
+				String logInfo="";
+				String writeBackSql="";
+				
 				Map<String, Object> map = DataModelMap.getMapObject();
 				DiagramExceptionData diagramExceptionData=null;
 				Map<String,DiagramExceptionData> diagramCalculateFailureMap=null;
@@ -74,13 +81,11 @@ public class RPCWellDataSyncThread  extends Thread{
 						diagramExceptionData=diagramCalculateFailureMap.get(calculateRequestData.getWellName());
 					}
 				}
-				
+				long t1=System.nanoTime();
 				sql=DataProcessingUtils.getDiagramQuerySql(calculateRequestData.getWellName(), fesdiagramacqtime);
 				List<List<Object>> diagramList=OracleJdbcUtis.queryFESDiagramData(sql);
-				
-				long endTime=0,startTime=0;
-				String logInfo="";
-				String writeBackSql="";
+				long t2=System.nanoTime();
+				queryDiagramTime=t2-t1;
 				
 				if(diagramList!=null && diagramList.size()>0){
 					for(int i=0;i<diagramList.size();i++){
@@ -127,25 +132,26 @@ public class RPCWellDataSyncThread  extends Thread{
 							
 							//功图计算
 							RPCCalculateResponseData calculateResponseData=null;
+							t1=System.nanoTime();
 							calculateResponseData=CalculateUtils.fesDiagramCalculate(gson.toJson(calculateRequestData));
-						
+							t2=System.nanoTime();
+							totalCalTime+=(t2-t1);
+//							StringManagerUtils.printLog("单张功图计算时间:"+StringManagerUtils.getTimeDiff(t1, t2));
+//							StringManagerUtils.printLogFile(logger, "单张功图计算时间:"+StringManagerUtils.getTimeDiff(t1, t2) ,"info");
+							
 							//结果回写
 							if(calculateResponseData!=null){
 								if(calculateResponseData.getCalculationStatus().getResultStatus()==1){
 									writeBackSql=DataProcessingUtils.getWriteBackSql(calculateResponseData);
 									if(StringManagerUtils.isNotNull(writeBackSql)){
+										t1=System.nanoTime();
 							            int iNum=OracleJdbcUtis.writeBackDiagramCalculateData(writeBackSql);
+							            t2=System.nanoTime();
+							            totalWriteBackTime+=(t2-t1);
+//							            StringManagerUtils.printLog("单张功图回写时间:"+StringManagerUtils.getTimeDiff(t1, t2));
+//										StringManagerUtils.printLogFile(logger, "单张功图回写时间:"+StringManagerUtils.getTimeDiff(t1, t2) ,"info");
 							            if(iNum>0){
 							            	writeBackCount++;
-//							            	endTime=System.nanoTime();
-//							            	String timeDiffStr=StringManagerUtils.getTimeDiff(startTime, endTime);
-//							            	logInfo="Write back the calculated data,wellname:"+calculateRequestData.getWellName()+",acqtime:"+fesdiagramAcqtimeStr+",resultStatus:"+calculateResponseData.getCalculationStatus().getResultStatus()+",resultCode:"+calculateResponseData.getCalculationStatus().getResultCode()+",durationTime:"+timeDiffStr;
-//							            	
-//							            	if(calculateResponseData.getCalculationStatus().getResultStatus()!=1){
-//							            		logInfo+=",requestData:"+gson.toJson(calculateRequestData);
-//							            	}
-//							            	StringManagerUtils.printLog(logInfo);
-//							            	StringManagerUtils.printLogFile(logger, logInfo,"info");
 							            }
 									}
 								}else{
@@ -182,10 +188,6 @@ public class RPCWellDataSyncThread  extends Thread{
 				e1.printStackTrace();
 				StringManagerUtils.printLogFile(logger, "error", e1, "error");
 			} finally{
-				if(recordCount>0 || writeBackCount>0){
-					StringManagerUtils.printLog("Get fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime+",recordCount:"+recordCount+",writeBackCount:"+writeBackCount);
-					StringManagerUtils.printLogFile(logger, "Get fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime+",recordCount:"+recordCount+",writeBackCount:"+writeBackCount,"info");
-				}
 				dataReadTimeInfoMap.put(calculateRequestData.getWellName(), fesdiagramacqtime);
 			}
 		}else{
@@ -206,7 +208,11 @@ public class RPCWellDataSyncThread  extends Thread{
 		}
 		long time2=System.nanoTime();
 		String timeDiffStr=StringManagerUtils.getTimeDiff(time1, time2);
-		logger.info("Get fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime+",recordCount:"+recordCount+",writeBackCount:"+writeBackCount+",durationTime:"+timeDiffStr);
+		if(recordCount>0){
+			String info="Get fesdiagram data,wellname:"+calculateRequestData.getWellName()+",current acqtime:"+fesdiagramacqtime+",recordCount:"+recordCount+",writeBackCount:"+writeBackCount+",durationTime:"+timeDiffStr+",平均计算时间:"+StringManagerUtils.getTimeDiff( ((double)totalCalTime)/((double)recordCount) )+",平均回写时间:"+StringManagerUtils.getTimeDiff( ((double)totalWriteBackTime)/((double)recordCount) )+",功图查询耗时:"+StringManagerUtils.getTimeDiff(queryDiagramTime);
+			StringManagerUtils.printLog(info);
+			StringManagerUtils.printLogFile(logger, info,"info");
+		}
 		CounterUtils.countDown();
 	}
 
