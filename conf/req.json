@@ -53,7 +53,7 @@
             }
         }
     },
-     "ProductionTable": {
+     "AuxTable": {
         "ConnectInfo": {
             "IP": "127.0.0.1",
             "Port": 1521,
@@ -63,7 +63,7 @@
             "Password": "a11ck_123"
         },
         "TableInfo": {
-            "Name": "TBL_PRODUCTIONDATA",
+            "Name": "pc_fd_pumpjack_fdyna_dia_aux_t",
             "Columns": {
                 "WellId": {
                     "Column": "well_id",
