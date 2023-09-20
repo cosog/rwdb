@@ -6,7 +6,7 @@ public class DataRequestConfig {
 	
 	private DiagramTableConfig DiagramTable;
 
-    private ProductionTableConfig ProductionTable;
+    private AuxDataTableConfig AuxTable;
     
     public static boolean ConnectInfoEquals(ConnectInfoConfig info1,ConnectInfoConfig info2){
     	boolean result=false;
@@ -254,7 +254,7 @@ public class DataRequestConfig {
 	    }
 	}
 	
-	public static class ProductionDataTableColumns
+	public static class AuxDataTableColumns
 	{
 	    private ColumnInfo WellId;
 
@@ -777,11 +777,11 @@ public class DataRequestConfig {
 		}
 	}
 
-	public static class ProductionDataTableStructure
+	public static class AuxDataTableStructure
 	{
 	    private String Name;
 
-	    private ProductionDataTableColumns Columns;
+	    private AuxDataTableColumns Columns;
 
 	    public void setName(String Name){
 	        this.Name = Name;
@@ -789,20 +789,20 @@ public class DataRequestConfig {
 	    public String getName(){
 	        return this.Name;
 	    }
-	    public void setColumns(ProductionDataTableColumns Columns){
-	        this.Columns = Columns;
-	    }
-	    public ProductionDataTableColumns getColumns(){
-	        return this.Columns;
-	    }
+		public AuxDataTableColumns getColumns() {
+			return Columns;
+		}
+		public void setColumns(AuxDataTableColumns columns) {
+			Columns = columns;
+		}
 	}
 	
-	public static class ProductionTableConfig
+	public static class AuxDataTableConfig
 	{
 
 	    private ConnectInfoConfig ConnectInfo;
 
-	    private ProductionDataTableStructure TableInfo;
+	    private AuxDataTableStructure TableInfo;
 
 	    public void setConnectInfo(ConnectInfoConfig ConnectInfo){
 	        this.ConnectInfo = ConnectInfo;
@@ -810,12 +810,12 @@ public class DataRequestConfig {
 	    public ConnectInfoConfig getConnectInfo(){
 	        return this.ConnectInfo;
 	    }
-	    public void setTableInfo(ProductionDataTableStructure TableInfo){
-	        this.TableInfo = TableInfo;
-	    }
-	    public ProductionDataTableStructure getTableInfo(){
-	        return this.TableInfo;
-	    }
+		public AuxDataTableStructure getTableInfo() {
+			return TableInfo;
+		}
+		public void setTableInfo(AuxDataTableStructure tableInfo) {
+			TableInfo = tableInfo;
+		}
 	}
 
 	public DiagramTableConfig getDiagramTable() {
@@ -826,11 +826,12 @@ public class DataRequestConfig {
 		DiagramTable = diagramTable;
 	}
 
-	public ProductionTableConfig getProductionTable() {
-		return ProductionTable;
+	public AuxDataTableConfig getAuxTable() {
+		return AuxTable;
 	}
 
-	public void setProductionTable(ProductionTableConfig productionTable) {
-		ProductionTable = productionTable;
+	public void setAuxTable(AuxDataTableConfig auxTable) {
+		AuxTable = auxTable;
 	}
+
 }

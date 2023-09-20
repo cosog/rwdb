@@ -61,17 +61,17 @@ public class OracleJdbcUtis {
 		
 		DataRequestConfig dataRequestConfig=MemoryDataUtils.getDataReqConfig();
 		
-		if(dataRequestConfig!=null && dataRequestConfig.getProductionTable()!=null && DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getProductionTable().getConnectInfo()) ){
+		if(dataRequestConfig!=null && dataRequestConfig.getAuxTable()!=null && DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getAuxTable().getConnectInfo()) ){
 			
 			outerProductionDataSource = new BasicDataSource();
 			
 			outerProductionDataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 
-			outerProductionDataSource.setUrl("jdbc:oracle:thin:@"+dataRequestConfig.getProductionTable().getConnectInfo().getIP()+":"+dataRequestConfig.getProductionTable().getConnectInfo().getPort()+(dataRequestConfig.getProductionTable().getConnectInfo().getVersion()>=12?"/":":")+dataRequestConfig.getProductionTable().getConnectInfo().getInstanceName()+"");
+			outerProductionDataSource.setUrl("jdbc:oracle:thin:@"+dataRequestConfig.getAuxTable().getConnectInfo().getIP()+":"+dataRequestConfig.getAuxTable().getConnectInfo().getPort()+(dataRequestConfig.getAuxTable().getConnectInfo().getVersion()>=12?"/":":")+dataRequestConfig.getAuxTable().getConnectInfo().getInstanceName()+"");
 
-			outerProductionDataSource.setUsername(dataRequestConfig.getProductionTable().getConnectInfo().getUser());
+			outerProductionDataSource.setUsername(dataRequestConfig.getAuxTable().getConnectInfo().getUser());
 
-			outerProductionDataSource.setPassword(dataRequestConfig.getProductionTable().getConnectInfo().getPassword());
+			outerProductionDataSource.setPassword(dataRequestConfig.getAuxTable().getConnectInfo().getPassword());
 
 			outerProductionDataSource.setInitialSize(10); // 初始化连接数
 
@@ -257,7 +257,7 @@ public class OracleJdbcUtis {
 		ResultSet rs = null;
 		List<List<Object>> list=new ArrayList<List<Object>>();
 		try{
-			if( (!DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getProductionTable().getConnectInfo())) || DataRequestConfig.ConnectInfoEquals(dataRequestConfig.getProductionTable().getConnectInfo(), dataRequestConfig.getDiagramTable().getConnectInfo())  ){
+			if( (!DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getAuxTable().getConnectInfo())) || DataRequestConfig.ConnectInfoEquals(dataRequestConfig.getAuxTable().getConnectInfo(), dataRequestConfig.getDiagramTable().getConnectInfo())  ){
 				conn=OracleJdbcUtis.getDiagramConnection();//配置无效或者和功图数据表连接配置相同，获取功图数据表连接
 			}else{
 				conn=OracleJdbcUtis.getProductionDataConnection();

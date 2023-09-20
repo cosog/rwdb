@@ -558,120 +558,120 @@ public class DataProcessingUtils {
 				&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo())){
 			sqlBuff.append("select ");
 			//井id
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getWellId().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getWellId().getColumn()+",");
 			//井名
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getWellName().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getWellName().getColumn()+",");
 			//原油密度
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getCrudeOilDensity().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getCrudeOilDensity().getColumn()+",");
 			//水密度
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getWaterDensity().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getWaterDensity().getColumn()+",");
 			//天然气相对密度
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getNaturalGasRelativeDensity().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getNaturalGasRelativeDensity().getColumn()+",");
 			//饱和压力
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getSaturationPressure().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getSaturationPressure().getColumn()+",");
 			//油层中部深度
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getReservoirDepth().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getReservoirDepth().getColumn()+",");
 			//油层中部温度
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getReservoirTemperature().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getReservoirTemperature().getColumn()+",");
 			//油压
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getTubingPressure().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getTubingPressure().getColumn()+",");
 			//套压
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getCasingPressure().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getCasingPressure().getColumn()+",");
 			//井口温度
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getWellHeadTemperature().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getWellHeadTemperature().getColumn()+",");
 			//含水率
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getWaterCut().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getWaterCut().getColumn()+",");
 			//生产气油比
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getProductionGasOilRatio().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getProductionGasOilRatio().getColumn()+",");
 			//动液面
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getProducingfluidLevel().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getProducingfluidLevel().getColumn()+",");
 			//泵挂
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getPumpSettingDepth().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getPumpSettingDepth().getColumn()+",");
 			//泵筒类型
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getBarrelType().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getBarrelType().getColumn()+",");
 			//泵级别
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getPumpGrade().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getPumpGrade().getColumn()+",");
 			//泵径
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getPumpBoreDiameter().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getPumpBoreDiameter().getColumn()+",");
 			//柱塞长
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getPlungerLength().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getPlungerLength().getColumn()+",");
 			//油管内径
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getTubingStringInsideDiameter().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getTubingStringInsideDiameter().getColumn()+",");
 			//套管内径
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getCasingStringInsideDiameter().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getCasingStringInsideDiameter().getColumn()+",");
 			//一级杆级别
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringGrade1().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringGrade1().getColumn()+",");
 			//一级杆外径
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringOutsideDiameter1().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringOutsideDiameter1().getColumn()+",");
 			//一级杆内径
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringInsideDiameter1().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringInsideDiameter1().getColumn()+",");
 			//一级杆长度
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringLength1().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringLength1().getColumn()+",");
 			//二级杆级别
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringGrade2().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringGrade2().getColumn()+",");
 			//二级杆外径
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringOutsideDiameter2().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringOutsideDiameter2().getColumn()+",");
 			//二级杆内径
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringInsideDiameter2().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringInsideDiameter2().getColumn()+",");
 			//二级杆长度
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringLength2().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringLength2().getColumn()+",");
 			//三级杆级别
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringGrade3().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringGrade3().getColumn()+",");
 			//三级杆外径
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringOutsideDiameter3().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringOutsideDiameter3().getColumn()+",");
 			//三级杆内径
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringInsideDiameter3().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringInsideDiameter3().getColumn()+",");
 			//三级杆长度
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringLength3().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringLength3().getColumn()+",");
 			//四级杆级别
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringGrade4().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringGrade4().getColumn()+",");
 			//四级杆外径
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringOutsideDiameter4().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringOutsideDiameter4().getColumn()+",");
 			//四级杆内径
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringInsideDiameter4().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringInsideDiameter4().getColumn()+",");
 			//四级杆长度
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getRodStringLength4().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getRodStringLength4().getColumn()+",");
 			//曲柄旋转方向
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getCrankRotationDirection().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getCrankRotationDirection().getColumn()+",");
 			//曲柄偏置角
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getOffsetAngleOfCrank().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getOffsetAngleOfCrank().getColumn()+",");
 			//平衡块1重量
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getBalanceWeight1().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getBalanceWeight1().getColumn()+",");
 			//平衡块2重量
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getBalanceWeight2().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getBalanceWeight2().getColumn()+",");
 			//平衡块3重量
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getBalanceWeight3().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getBalanceWeight3().getColumn()+",");
 			//平衡块4重量
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getBalanceWeight4().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getBalanceWeight4().getColumn()+",");
 			//平衡块5重量
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getBalanceWeight5().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getBalanceWeight5().getColumn()+",");
 			//平衡块6重量
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getBalanceWeight6().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getBalanceWeight6().getColumn()+",");
 			//平衡块7重量
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getBalanceWeight7().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getBalanceWeight7().getColumn()+",");
 			//平衡块8重量
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getBalanceWeight8().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getBalanceWeight8().getColumn()+",");
 			//工况干预代码
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getManualInterventionCode().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getManualInterventionCode().getColumn()+",");
 			//净毛比
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getNetGrossRatio().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getNetGrossRatio().getColumn()+",");
 			//净毛值
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getNetGrossValue().getColumn()+",");
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getNetGrossValue().getColumn()+",");
 			//反演液面校正值
-			sqlBuff.append(" "+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getLevelCorrectValue().getColumn());
+			sqlBuff.append(" "+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getLevelCorrectValue().getColumn());
 			
-			sqlBuff.append(" from "+dataRequestConfig.getProductionTable().getTableInfo().getName()+" t where 1=1");
+			sqlBuff.append(" from "+dataRequestConfig.getAuxTable().getTableInfo().getName()+" t where 1=1");
 			if( wellList!=null && wellList.size()>0 ){
-				sqlBuff.append(" and t."+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getWellName().getColumn()+" in ("+StringManagerUtils.joinStringArr2(wellList, ",")+")");
+				sqlBuff.append(" and t."+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getWellName().getColumn()+" in ("+StringManagerUtils.joinStringArr2(wellList, ",")+")");
 			}
 			
-			if(StringManagerUtils.isNotNull(dataRequestConfig.getProductionTable().getTableInfo().getColumns().getSaveTime().getColumn())){
-				sqlBuff.append(" and t."+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getSaveTime().getColumn());
-				sqlBuff.append("= (select max(t2."+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getSaveTime().getColumn()+") from "+dataRequestConfig.getProductionTable().getTableInfo().getName()+" t2 where t2."+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getWellName().getColumn()+"=t."+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getWellName().getColumn()+" )");
+			if(StringManagerUtils.isNotNull(dataRequestConfig.getAuxTable().getTableInfo().getColumns().getSaveTime().getColumn())){
+				sqlBuff.append(" and t."+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getSaveTime().getColumn());
+				sqlBuff.append("= (select max(t2."+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getSaveTime().getColumn()+") from "+dataRequestConfig.getAuxTable().getTableInfo().getName()+" t2 where t2."+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getWellName().getColumn()+"=t."+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getWellName().getColumn()+" )");
 			}
 			
 //			sqlBuff.append(" and t.prod_id<=12");
-//			sqlBuff.append(" and t."+dataRequestConfig.getProductionTable().getTableInfo().getColumns().getWellName().getColumn()+" in('rpc00001')");
+//			sqlBuff.append(" and t."+dataRequestConfig.getAuxTable().getTableInfo().getColumns().getWellName().getColumn()+" in('rpc00001')");
 		}
 		return sqlBuff.toString();
 	}

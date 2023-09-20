@@ -62,9 +62,9 @@ public class AgileCalculate {
 				&& dataRequestConfig.getDiagramTable().getTableInfo().getColumns()!=null 
 				&& DataRequestConfig.ConnectInfoEffective(dataRequestConfig.getDiagramTable().getConnectInfo()) 
 				
-				&& dataRequestConfig.getProductionTable()!=null 
-				&& dataRequestConfig.getProductionTable().getTableInfo()!=null
-				&& dataRequestConfig.getProductionTable().getTableInfo().getColumns()!=null){
+				&& dataRequestConfig.getAuxTable()!=null 
+				&& dataRequestConfig.getAuxTable().getTableInfo()!=null
+				&& dataRequestConfig.getAuxTable().getTableInfo().getColumns()!=null){
 			Gson gson=new Gson();
 			StringManagerUtils stringManagerUtils=new StringManagerUtils();
 			List<RPCCalculateRequestData> rpcCalculateRequestDataList=null;
